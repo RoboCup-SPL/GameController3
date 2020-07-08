@@ -16,6 +16,7 @@
 
 namespace GameController::Core
 {
+  template<typename Derived>
   class Entity
   {
   public:
@@ -30,6 +31,7 @@ namespace GameController::Core
     template<typename StateType>
     StateType& get()
     {
+      static_assert(std::is_same<typename StateType::BaseType::EntityType, Derived>::value, "You are trying to get a state from the wrong entity type.");
       const auto it = states.find(typeid(StateType));
       assert(it != states.end());
       return *static_cast<StateType*>(it->second.get());
@@ -43,6 +45,7 @@ namespace GameController::Core
     template<typename StateType>
     const StateType& get() const
     {
+      static_assert(std::is_same<typename StateType::BaseType::EntityType, Derived>::value, "You are trying to get a state from the wrong entity type.");
       const auto it = states.find(typeid(StateType));
       assert(it != states.end());
       return *static_cast<const StateType*>(it->second.get());

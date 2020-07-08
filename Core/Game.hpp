@@ -17,7 +17,7 @@ namespace GameController::Core
   class League;
   class Team;
 
-  class Game final : public Entity
+  class Game final : public Entity<Game>
   {
   public:
     /**
