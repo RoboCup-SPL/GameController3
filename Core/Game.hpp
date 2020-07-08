@@ -24,7 +24,7 @@ namespace GameController::Core
      * Constructor.
      * @param league The rules from which to create the game states and teams.
      */
-    Game(const League& league);
+    explicit Game(const League& league);
 
   private:
     std::vector<std::unique_ptr<Team>> teams; /**< The teams in this game. */

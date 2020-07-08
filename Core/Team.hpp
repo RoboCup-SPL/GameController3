@@ -33,7 +33,7 @@ namespace GameController::Core
      * Mutable getter for the game.
      * @return A reference to the game.
      */
-    Game& getGame()
+    [[nodiscard]] Game& getGame()
     {
       return game;
     }
@@ -42,7 +42,7 @@ namespace GameController::Core
      * Immutable getter for the game.
      * @return A constant reference to the game.
      */
-    const Game& getGame() const
+    [[nodiscard]] const Game& getGame() const
     {
       return game;
     }
@@ -51,7 +51,7 @@ namespace GameController::Core
      * Getter for the ID.
      * @return The team ID.
      */
-    unsigned int getID() const
+    [[nodiscard]] unsigned int getID() const
     {
       return id;
     }

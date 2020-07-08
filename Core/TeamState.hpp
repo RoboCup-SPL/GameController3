@@ -24,7 +24,7 @@ namespace GameController::Core
      * Constructor.
      * @param team The team that owns this state.
      */
-    TeamStateBase(Team& team) :
+    explicit TeamStateBase(Team& team) :
       GameStateBase(team.getGame()),
       _team(team)
     {}
@@ -33,7 +33,7 @@ namespace GameController::Core
      * Mutable getter for the team.
      * @return A reference to the team.
      */
-    Team& getTeam()
+    [[nodiscard]] Team& getTeam()
     {
       return _team;
     }
@@ -42,7 +42,7 @@ namespace GameController::Core
      * Immutable getter for the team.
      * @return A constant reference to the team.
      */
-    const Team& getTeam() const
+    [[nodiscard]] const Team& getTeam() const
     {
       return _team;
     }

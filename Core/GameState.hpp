@@ -23,7 +23,7 @@ namespace GameController::Core
      * Constructor.
      * @param game The game that owns this state.
      */
-    GameStateBase(Game& game) :
+    explicit GameStateBase(Game& game) :
       _game(game)
     {}
 
@@ -31,7 +31,7 @@ namespace GameController::Core
      * Mutable getter for the game.
      * @return A reference to the game.
      */
-    Game& getGame()
+    [[nodiscard]] Game& getGame()
     {
       return _game;
     }
@@ -40,7 +40,7 @@ namespace GameController::Core
      * Immutable getter for the game.
      * @return A constant reference to the game.
      */
-    const Game& getGame() const
+    [[nodiscard]] const Game& getGame() const
     {
       return _game;
     }

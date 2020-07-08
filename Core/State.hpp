@@ -44,7 +44,7 @@ namespace GameController::Core
      * Constructor.
      * @param value The initial value of the state.
      */
-    State(Type value) :
+    explicit State(Type value) :
       _value(value)
     {}
 

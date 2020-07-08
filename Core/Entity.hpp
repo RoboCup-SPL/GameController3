@@ -50,7 +50,7 @@ namespace GameController::Core
 
   protected:
     /**
-     * Adds a state instance to an entitiy.
+     * Adds a state instance to an entity.
      * @param type The type handle of the state.
      * @param state The pointer to the state instance (of which this object takes ownership).
      */

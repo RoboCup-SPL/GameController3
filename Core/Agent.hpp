@@ -30,7 +30,7 @@ namespace GameController::Core
      * Mutable getter for the team.
      * @return A reference to the team.
      */
-    Team& getTeam()
+    [[nodiscard]] Team& getTeam()
     {
       return team;
     }
@@ -39,7 +39,7 @@ namespace GameController::Core
      * Immutable getter for the team.
      * @return A constant reference to the team.
      */
-    const Team& getTeam() const
+    [[nodiscard]] const Team& getTeam() const
     {
       return team;
     }
@@ -48,7 +48,7 @@ namespace GameController::Core
      * Getter for the ID.
      * @return The agent ID.
      */
-    unsigned int getID() const
+    [[nodiscard]] unsigned int getID() const
     {
       return id;
     }

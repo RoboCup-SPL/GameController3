@@ -47,7 +47,7 @@ namespace GameController::Core
      * @return The list of state factories for a given state base type.
      */
     template<typename StateBaseType>
-    const std::vector<StateFactoryTypePair<StateBaseType>>& getStateFactories() const
+    [[nodiscard]] const std::vector<StateFactoryTypePair<StateBaseType>>& getStateFactories() const
     {
 #define RETURN_STATE_FACTORIES(type, factories) \
       if constexpr(std::is_same<StateBaseType, type>::value) \
@@ -62,7 +62,7 @@ namespace GameController::Core
      * Getter for the number of teams.
      * @return The number of teams.
      */
-    unsigned int getNumberOfTeams() const
+    [[nodiscard]] unsigned int getNumberOfTeams() const
     {
       return _numberOfTeams;
     }
@@ -71,7 +71,7 @@ namespace GameController::Core
      * Getter for the number of agents per team.
      * @return The number of agents per team.
      */
-    unsigned int getNumberOfAgentsPerTeam() const
+    [[nodiscard]] unsigned int getNumberOfAgentsPerTeam() const
     {
       return _numberOfAgentsPerTeam;
     }

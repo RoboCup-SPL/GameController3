@@ -24,7 +24,7 @@ namespace GameController::Core
      * Constructor.
      * @param agent The agent that owns this state.
      */
-    AgentStateBase(Agent& agent) :
+    explicit AgentStateBase(Agent& agent) :
       TeamStateBase(agent.getTeam()),
       _agent(agent)
     {}
@@ -33,7 +33,7 @@ namespace GameController::Core
      * Mutable getter for the agent.
      * @return A reference to the agent.
      */
-    Agent& getAgent()
+    [[nodiscard]] Agent& getAgent()
     {
       return _agent;
     }
@@ -42,7 +42,7 @@ namespace GameController::Core
      * Immutable getter for the agent.
      * @return A constant reference to the agent.
      */
-    const Agent& getAgent() const
+    [[nodiscard]] const Agent& getAgent() const
     {
       return _agent;
     }
