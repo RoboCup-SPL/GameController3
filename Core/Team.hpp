@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Entity.hpp"
+#include <cassert>
 #include <memory>
 #include <vector>
 
@@ -45,6 +46,37 @@ namespace GameController::Core
     [[nodiscard]] const Game& getGame() const
     {
       return game;
+    }
+
+    /**
+     * Getter for the number of agents.
+     * @return The number of agents.
+     */
+    [[nodiscard]] std::size_t getNumberOfAgents() const
+    {
+      return agents.size();
+    }
+
+    /**
+     * Mutable getter for an agent.
+     * @param id The ID of the agent.
+     * @return A reference to the agent.
+     */
+    [[nodiscard]] Agent& getAgent(unsigned int id)
+    {
+      assert(id < agents.size());
+      return *agents[id];
+    }
+
+    /**
+     * Immutable getter for an agent.
+     * @param id The ID of the agent.
+     * @return A constant reference to the agent.
+     */
+    [[nodiscard]] const Agent& getAgent(unsigned int id) const
+    {
+      assert(id < agents.size());
+      return *agents[id];
     }
 
     /**
