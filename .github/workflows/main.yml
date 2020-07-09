@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build-type: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run CMake
+      run: cmake -S $GITHUB_WORKSPACE -B ${{runner.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build-type}}
+    - name: Build
+      run: cmake --build ${{runner.workspace}}/build
