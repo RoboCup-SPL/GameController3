@@ -11,6 +11,8 @@ add_library(Core STATIC
     Team.cpp
     Team.hpp
     TeamState.hpp
+    Time.hpp
+    Timer.hpp
 )
 
 target_link_libraries(Core PUBLIC Flags::Default)

@@ -20,6 +20,8 @@ namespace GameController::Core
   class Entity
   {
   public:
+    using StateVisitor = std::function<void(StateBase&)>;
+
     /** Virtual destructor for polymorphism. */
     virtual ~Entity() = default;
 
@@ -49,6 +51,16 @@ namespace GameController::Core
       const auto it = states.find(typeid(StateType));
       assert(it != states.end());
       return *static_cast<const StateType*>(it->second.get());
+    }
+
+    /**
+     * Visits all states in this entity.
+     * @param visit A function that is called for every state in this entity.
+     */
+    virtual void accept(const StateVisitor& visit)
+    {
+      for(const auto& pair : states)
+        visit(*pair.second);
     }
 
   protected:

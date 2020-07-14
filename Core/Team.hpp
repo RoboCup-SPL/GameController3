@@ -31,6 +31,12 @@ namespace GameController::Core
     Team(const League& league, Game& game, unsigned int id);
 
     /**
+     * Visits all states in this entity and sub-entities.
+     * @param visit A function that is called for every state in this entity or sub-entities.
+     */
+    void accept(const StateVisitor& visit) override;
+
+    /**
      * Mutable getter for the game.
      * @return A reference to the game.
      */

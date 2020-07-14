@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "Timer.hpp"
+
 namespace GameController::Core
 {
   class StateBase
@@ -15,6 +17,27 @@ namespace GameController::Core
   public:
     /** Virtual destructor for polymorphism. */
     virtual ~StateBase() = default;
+
+    /**
+     * Mutable getter for the timer associated with this state.
+     * @return A reference to the timer.
+     */
+    [[nodiscard]] Timer& getTimer()
+    {
+      return _timer;
+    }
+
+    /**
+     * Immutable getter for the timer associated with this state.
+     * @return A constant reference to the timer.
+     */
+    [[nodiscard]] const Timer& getTimer() const
+    {
+      return _timer;
+    }
+
+  private:
+    Timer _timer; /**< The timer associated with this state. */
   };
 
   template<typename Type>
@@ -34,7 +57,7 @@ namespace GameController::Core
      * Getter for the state value.
      * @return The value.
      */
-    const Type& get() const
+    [[nodiscard]] const Type& get() const
     {
       return _value;
     }

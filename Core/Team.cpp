@@ -25,3 +25,10 @@ Team::Team(const League& league, Game& game, unsigned int id) :
   for(unsigned int i = 0; i < league.getNumberOfAgentsPerTeam(); ++i)
     agents.push_back(std::make_unique<Agent>(league, *this, i));
 }
+
+void Team::accept(const StateVisitor& visit)
+{
+  Entity::accept(visit);
+  for(std::size_t i = 0; i < getNumberOfAgents(); ++i)
+    getAgent(i).accept(visit);
+}

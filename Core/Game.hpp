@@ -28,6 +28,18 @@ namespace GameController::Core
     explicit Game(const League& league);
 
     /**
+     * Proceeds the time.
+     * @param dt The amount of time that has passed.
+     */
+    void proceed(Duration dt);
+
+    /**
+     * Visits all states in this entity and sub-entities.
+     * @param visit A function that is called for every state in this entity or sub-entities.
+     */
+    void accept(const StateVisitor& visit) override;
+
+    /**
      * Getter for the number of teams.
      * @return The number of teams.
      */
