@@ -22,7 +22,7 @@ namespace GameController::Core
     /**
      * Sets the timer.
      * @param duration The duration after which the timer is at 0.
-     * @param halted A function which indicates whether the timer should halted.
+     * @param halted A function which indicates whether the timer should be halted.
      */
     void set(Duration duration, const IsHalted& halted = IsHalted())
     {
@@ -61,6 +61,6 @@ namespace GameController::Core
   private:
     bool active = false; /**< Whether the timer is active. */
     Duration remainingTime = 0; /**< The remaining time until the timer is at 0. */
-    IsHalted isHalted; /**< A function which indicates whether the timer should halted. */
+    IsHalted isHalted; /**< A function which indicates whether the timer should be halted. */
   };
 }
