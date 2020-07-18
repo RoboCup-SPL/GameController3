@@ -7,6 +7,7 @@
  */
 
 #include "Game.hpp"
+#include "Action.hpp"
 #include "Agent.hpp"
 #include "GameState.hpp"
 #include "League.hpp"
@@ -29,6 +30,14 @@ void Game::proceed(Duration dt)
 {
   // TODO: If any timer elapses before dt and has an action associated to it, dt has to be broken down.
   accept([&dt](StateBase& state){ state.getTimer().proceed(dt); });
+}
+
+void Game::apply(const Action& action)
+{
+  if(!action.isLegal(*this))
+    return;
+  // TODO: add a snapshot of all states and timers to the log
+  action.execute(*this);
 }
 
 void Game::accept(const StateVisitor& visit)

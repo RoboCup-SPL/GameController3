@@ -15,6 +15,7 @@
 
 namespace GameController::Core
 {
+  class Action;
   class League;
   class Team;
 
@@ -32,6 +33,12 @@ namespace GameController::Core
      * @param dt The amount of time that has passed.
      */
     void proceed(Duration dt);
+
+    /**
+     * Applies an action to the game.
+     * @param action The action to apply.
+     */
+    void apply(const Action& action);
 
     /**
      * Visits all states in this entity and sub-entities.
