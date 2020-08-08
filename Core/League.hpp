@@ -16,15 +16,15 @@
 #include "State.hpp"
 #include "TeamState.hpp"
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_map>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
-#define PER_STATE_BASE_TYPE(_) \
+#define PER_STATE_BASE_TYPE(_)            \
   _(AgentStateBase, _agentStateFactories) \
-  _(GameStateBase, _gameStateFactories) \
+  _(GameStateBase, _gameStateFactories)   \
   _(TeamStateBase, _teamStateFactories)
 
 namespace GameController::Core
@@ -33,7 +33,7 @@ namespace GameController::Core
   {
   public:
     template<typename StateBaseType>
-    using StateFactory = std::unique_ptr<StateBase>(*)(typename StateBaseType::EntityType&);
+    using StateFactory = std::unique_ptr<StateBase> (*)(typename StateBaseType::EntityType&);
 
     template<typename StateBaseType>
     using StateFactoryTypePair = std::pair<StateFactory<StateBaseType>, std::type_index>;
@@ -49,9 +49,9 @@ namespace GameController::Core
     template<typename StateBaseType>
     [[nodiscard]] const std::vector<StateFactoryTypePair<StateBaseType>>& getStateFactories() const
     {
-#define RETURN_STATE_FACTORIES(type, factories) \
-      if constexpr(std::is_same<StateBaseType, type>::value) \
-        return factories;
+#define RETURN_STATE_FACTORIES(type, factories)          \
+  if constexpr(std::is_same<StateBaseType, type>::value) \
+    return factories;
       PER_STATE_BASE_TYPE(RETURN_STATE_FACTORIES)
 
       static std::vector<StateFactoryTypePair<StateBaseType>> x;
@@ -85,9 +85,9 @@ namespace GameController::Core
     void registerState()
     {
       const auto factory = +[](typename StateType::EntityType& entity) -> std::unique_ptr<StateBase> { return std::make_unique<StateType>(entity); };
-#define ADD_TO_STATE_FACTORIES(type, factories) \
-      if constexpr(std::is_same<typename StateType::BaseType, type>::value) \
-        factories.emplace_back(factory, typeid(StateType));
+#define ADD_TO_STATE_FACTORIES(type, factories)                         \
+  if constexpr(std::is_same<typename StateType::BaseType, type>::value) \
+    factories.emplace_back(factory, typeid(StateType));
       PER_STATE_BASE_TYPE(ADD_TO_STATE_FACTORIES)
     }
 
@@ -111,7 +111,7 @@ namespace GameController::Core
 
   private:
 #define DECLARE_STATE_FACTORIES(type, factories) \
-    mutable std::vector<StateFactoryTypePair<type>> factories;
+  mutable std::vector<StateFactoryTypePair<type>> factories;
     PER_STATE_BASE_TYPE(DECLARE_STATE_FACTORIES)
     unsigned int _numberOfTeams = 0; /**< The number of teams in this league. */
     unsigned int _numberOfAgentsPerTeam = 0; /**< The number of agents per team in this league. */
