@@ -31,6 +31,7 @@ namespace GameController::Core
      */
     [[nodiscard]] virtual bool isLegal(const Game& game) const
     {
+      static_cast<void>(game);
       return true;
     }
   };
