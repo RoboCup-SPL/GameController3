@@ -12,6 +12,7 @@
 #include "GameState.hpp"
 #include "League.hpp"
 #include "Team.hpp"
+#include <cassert>
 
 using Game = GameController::Core::Game;
 
@@ -28,8 +29,34 @@ Game::Game(const League& league)
 
 void Game::proceed(Duration dt)
 {
-  // TODO: If any timer elapses before dt and has an action associated to it, dt has to be broken down.
-  accept([&dt](StateBase& state){ state.getTimer().proceed(dt); });
+  while(dt)
+  {
+    // Check how far we can go into the future at most before the first timer expires.
+    Duration thisDt = dt;
+    accept([&thisDt](StateBase& state) {
+      if(state.getTimer().isRunning())
+      {
+        if(Duration tEnd = state.getTimer().getRemainingTime(); tEnd > 0)
+          thisDt = std::min(thisDt, tEnd);
+      }
+    });
+    assert(thisDt > 0);
+    assert(thisDt <= dt);
+
+    // Proceed all timers by this delta.
+    accept([&thisDt](StateBase& state) {
+      state.getTimer().proceed(thisDt);
+    });
+
+    // Execute all actions of timers that elapsed in this instance.
+    accept([this](StateBase& state) {
+      if(auto action = state.getTimer().checkExpiration(); action)
+        apply(*action);
+    });
+
+    // Subtract the part of the delta that has been handled.
+    dt -= thisDt;
+  }
 }
 
 void Game::apply(const Action& action)

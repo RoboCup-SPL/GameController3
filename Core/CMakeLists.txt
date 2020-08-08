@@ -13,6 +13,7 @@ add_library(Core STATIC
     Team.hpp
     TeamState.hpp
     Time.hpp
+    Timer.cpp
     Timer.hpp
 )
 
