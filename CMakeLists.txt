@@ -29,3 +29,4 @@ if(WITH_COVERAGE)
 endif()
 
 add_subdirectory(Core)
+add_subdirectory(Leagues/SPL)
