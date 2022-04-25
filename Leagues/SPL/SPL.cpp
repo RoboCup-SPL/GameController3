@@ -12,6 +12,7 @@
 #include "States/Score.hpp"
 #include "States/TeamColor.hpp"
 #include "States/TeamNumber.hpp"
+#include "States/TimeoutTaken.hpp"
 
 using SPL = GameController::Leagues::SPL::SPL;
 
@@ -28,6 +29,7 @@ SPL::SPL()
   registerState<States::Score>();
   registerState<States::TeamColor>();
   registerState<States::TeamNumber>();
+  registerState<States::TimeoutTaken>();
 
   // Agent states
 }

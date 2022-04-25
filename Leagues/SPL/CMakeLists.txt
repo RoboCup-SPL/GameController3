@@ -4,6 +4,7 @@ add_library(SPL STATIC
     States/Score.hpp
     States/TeamColor.hpp
     States/TeamNumber.hpp
+    States/TimeoutTaken.hpp
     SPL.cpp
     SPL.hpp
 )
