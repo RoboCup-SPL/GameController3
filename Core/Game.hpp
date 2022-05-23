@@ -15,7 +15,7 @@
 
 namespace GameController::Core
 {
-  class Action;
+  class ActionBase;
   class League;
   class Team;
 
@@ -38,7 +38,7 @@ namespace GameController::Core
      * Applies an action to the game.
      * @param action The action to apply.
      */
-    void apply(const Action& action);
+    void apply(const ActionBase& action);
 
     /**
      * Visits all states in this entity and sub-entities.

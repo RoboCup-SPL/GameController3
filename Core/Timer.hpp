@@ -29,7 +29,7 @@ namespace GameController::Core
         return *this;
       }
 
-      Builder& action(std::unique_ptr<Action> action)
+      Builder& action(std::unique_ptr<ActionBase> action)
       {
         _action = std::move(action);
         return *this;
@@ -56,7 +56,7 @@ namespace GameController::Core
       {}
 
       IsHalted& _isHalted;
-      std::unique_ptr<Action>& _action;
+      std::unique_ptr<ActionBase>& _action;
       bool& _cancelOnExpiration;
       bool& _clipToZero;
       friend class Timer;
@@ -94,13 +94,13 @@ namespace GameController::Core
      * Checks whether the timer expired.
      * @return The action, if actually expired.
      */
-    [[nodiscard]] std::unique_ptr<Action> checkExpiration();
+    [[nodiscard]] std::unique_ptr<ActionBase> checkExpiration();
 
   private:
     bool active = false; /**< Whether the timer is active. */
     Duration remainingTime = 0; /**< The remaining time until the timer is at 0. */
     IsHalted isHalted; /**< A function which indicates whether the timer should be halted. */
-    std::unique_ptr<Action> action; /**< An action that should be executed when the timer expires. */
+    std::unique_ptr<ActionBase> action; /**< An action that should be executed when the timer expires. */
     bool cancelOnExpiration = false; /**< Whether the timer is canceled when it expires. */
     bool clipToZero = false; /**< Whether the timer is clipped to zero when it otherwise would be negative. */
   };

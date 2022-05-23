@@ -59,7 +59,7 @@ void Game::proceed(Duration dt)
   }
 }
 
-void Game::apply(const Action& action)
+void Game::apply(const ActionBase& action)
 {
   if(!action.isLegal(*this))
     return;

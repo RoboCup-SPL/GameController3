@@ -41,10 +41,10 @@ void Timer::cancel()
   action.reset();
 }
 
-std::unique_ptr<GameController::Core::Action> Timer::checkExpiration()
+std::unique_ptr<GameController::Core::ActionBase> Timer::checkExpiration()
 {
   if(!active || remainingTime)
-    return std::unique_ptr<Action>();
+    return std::unique_ptr<ActionBase>();
   if(cancelOnExpiration)
     active = false;
   return std::move(action);

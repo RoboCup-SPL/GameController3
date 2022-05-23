@@ -12,11 +12,11 @@ namespace GameController::Core
 {
   class Game;
 
-  class Action
+  class ActionBase
   {
   public:
     /** Virtual destructor for polymorphism. */
-    virtual ~Action() = default;
+    virtual ~ActionBase() = default;
 
     /**
      * Executes the action on a game.
@@ -34,5 +34,27 @@ namespace GameController::Core
       static_cast<void>(game);
       return true;
     }
+  };
+
+  struct EmptyArgs
+  {
+  };
+
+  template<typename ArgsType = EmptyArgs>
+  class Action : public ActionBase
+  {
+  public:
+    using Args = ArgsType;
+
+    /**
+     * Constructor.
+     * @param args The arguments of this action.
+     */
+    Action(const Args& args) :
+      args(args)
+    {}
+
+  protected:
+    const Args args; /**< The arguments of this action. */
   };
 }

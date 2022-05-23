@@ -9,22 +9,11 @@
 #pragma once
 
 #include "Core/TeamState.hpp"
+#include "Leagues/SPL/types.pb.h"
 
 namespace GameController::Leagues::SPL::States
 {
-  enum class TeamColorType
-  {
-    BLUE,
-    RED,
-    YELLOW,
-    BLACK,
-    WHITE,
-    GREEN,
-    ORANGE,
-    PURPLE,
-    BROWN,
-    GRAY
-  };
+  using TeamColorType = Proto::TeamColor;
 
   class TeamColor : public Core::TeamState<TeamColorType>
   {

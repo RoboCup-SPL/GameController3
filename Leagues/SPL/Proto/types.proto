@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package GameController.Leagues.SPL.Proto;
+
+enum TeamColor {
+  BLUE = 0;
+  RED = 1;
+  YELLOW = 2;
+  BLACK = 3;
+  WHITE = 4;
+  GREEN = 5;
+  ORANGE = 6;
+  PURPLE = 7;
+  BROWN = 8;
+  GRAY = 9;
+};
