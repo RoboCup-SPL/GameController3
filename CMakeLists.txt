@@ -14,6 +14,7 @@ add_library(Flags::Default INTERFACE IMPORTED)
 target_compile_options(Flags::Default INTERFACE
     $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall>
     $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wextra>
+    $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wno-switch>
     $<$<CXX_COMPILER_ID:MSVC>:/W3>
 )
 

@@ -7,9 +7,13 @@
  */
 
 #include "SPL.hpp"
+#include "States/GamePhase.hpp"
+#include "States/GameState.hpp"
 #include "States/KickingTeam.hpp"
+#include "States/Penalty.hpp"
 #include "States/PenaltyCounter.hpp"
 #include "States/Score.hpp"
+#include "States/SetPlay.hpp"
 #include "States/TeamColor.hpp"
 #include "States/TeamNumber.hpp"
 #include "States/TimeoutTaken.hpp"
@@ -22,7 +26,10 @@ SPL::SPL()
   setNumberOfAgentsPerTeam(6);
 
   // Game states
+  registerState<States::GamePhase>();
+  registerState<States::GameState>();
   registerState<States::KickingTeam>();
+  registerState<States::SetPlay>();
 
   // Team states
   registerState<States::PenaltyCounter>();
@@ -32,4 +39,5 @@ SPL::SPL()
   registerState<States::TimeoutTaken>();
 
   // Agent states
+  registerState<States::Penalty>();
 }
