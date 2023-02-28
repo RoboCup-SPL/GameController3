@@ -1,0 +1,96 @@
+{
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:3000",
+    "distDir": "frontend/build"
+  },
+  "package": {
+    "productName": "GameController",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false
+    },
+    "bundle": {
+      "active": true,
+      "category": "Utility",
+      "copyright": "",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
+      "icon": [],
+      "identifier": "org.robocup.spl.game-controller",
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "The GameController for the RoboCup Standard Platform League",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "cli": {
+      "args": [
+        {
+          "description": "Set away team",
+          "name": "away-team",
+          "takesValue": true
+        },
+        {
+          "description": "Use 255.255.255.255 as broadcast address",
+          "name": "broadcast",
+          "short": "b"
+        },
+        {
+          "description": "Set the competition type",
+          "name": "competition",
+          "short": "c",
+          "takesValue": true
+        },
+        {
+          "description": "Select fullscreen mode",
+          "name": "fullscreen",
+          "short": "f"
+        },
+        {
+          "description": "Set home team",
+          "name": "home-team",
+          "takesValue": true
+        },
+        {
+          "description": "Set the network interface",
+          "name": "interface",
+          "short": "i",
+          "takesValue": true
+        },
+        {
+          "description": "Join multicast groups for simulated team communication",
+          "name": "multicast",
+          "short": "m"
+        },
+        {
+          "description": "Select play-off game",
+          "name": "play-off",
+          "short": "p"
+        }
+      ]
+    },
+    "security": {
+      "csp": "default-src 'self'"
+    },
+    "updater": {
+      "active": false
+    }
+  }
+}

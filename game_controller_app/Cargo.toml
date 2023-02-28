@@ -1,0 +1,33 @@
+[package]
+authors = ["Arne Hasselbring <arha@uni-bremen.de>"]  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+description = "The GUI application of the RoboCup Standard Platform League GameController"
+edition = "2021"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+license = "MIT"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+name = "game_controller_app"
+repository = "https://github.com/RoboCup-SPL/GameController"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+version = "0.1.0"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+
+[build-dependencies]
+tauri-build = { version = "1.2.1", features = [] }
+
+[dependencies]
+anyhow = { version = "1" }
+enum-map = { version = "2.5", features = ["serde"] }
+game_controller = { path = "../game_controller" }
+game_controller_msgs = { path = "../game_controller_msgs" }
+game_controller_net = { path = "../game_controller_net" }
+network-interface = { version = "1" }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = { version = "0.9" }
+tauri = { version = "1.2.4", features = ["cli"] }
+time = { version = "0.3", features = ["formatting", "local-offset"] }
+tokio = { version = "1.0", features = ["fs", "rt-multi-thread", "time"] }
+tokio-util = { version = "0.7" }
+
+[features]
+# by default Tauri runs in production mode
+# when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL
+default = ["custom-protocol"]
+# this feature is used for production builds where `devPath` points to the filesystem
+# DO NOT remove this
+custom-protocol = ["tauri/custom-protocol"]

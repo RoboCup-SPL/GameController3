@@ -1,0 +1,28 @@
+[workspace]
+members = [
+  "game_controller",
+  "game_controller_app",
+  "game_controller_msgs",
+  "game_controller_net",
+]
+
+[workspace.dependencies]
+anyhow = { version = "1.0" }
+bindgen = { version = "0.64" }
+bytes = { version = "1.0" }
+enum-map = { version = "2.5", features = ["serde"] }
+game_controller = { path = "game_controller" }
+game_controller_msgs = { path = "game_controller_msgs" }
+game_controller_net = { path = "game_controller_net" }
+serde = { version = "1.0", features = ["derive"] }
+serde_with = { version = "2.3", features = ["base64", "time_0_3"] }
+time = { version = "0.3", features = ["formatting", "serde"] }
+tokio = { version = "1.0", features = ["macros", "net", "sync", "time"] }
+trait_enum = { version = "0.5" }
+
+[workspace.package]
+authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/RoboCup-SPL/GameController"
+version = "0.1.0"
