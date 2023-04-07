@@ -136,7 +136,26 @@ export const listenForState = async (handler) => {
 
 export const syncWithBackend = async () => {
   if (window.__TAURI_METADATA__) {
-    await invoke("sync_with_backend");
+    return await invoke("sync_with_backend");
+  } else {
+    return {
+      competition: {},
+      game: {
+        teams: {
+          home: {
+            number: 0,
+            fieldPlayerColor: "blue",
+            goalkeeperColor: "yellow",
+          },
+          away: {
+            number: 0,
+            fieldPlayerColor: "red",
+            goalkeeperColor: "black",
+          },
+        },
+        long: false,
+      },
+    };
   }
 };
 

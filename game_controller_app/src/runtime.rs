@@ -60,6 +60,8 @@ pub struct RuntimeState {
     pub action_sender: mpsc::UnboundedSender<VAction>,
     /// The notify object with which the UI tells the runtime thread that it can start its loop.
     pub ui_notify: Arc<Notify>,
+    /// The combined parameters of the game and competition.
+    pub params: Params,
     /// The sender for the shutdown signal.
     shutdown_token: CancellationToken,
     /// The mutable state behind a mutex. It is a tokio mutex because it is held across await.
@@ -306,7 +308,7 @@ pub async fn start_runtime(
         creator: "GameController".into(),
         version: 1,
         timestamp: date_time,
-        params: Box::new(params),
+        params: Box::new(params.clone()),
     }));
 
     let network_interface = network_interfaces
@@ -344,6 +346,7 @@ pub async fn start_runtime(
     Ok(RuntimeState {
         action_sender,
         ui_notify,
+        params,
         shutdown_token,
         mutable_state: Mutex::new(MutableState {
             runtime_join_set,

@@ -5,6 +5,7 @@ import { listenForState, syncWithBackend } from "../api.js";
 
 const Main = () => {
   const [game, setGame] = useState(null);
+  const [params, setParams] = useState(null);
   const [selectedPenaltyCall, setSelectedPenaltyCall] = useState(null);
 
   useEffect(() => {
@@ -14,7 +15,7 @@ const Main = () => {
       });
       // listen must have completed before starting the next call because the core may send a state
       // event once syncWithBackend is called that must not be missed.
-      await syncWithBackend();
+      setParams(await syncWithBackend());
       return unlisten;
     })();
     return () => {
@@ -22,7 +23,7 @@ const Main = () => {
     };
   }, []);
 
-  if (game != null) {
+  if (game != null && params != null) {
     const mirror = game.sides === "homeDefendsRightGoal";
     return (
       <div
@@ -33,11 +34,11 @@ const Main = () => {
         <div className="w-80">
           <TeamPanel
             game={game}
-            team={game.teams.home}
-            side="home"
-            sign={mirror ? -1 : 1}
+            params={params}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
+            side="home"
+            sign={mirror ? -1 : 1}
           />
         </div>
         <div className="grow">
@@ -50,11 +51,11 @@ const Main = () => {
         <div className="w-80">
           <TeamPanel
             game={game}
-            team={game.teams.away}
-            side="away"
-            sign={mirror ? 1 : -1}
+            params={params}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
+            side="away"
+            sign={mirror ? 1 : -1}
           />
         </div>
       </div>

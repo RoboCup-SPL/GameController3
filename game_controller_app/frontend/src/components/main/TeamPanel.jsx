@@ -2,7 +2,9 @@ import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
 import { applyAction } from "../../api.js";
 
-const TeamPanel = ({ game, team, side, sign, selectedPenaltyCall, setSelectedPenaltyCall }) => {
+const TeamPanel = ({ game, params, selectedPenaltyCall, setSelectedPenaltyCall, side, sign }) => {
+  const team = game.teams[side];
+  const teamParams = params.game.teams[side];
   const handlePlayerClick = (player) => {
     if (selectedPenaltyCall) {
       applyAction({
@@ -73,8 +75,13 @@ const TeamPanel = ({ game, team, side, sign, selectedPenaltyCall, setSelectedPen
         .map((player) => (
           <PlayerButton
             key={player.number}
-            player={player}
+            color={
+              player.number == team.goalkeeper
+                ? teamParams.goalkeeperColor
+                : teamParams.fieldPlayerColor
+            }
             onClick={() => handlePlayerClick(player)}
+            player={player}
           />
         ))}
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>

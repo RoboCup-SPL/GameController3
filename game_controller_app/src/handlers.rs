@@ -9,7 +9,7 @@ use tauri::{
 };
 use tokio::sync::Notify;
 
-use game_controller::action::VAction;
+use game_controller::{action::VAction, types::Params};
 
 use crate::launch::{LaunchData, LaunchSettings};
 use crate::runtime::{start_runtime, RuntimeState};
@@ -88,15 +88,17 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
 }
 
 /// This function should be called once by the UI after it listens to UI events, but before it
-/// calls [apply_action]. The result is needed as a tauri workaround.
+/// calls [apply_action]. The caller gets the combined parameters of the game and competition. It
+/// is wrapped in a [Result] as a tauri workaround.
 #[command]
-async fn sync_with_backend(app: AppHandle, state: State<'_, SyncState>) -> Result<(), ()> {
+async fn sync_with_backend(app: AppHandle, state: State<'_, SyncState>) -> Result<Params, ()> {
     // Wait until manage has been called.
     state.0.notified().await;
     // Now we can obtain a handle to the RuntimeState to notify the runtime thread that it can
     // start sending UI events.
-    app.state::<RuntimeState>().ui_notify.notify_one();
-    Ok(())
+    let runtime_state = app.state::<RuntimeState>();
+    runtime_state.ui_notify.notify_one();
+    Ok(runtime_state.params.clone())
 }
 
 /// This function enqueues an action to be applied to the game.
