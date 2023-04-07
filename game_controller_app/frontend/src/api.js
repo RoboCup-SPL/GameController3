@@ -129,6 +129,7 @@ export const listenForState = async (handler) => {
           },
         },
       },
+      legalActions: [],
       connectionStatus: {
         home: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],
         away: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],
@@ -168,5 +169,13 @@ export const applyAction = (action) => {
     invoke("apply_action", { action: action });
   } else {
     console.log(action);
+  }
+};
+
+export const declareActions = (actions) => {
+  if (window.__TAURI_METADATA__) {
+    invoke("declare_actions", { actions: actions });
+  } else {
+    console.log(actions);
   }
 };

@@ -6,6 +6,7 @@ import { listenForState, syncWithBackend } from "../api.js";
 const Main = () => {
   const [connectionStatus, setConnectionStatus] = useState(null);
   const [game, setGame] = useState(null);
+  const [legalActions, setLegalActions] = useState(null);
   const [params, setParams] = useState(null);
   const [selectedPenaltyCall, setSelectedPenaltyCall] = useState(null);
 
@@ -13,6 +14,7 @@ const Main = () => {
     const thePromise = (async () => {
       const unlisten = await listenForState((state) => {
         setConnectionStatus(state.connectionStatus);
+        setLegalActions(state.legalActions);
         setGame(state.game);
       });
       // listen must have completed before starting the next call because the core may send a state

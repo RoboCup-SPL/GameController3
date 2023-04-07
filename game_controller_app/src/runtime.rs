@@ -11,6 +11,7 @@ use std::{
 
 use anyhow::{Context, Result};
 use serde::Serialize;
+use serde_with::{serde_as, BoolFromInt};
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use tokio::{
     fs::create_dir_all,
@@ -43,6 +44,7 @@ use crate::launch::{LaunchSettings, NetworkInterface, Team};
 use crate::logger::FileLogger;
 
 /// This struct represents the state that is sent to the UI.
+#[serde_as]
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UiState {
@@ -50,6 +52,9 @@ pub struct UiState {
     connection_status: ConnectionStatusMap,
     /// The game state.
     game: Game,
+    /// The mask of legal actions in the order they were subscribed.
+    #[serde_as(as = "Vec<BoolFromInt>")]
+    legal_actions: Vec<bool>,
 }
 
 /// This struct encapsulates state that must be mutated.
@@ -64,6 +69,8 @@ struct MutableState {
 pub struct RuntimeState {
     /// The sender for actions to the runtime.
     pub action_sender: mpsc::UnboundedSender<VAction>,
+    /// The sender for subscribed actions of the UI.
+    pub subscribed_actions_sender: watch::Sender<Vec<VAction>>,
     /// The notify object with which the UI tells the runtime thread that it can start its loop.
     pub ui_notify: Arc<Notify>,
     /// The combined parameters of the game and competition.
@@ -131,10 +138,12 @@ fn start_network(
 /// visible state change happens. Finally, the next event is awaited, which can be either that the
 /// previously calculated deadline was reached, an incoming network event, an action from the UI,
 /// or a shutdown request.
+#[allow(clippy::too_many_arguments)]
 async fn event_loop(
     mut game_controller: GameController,
     mut event_receiver: mpsc::UnboundedReceiver<Event>,
     mut action_receiver: mpsc::UnboundedReceiver<VAction>,
+    mut subscribed_actions_receiver: watch::Receiver<Vec<VAction>>,
     ui_notify: Arc<Notify>,
     shutdown_token: CancellationToken,
     control_sender: watch::Sender<Game>,
@@ -153,6 +162,11 @@ async fn event_loop(
         send_ui_state(UiState {
             connection_status: get_connection_status_map(&aliveness_timestamps, &last),
             game: game_controller.game.clone(),
+            legal_actions: subscribed_actions_receiver
+                .borrow_and_update()
+                .iter()
+                .map(|action| action.is_legal(&game_controller.game))
+                .collect(),
         })?;
         control_sender.send(game_controller.game.clone())?;
 
@@ -259,6 +273,7 @@ async fn event_loop(
                     game_controller.apply(action, ActionSource::User);
                 }
             },
+            _ = subscribed_actions_receiver.changed() => {},
             _ = shutdown_token.cancelled() => {
                 for mut monitor_state in monitors.into_values() {
                     monitor_state.shutdown().await;
@@ -353,6 +368,7 @@ pub async fn start_runtime(
     );
 
     let (action_sender, action_receiver) = mpsc::unbounded_channel();
+    let (subscribed_actions_sender, subscribed_actions_receiver) = watch::channel(vec![]);
     let ui_notify = Arc::new(Notify::new());
     let shutdown_token = CancellationToken::new();
 
@@ -360,6 +376,7 @@ pub async fn start_runtime(
         game_controller,
         event_receiver,
         action_receiver,
+        subscribed_actions_receiver,
         ui_notify.clone(),
         shutdown_token.clone(),
         control_sender,
@@ -368,6 +385,7 @@ pub async fn start_runtime(
 
     Ok(RuntimeState {
         action_sender,
+        subscribed_actions_sender,
         ui_notify,
         params,
         shutdown_token,

@@ -88,8 +88,8 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
 }
 
 /// This function should be called once by the UI after it listens to UI events, but before it
-/// calls [apply_action]. The caller gets the combined parameters of the game and competition. It
-/// is wrapped in a [Result] as a tauri workaround.
+/// calls [apply_action] or [declare_actions]. The caller gets the combined parameters of the game
+/// and competition. It is wrapped in a [Result] as a tauri workaround.
 #[command]
 async fn sync_with_backend(app: AppHandle, state: State<'_, SyncState>) -> Result<Params, ()> {
     // Wait until manage has been called.
@@ -107,11 +107,18 @@ fn apply_action(action: VAction, state: State<RuntimeState>) {
     let _ = state.action_sender.send(action);
 }
 
+/// This function lets the UI declare actions for which it wants to know whether they are legal.
+#[command]
+fn declare_actions(actions: Vec<VAction>, state: State<RuntimeState>) {
+    let _ = state.subscribed_actions_sender.send(actions);
+}
+
 /// This function returns a handler that can be passed to [tauri::Builder::invoke_handler].
 /// It must be boxed because otherwise its size is unknown at compile time.
 pub fn get_invoke_handler() -> Box<InvokeHandler<Wry>> {
     Box::new(generate_handler![
         apply_action,
+        declare_actions,
         get_launch_data,
         launch,
         sync_with_backend,
