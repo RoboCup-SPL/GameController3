@@ -26,15 +26,19 @@ use game_controller::{
     actions::TeamMessage,
     log::{LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage},
     timer::EvaluatedRunConditions,
-    types::{ActionSource, Game, GameParams, Params, Side},
+    types::{ActionSource, Game, GameParams, Params, PlayerNumber, Side},
     GameController,
 };
-use game_controller_msgs::MonitorRequest;
+use game_controller_msgs::{MonitorRequest, StatusMessage};
 use game_controller_net::{
     run_control_message_sender, run_monitor_request_receiver, run_status_message_forwarder,
     run_status_message_receiver, run_team_message_receiver, Event,
 };
 
+use crate::connection_status::{
+    get_connection_status_map, get_next_connection_status_change, AlivenessTimestampMap,
+    ConnectionStatusMap,
+};
 use crate::launch::{LaunchSettings, NetworkInterface, Team};
 use crate::logger::FileLogger;
 
@@ -42,6 +46,8 @@ use crate::logger::FileLogger;
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UiState {
+    /// The current connection status of all players.
+    connection_status: ConnectionStatusMap,
     /// The game state.
     game: Game,
 }
@@ -137,6 +143,7 @@ async fn event_loop(
     let mut last = Instant::now();
     let mut monitors = HashMap::<IpAddr, JoinSet<Result<()>>>::new();
     let mut players = HashSet::<IpAddr>::new();
+    let mut aliveness_timestamps = AlivenessTimestampMap::new();
     let (status_forward_sender, _) = broadcast::channel(16);
 
     // We must wait for the main window before sending the first UI state.
@@ -144,15 +151,21 @@ async fn event_loop(
 
     loop {
         send_ui_state(UiState {
+            connection_status: get_connection_status_map(&aliveness_timestamps, &last),
             game: game_controller.game.clone(),
         })?;
         control_sender.send(game_controller.game.clone())?;
 
+        let next_connection_status_change =
+            get_next_connection_status_change(&aliveness_timestamps, &last);
         let run_conditions =
             EvaluatedRunConditions::new(&game_controller.game, &game_controller.params);
         let dt = game_controller.clip_next_timer_wrap(
             &run_conditions,
-            game_controller.clip_next_timer_expiration(&run_conditions, Duration::MAX),
+            game_controller.clip_next_timer_expiration(
+                &run_conditions,
+                next_connection_status_change.unwrap_or(Duration::MAX),
+            ),
         );
 
         let deadline = last.checked_add(dt);
@@ -211,6 +224,16 @@ async fn event_loop(
                         // because then the monitor can display this fact. We must ignore errors
                         // here because it is possible that nobody is subscribed at the moment.
                         let _ = status_forward_sender.send((host, data.clone()));
+                        if let Ok(status_message) = StatusMessage::try_from(data) {
+                            if let Some(side)
+                                = game_controller.params.game.get_side(status_message.team_number)
+                            {
+                                aliveness_timestamps.insert(
+                                    (side, PlayerNumber::new(status_message.player_number)),
+                                    now,
+                                );
+                            }
+                        }
                     },
                     Some(Event::TeamMessage { host, team, data, too_long }) => {
                         game_controller.log_now(LogEntry::TeamMessage(LoggedTeamMessage {

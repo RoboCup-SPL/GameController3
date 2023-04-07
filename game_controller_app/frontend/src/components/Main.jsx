@@ -4,6 +4,7 @@ import TeamPanel from "./main/TeamPanel";
 import { listenForState, syncWithBackend } from "../api.js";
 
 const Main = () => {
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const [game, setGame] = useState(null);
   const [params, setParams] = useState(null);
   const [selectedPenaltyCall, setSelectedPenaltyCall] = useState(null);
@@ -11,6 +12,7 @@ const Main = () => {
   useEffect(() => {
     const thePromise = (async () => {
       const unlisten = await listenForState((state) => {
+        setConnectionStatus(state.connectionStatus);
         setGame(state.game);
       });
       // listen must have completed before starting the next call because the core may send a state
@@ -23,7 +25,7 @@ const Main = () => {
     };
   }, []);
 
-  if (game != null && params != null) {
+  if (connectionStatus != null && game != null && params != null) {
     const mirror = game.sides === "homeDefendsRightGoal";
     return (
       <div
@@ -33,6 +35,7 @@ const Main = () => {
       >
         <div className="w-80">
           <TeamPanel
+            connectionStatus={connectionStatus}
             game={game}
             params={params}
             selectedPenaltyCall={selectedPenaltyCall}
@@ -50,6 +53,7 @@ const Main = () => {
         </div>
         <div className="w-80">
           <TeamPanel
+            connectionStatus={connectionStatus}
             game={game}
             params={params}
             selectedPenaltyCall={selectedPenaltyCall}

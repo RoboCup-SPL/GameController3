@@ -7,6 +7,7 @@
 
 use tauri::{async_runtime, generate_context, Manager, RunEvent, WindowBuilder, WindowUrl};
 
+mod connection_status;
 mod handlers;
 mod launch;
 mod logger;

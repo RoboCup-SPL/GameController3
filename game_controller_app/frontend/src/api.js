@@ -129,6 +129,10 @@ export const listenForState = async (handler) => {
           },
         },
       },
+      connectionStatus: {
+        home: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],
+        away: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],
+      },
     });
     return () => {};
   }

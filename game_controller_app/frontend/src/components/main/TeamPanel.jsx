@@ -2,8 +2,17 @@ import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
 import { applyAction } from "../../api.js";
 
-const TeamPanel = ({ game, params, selectedPenaltyCall, setSelectedPenaltyCall, side, sign }) => {
+const TeamPanel = ({
+  connectionStatus,
+  game,
+  params,
+  selectedPenaltyCall,
+  setSelectedPenaltyCall,
+  side,
+  sign,
+}) => {
   const team = game.teams[side];
+  const teamConnectionStatus = connectionStatus[side];
   const teamParams = params.game.teams[side];
   const handlePlayerClick = (player) => {
     if (selectedPenaltyCall) {
@@ -68,6 +77,7 @@ const TeamPanel = ({ game, params, selectedPenaltyCall, setSelectedPenaltyCall, 
         .map((player, index) => {
           return {
             ...player,
+            connectionStatus: teamConnectionStatus[index],
             number: index + 1,
           };
         })

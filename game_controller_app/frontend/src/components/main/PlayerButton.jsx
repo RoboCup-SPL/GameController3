@@ -21,7 +21,21 @@ const PlayerButton = ({ color, onClick, player }) => {
       }`}
       onClick={onClick}
     >
-      <div>
+      <div className="flex items-center justify-center gap-2">
+        <svg
+          className={
+            player.connectionStatus >= 2
+              ? "text-green-600"
+              : player.connectionStatus >= 1
+              ? "text-yellow-400"
+              : "text-red-600"
+          }
+          fill="currentColor"
+          height="10"
+          width="10"
+        >
+          <circle cx="5" cy="5" r="5" />
+        </svg>
         {color.charAt(0).toUpperCase() + color.slice(1)} {player.number}
       </div>
       <div className={player.penaltyTimer.started ? "" : "invisible"}>
