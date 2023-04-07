@@ -2,7 +2,7 @@
 
 use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use tokio::{fs::File, io::AsyncWriteExt, sync::mpsc, task::JoinSet};
 
 use game_controller::log::{Logger, TimestampedLogEntry};
@@ -23,7 +23,7 @@ impl FileLogger {
         join_set: &mut JoinSet<Result<()>>,
         sync: bool,
     ) -> Result<Self> {
-        let mut file = File::create(path).await?;
+        let mut file = File::create(path).await.context("could not create log file")?;
         let (entry_sender, mut entry_receiver) = mpsc::unbounded_channel();
         join_set.spawn(async move {
             while let Some(entry) = entry_receiver.recv().await {

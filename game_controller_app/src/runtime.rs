@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde::Serialize;
 use time::{format_description::well_known::Rfc3339, OffsetDateTime};
 use tokio::{
@@ -259,11 +259,15 @@ pub async fn start_runtime(
     let mut runtime_join_set = JoinSet::new();
 
     let params = Params {
-        competition: serde_yaml::from_reader(File::open(
-            config_directory
-                .join(&settings.competition.id)
-                .join("params.yaml"),
-        )?)?,
+        competition: serde_yaml::from_reader(
+            File::open(
+                config_directory
+                    .join(&settings.competition.id)
+                    .join("params.yaml"),
+            )
+            .context("could not open competition params")?,
+        )
+        .context("could not parse competition params")?,
         game: GameParams {
             teams: settings.teams.clone(),
             long: settings.competition.play_off,
@@ -279,7 +283,9 @@ pub async fn start_runtime(
             .replace(' ', "-")
     });
     let date_time = OffsetDateTime::now_local().unwrap_or_else(|_| OffsetDateTime::now_utc());
-    create_dir_all(log_directory).await?;
+    create_dir_all(log_directory)
+        .await
+        .context("could not create log directory")?;
     let logger = FileLogger::new(
         log_directory.join(format!(
             "log_{}_{}_{}.yaml",
@@ -291,7 +297,8 @@ pub async fn start_runtime(
         false, // TODO: This should be true at actual competitions so that logs are always
                // recoverable
     )
-    .await?;
+    .await
+    .context("could not create logger")?;
 
     let mut game_controller = GameController::new(params.clone(), Box::new(logger));
 

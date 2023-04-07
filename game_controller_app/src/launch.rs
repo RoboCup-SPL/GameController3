@@ -112,7 +112,8 @@ pub struct LaunchData {
 /// This function creates a list of competitions from the subdirectories of `config`.
 /// The files `params.yaml` and `teams.yaml` must exist within a subdirectory to consider it.
 fn get_competitions(config_directory: &Path) -> Result<Vec<Competition>> {
-    let mut result: Vec<Competition> = std::fs::read_dir(config_directory)?
+    let mut result: Vec<Competition> = std::fs::read_dir(config_directory)
+        .context("could not open config directory")?
         .map(|entry| {
             let entry = entry?;
             if !entry.file_type()?.is_dir() {
@@ -123,8 +124,14 @@ fn get_competitions(config_directory: &Path) -> Result<Vec<Competition>> {
             if !params_path.try_exists()? || !teams_path.try_exists()? {
                 return Ok(None);
             }
-            let params: CompetitionParams = serde_yaml::from_reader(File::open(params_path)?)?;
-            let teams: Vec<u8> = serde_yaml::from_reader(File::open(teams_path)?)?;
+            let params: CompetitionParams = serde_yaml::from_reader(
+                File::open(params_path).context("could not open competition params")?,
+            )
+            .context("could not parse competition params")?;
+            let teams: Vec<u8> = serde_yaml::from_reader(
+                File::open(teams_path).context("could not open competition teams")?,
+            )
+            .context("could not parse competition teams")?;
             Ok(Some(Competition {
                 id: entry
                     .path()
@@ -147,16 +154,18 @@ fn get_competitions(config_directory: &Path) -> Result<Vec<Competition>> {
 
 /// This function reads all teams from `config/teams.yaml`.
 fn get_teams(config_directory: &Path) -> Result<Vec<Team>> {
-    Ok(serde_yaml::from_reader(File::open(
-        config_directory.join("teams.yaml"),
-    )?)?)
+    serde_yaml::from_reader(
+        File::open(config_directory.join("teams.yaml")).context("could not open teams config")?,
+    )
+    .context("could not parse teams config")
 }
 
 /// This function returns the list of available network interfaces with a configured IPv4 address.
 /// It can currently not handle network interfaces with multiple addresses (only the first IPv4
 /// address is used in that case).
 fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
-    Ok(network_interface::NetworkInterface::show()?
+    Ok(network_interface::NetworkInterface::show()
+        .context("could not enumerate network interfaces")?
         .into_iter()
         .filter_map(|interface| {
             if let Some(addr) = interface.addr.iter().find(|addr| addr.ip().is_ipv4()) {
@@ -288,12 +297,18 @@ pub fn make_launch_data(
             ),
         },
         teams: enum_map! {
-            Side::Home => parse_team(args.get("home-team"))?.unwrap_or(TeamSettings {
+            Side::Home => parse_team(args.get("home-team"))
+                .context("could not set home team")?
+                .unwrap_or(TeamSettings
+            {
                 number: default_team.number,
                 field_player_color: default_team.field_player_colors[0],
                 goalkeeper_color: default_team.goalkeeper_colors[0],
             }),
-            Side::Away => parse_team(args.get("away-team"))?.unwrap_or(TeamSettings {
+            Side::Away => parse_team(args.get("away-team"))
+                .context("could not set away team")?
+                .unwrap_or(TeamSettings
+            {
                 number: default_team.number,
                 field_player_color: default_team.field_player_colors[1],
                 goalkeeper_color: default_team.goalkeeper_colors[1],

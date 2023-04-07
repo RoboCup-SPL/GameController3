@@ -55,13 +55,13 @@ fn main() {
                             app.manage(launch_data);
                         }
                         Err(error) => {
-                            eprintln!("{error}");
+                            eprintln!("{error:?}");
                             app.handle().exit(1);
                         }
                     }
                 }
                 Err(error) => {
-                    eprintln!("{error}");
+                    eprintln!("{error:?}");
                     app.handle().exit(1);
                 }
             };
