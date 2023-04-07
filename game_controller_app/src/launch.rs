@@ -28,7 +28,8 @@ pub struct Team {
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Competition {
-    /// The machine-readable name of the competition. This is the name of the competition's subdirectory in `config`.
+    /// The machine-readable name of the competition. This is the name of the competition's
+    /// subdirectory in `config`.
     pub id: String,
     /// The "pretty" name of the competition (taken from `config/<id>/params.yaml`).
     pub name: String,
@@ -181,8 +182,8 @@ fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
         .collect())
 }
 
-/// This function creates [LaunchData] from a path to the `config` directory and a map of command line arguments that
-/// can initialize certain values of the default settings.
+/// This function creates [LaunchData] from a path to the `config` directory and a map of command
+/// line arguments that can initialize certain values of the default settings.
 pub fn make_launch_data(
     config_directory: &Path,
     args: HashMap<String, ArgData>,

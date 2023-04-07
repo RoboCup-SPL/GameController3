@@ -23,7 +23,9 @@ impl FileLogger {
         join_set: &mut JoinSet<Result<()>>,
         sync: bool,
     ) -> Result<Self> {
-        let mut file = File::create(path).await.context("could not create log file")?;
+        let mut file = File::create(path)
+            .await
+            .context("could not create log file")?;
         let (entry_sender, mut entry_receiver) = mpsc::unbounded_channel();
         join_set.spawn(async move {
             while let Some(entry) = entry_receiver.recv().await {
