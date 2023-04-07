@@ -31,7 +31,6 @@ fn get_launch_data(launch_data: State<LaunchData>) -> LaunchData {
 #[command]
 async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     assert_eq!(window.label(), "launcher");
-    window.close().unwrap();
 
     // The notify object must be managed before the window is created.
     let runtime_notify = Arc::new(Notify::new());
@@ -46,6 +45,10 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
         .fullscreen(settings.window.fullscreen)
         .build()
         .unwrap();
+
+    // At least on Linux, the launcher must be closed after the main window was created, because
+    // otherwise the application wants to exit.
+    window.close().unwrap();
 
     let send_ui_state = move |ui_state| {
         if let Err(error) = main_window.emit("state", ui_state) {
