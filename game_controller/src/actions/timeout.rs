@@ -44,6 +44,9 @@ impl Action for Timeout {
     fn is_legal(&self, game: &Game) -> bool {
         game.state != State::Playing
             && game.state != State::Finished
+            && (game.phase != Phase::PenaltyShootout
+                || game.state == State::Initial
+                || game.state == State::Timeout)
             // This check is so you can't take timeouts during a penalty kick Ready/Set. The rules
             // don't explicitly rule this out (I think), but it would be ridiculous if it was
             // legal.

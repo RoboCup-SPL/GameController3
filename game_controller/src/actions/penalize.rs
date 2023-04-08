@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::action::{Action, VAction};
 use crate::actions::{StartSetPlay, Unpenalize};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
-use crate::types::{Game, Params, Penalty, PenaltyCall, PlayerNumber, SetPlay, Side, State};
+use crate::types::{Game, Params, Penalty, PenaltyCall, Phase, PlayerNumber, SetPlay, Side, State};
 
 /// This struct defines an action to apply a penalty to players.
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -128,7 +128,8 @@ impl Action for Penalize {
             && (match self.call {
                 PenaltyCall::RequestForPickUp => true,
                 PenaltyCall::IllegalPosition => {
-                    game.state == State::Set || game.state == State::Playing
+                    game.phase != Phase::PenaltyShootout
+                        && (game.state == State::Set || game.state == State::Playing)
                 }
                 PenaltyCall::MotionInSet => game.state == State::Set,
                 PenaltyCall::FallenInactive => {
@@ -136,7 +137,9 @@ impl Action for Penalize {
                         || game.state == State::Set
                         || game.state == State::Playing
                 }
-                PenaltyCall::LocalGameStuck => game.state == State::Playing,
+                PenaltyCall::LocalGameStuck => {
+                    game.phase != Phase::PenaltyShootout && game.state == State::Playing
+                }
                 PenaltyCall::BallHolding => game.state == State::Playing,
                 PenaltyCall::PlayerStance => {
                     game.state == State::Ready
@@ -145,10 +148,14 @@ impl Action for Penalize {
                 }
                 PenaltyCall::Pushing => game.state == State::Ready || game.state == State::Playing,
                 PenaltyCall::Foul => {
-                    game.state == State::Playing && game.set_play == SetPlay::NoSetPlay
+                    game.phase != Phase::PenaltyShootout
+                        && game.state == State::Playing
+                        && game.set_play == SetPlay::NoSetPlay
                 }
                 PenaltyCall::PenaltyKick => {
-                    game.state == State::Playing && game.set_play == SetPlay::NoSetPlay
+                    game.phase != Phase::PenaltyShootout
+                        && game.state == State::Playing
+                        && game.set_play == SetPlay::NoSetPlay
                 }
                 PenaltyCall::PlayingWithArmsHands => game.state == State::Playing,
                 PenaltyCall::LeavingTheField => {

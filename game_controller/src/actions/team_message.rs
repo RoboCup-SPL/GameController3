@@ -1,5 +1,5 @@
 use crate::action::Action;
-use crate::types::{Game, Params, Side, State};
+use crate::types::{Game, Params, Phase, Side, State};
 
 use serde::{Deserialize, Serialize};
 
@@ -25,6 +25,9 @@ impl Action for TeamMessage {
 
     fn is_legal(&self, game: &Game) -> bool {
         // Team messages are only counted during those states.
-        game.state == State::Ready || game.state == State::Set || game.state == State::Playing
+        game.phase != Phase::PenaltyShootout
+            && (game.state == State::Ready
+                || game.state == State::Set
+                || game.state == State::Playing)
     }
 }

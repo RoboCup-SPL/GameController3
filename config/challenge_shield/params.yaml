@@ -131,3 +131,6 @@ timeoutDuration:
 timeoutsPerTeam: 1
 messagesPerTeam: 1200
 mercyRuleScoreDifference: 10
+penaltyShotDuration:
+  secs: 30
+  nanos: 0

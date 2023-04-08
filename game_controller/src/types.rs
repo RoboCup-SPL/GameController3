@@ -58,6 +58,8 @@ pub struct CompetitionParams {
     pub messages_per_team: u16,
     /// The score difference at which a game is finished automatically.
     pub mercy_rule_score_difference: u8,
+    /// The duration of a penalty kick in a penalty shoot-out.
+    pub penalty_shot_duration: Duration,
 }
 
 /// This struct contains constant parameters for one team.
@@ -116,6 +118,8 @@ pub enum Phase {
     FirstHalf,
     /// The second half of the regular playing time.
     SecondHalf,
+    /// A penalty shoot-out to decide the outcome of a game.
+    PenaltyShootout,
 }
 
 /// This enumerates the states in which a game can be.
@@ -126,11 +130,11 @@ pub enum State {
     Initial,
     /// This state is active when certain set plays are set up.
     Ready,
-    /// This state is active after certain set plays have been set up.
+    /// This state is active after certain set plays have been set up and before each penalty shot.
     Set,
     /// This state is active during normal play (a set play can be going on).
     Playing,
-    /// This state is active after each half.
+    /// This state is active after each half and each penalty shot.
     Finished,
     /// This state is active during a timeout.
     Timeout,
@@ -307,9 +311,9 @@ pub struct Game {
     pub state: State,
     /// The current set play.
     pub set_play: SetPlay,
-    /// The side which may play the ball during the current set play.
+    /// The side which may play the ball during the current set play or penalty shot.
     pub kicking_side: Side,
-    /// The timer which counts down the duration of a half.
+    /// The timer which counts down the duration of a half or the current penalty shot.
     pub primary_timer: Timer,
     /// The timer which counts down set plays, timeouts, half-time break etc.
     pub secondary_timer: Timer,
@@ -333,6 +337,10 @@ pub struct Team {
     pub message_budget: u16,
     /// Whether the team has sent illegal team messages.
     pub illegal_communication: bool,
+    /// The current penalty shot index.
+    pub penalty_shot: u8,
+    /// The mask of all penalty shot by this team (bit i means that penalty shot i was successful).
+    pub penalty_shot_mask: u16,
     /// The players of the team.
     pub players: [Player; (PlayerNumber::MAX - PlayerNumber::MIN + 1) as usize],
 }

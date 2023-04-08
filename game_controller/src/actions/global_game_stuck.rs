@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::Action;
 use crate::actions::StartSetPlay;
-use crate::types::{Game, Params, SetPlay, Side, State};
+use crate::types::{Game, Params, Phase, SetPlay, Side, State};
 
 /// This struct defines an action which corresponds to the referee call "Global Game Stuck".
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -22,6 +22,6 @@ impl Action for GlobalGameStuck {
     }
 
     fn is_legal(&self, game: &Game) -> bool {
-        game.state == State::Playing
+        game.phase != Phase::PenaltyShootout && game.state == State::Playing
     }
 }

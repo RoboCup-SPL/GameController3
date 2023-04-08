@@ -23,17 +23,21 @@ trait_enum! {
     #[serde(tag = "type", content = "args", rename_all = "camelCase")]
     pub enum VAction: Action {
         FinishHalf,
+        FinishPenaltyShot,
         FinishSetPlay,
+        FreePenaltyShot,
         FreeSetPlay,
         GlobalGameStuck,
         Goal,
         Penalize,
+        StartPenaltyShootout,
         StartSetPlay,
         Substitute,
         SwitchHalf,
         TeamMessage,
         Timeout,
         Unpenalize,
+        WaitForPenaltyShot,
         WaitForSetPlay,
     }
 }

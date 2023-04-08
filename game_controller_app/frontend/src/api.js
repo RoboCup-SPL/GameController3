@@ -98,6 +98,8 @@ export const listenForState = async (handler) => {
             timeoutBudget: 1,
             messageBudget: 1200,
             illegalCommunication: false,
+            penaltyShot: 0,
+            penaltyShotMask: 0,
             players: [
               { penalty: "noPenalty", penaltyTimer: { stopped: null } },
               { penalty: "noPenalty", penaltyTimer: { stopped: null } },
@@ -116,6 +118,8 @@ export const listenForState = async (handler) => {
             timeoutBudget: 1,
             messageBudget: 1200,
             illegalCommunication: false,
+            penaltyShot: 0,
+            penaltyShotMask: 0,
             players: [
               { penalty: "noPenalty", penaltyTimer: { stopped: null } },
               { penalty: "noPenalty", penaltyTimer: { stopped: null } },

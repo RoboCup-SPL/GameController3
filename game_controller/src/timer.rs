@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 pub use time::Duration as SignedDuration;
 
 use crate::action::VAction;
-use crate::types::{Game, Params, State};
+use crate::types::{Game, Params, Phase, State};
 
 /// This enumerates conditions which restrict in which states a timer actually counts down.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
@@ -38,6 +38,7 @@ impl EvaluatedRunConditions {
         Self {
             playing: game.state == State::Playing
                 || ((game.state == State::Ready || game.state == State::Set)
+                    && game.phase != Phase::PenaltyShootout
                     && !params.game.long
                     && game.primary_timer.get_remaining()
                         != TryInto::<SignedDuration>::try_into(params.competition.half_duration)

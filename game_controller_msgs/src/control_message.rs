@@ -8,7 +8,7 @@ use game_controller::types::{
 use crate::bindings::{
     COMPETITION_PHASE_PLAYOFF, COMPETITION_PHASE_ROUNDROBIN, COMPETITION_TYPE_NORMAL,
     GAMECONTROLLER_STRUCT_HEADER, GAMECONTROLLER_STRUCT_SIZE, GAMECONTROLLER_STRUCT_VERSION,
-    GAME_PHASE_NORMAL, GAME_PHASE_TIMEOUT, MAX_NUM_PLAYERS, PENALTY_NONE,
+    GAME_PHASE_NORMAL, GAME_PHASE_PENALTYSHOOT, GAME_PHASE_TIMEOUT, MAX_NUM_PLAYERS, PENALTY_NONE,
     PENALTY_SPL_ILLEGAL_BALL_CONTACT, PENALTY_SPL_ILLEGAL_MOTION_IN_SET,
     PENALTY_SPL_ILLEGAL_POSITION, PENALTY_SPL_ILLEGAL_POSITION_IN_SET, PENALTY_SPL_INACTIVE_PLAYER,
     PENALTY_SPL_LEAVING_THE_FIELD, PENALTY_SPL_LOCAL_GAME_STUCK, PENALTY_SPL_PLAYER_PUSHING,
@@ -168,10 +168,10 @@ impl ControlMessage {
                 COMPETITION_PHASE_ROUNDROBIN
             },
             competition_type: COMPETITION_TYPE_NORMAL,
-            game_phase: if game.state == State::Timeout {
-                GAME_PHASE_TIMEOUT
-            } else {
-                GAME_PHASE_NORMAL
+            game_phase: match (game.phase, game.state) {
+                (_, State::Timeout) => GAME_PHASE_TIMEOUT,
+                (Phase::FirstHalf | Phase::SecondHalf, _) => GAME_PHASE_NORMAL,
+                (Phase::PenaltyShootout, _) => GAME_PHASE_PENALTYSHOOT,
             },
             state: match game.state {
                 State::Initial | State::Timeout => STATE_INITIAL,
@@ -206,8 +206,8 @@ impl ControlMessage {
                 goalkeeper_color: get_color(params.game.teams[side].goalkeeper_color),
                 goalkeeper: game.teams[side].goalkeeper.into(),
                 score: game.teams[side].score,
-                penalty_shot: 0,
-                single_shots: 0,
+                penalty_shot: game.teams[side].penalty_shot,
+                single_shots: game.teams[side].penalty_shot_mask,
                 message_budget: game.teams[side].message_budget,
                 players: game.teams[side]
                     .players

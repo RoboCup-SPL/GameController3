@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::action::{Action, VAction};
 use crate::actions::{FinishSetPlay, WaitForSetPlay};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Game, Params, SetPlay, Side, State};
+use crate::types::{Game, Params, Phase, SetPlay, Side, State};
 
 /// This struct defines an action to start a set play. Depending on the set play type, this means
 /// switching to the Ready state or just setting a flag for the current set play within the Playing
@@ -63,6 +63,7 @@ impl Action for StartSetPlay {
 
     fn is_legal(&self, game: &Game) -> bool {
         self.set_play != SetPlay::NoSetPlay
+            && game.phase != Phase::PenaltyShootout
             && (if self.set_play == SetPlay::KickOff {
                 // For kick-offs, the kicking side is pre-filled so that only that team can take
                 // the kick-off.

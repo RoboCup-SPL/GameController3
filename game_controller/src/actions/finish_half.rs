@@ -37,6 +37,9 @@ impl Action for FinishHalf {
     }
 
     fn is_legal(&self, game: &Game) -> bool {
-        game.state == State::Playing || game.state == State::Ready || game.state == State::Set
+        game.phase != Phase::PenaltyShootout
+            && (game.state == State::Playing
+                || game.state == State::Ready
+                || game.state == State::Set)
     }
 }
