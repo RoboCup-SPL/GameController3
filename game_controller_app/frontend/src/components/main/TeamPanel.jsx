@@ -69,8 +69,17 @@ const TeamPanel = ({
           <dt>Penalties</dt>
           <dd className="tabular-nums">{team.penaltyCounter}</dd>
 
-          <dt>Messages</dt>
-          <dd className="tabular-nums">{team.messageBudget}</dd>
+          {game.phase === "penaltyShootout" ? (
+            <>
+              <dt>Penalty Shot{game.kickingSide === side ? "" : "s"}</dt>
+              <dd className="tabular-nums">{team.penaltyShot}</dd>
+            </>
+          ) : (
+            <>
+              <dt>Messages</dt>
+              <dd className="tabular-nums">{team.messageBudget}</dd>
+            </>
+          )}
         </dl>
       </div>
       {team.players

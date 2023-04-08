@@ -10,13 +10,19 @@ const StatePanel = ({ game }) => {
         label="Ready"
       />
       <ActionButton
-        action={{ type: "waitForSetPlay", args: null }}
+        action={
+          game.phase === "penaltyShootout"
+            ? { type: "waitForPenaltyShot", args: null }
+            : { type: "waitForSetPlay", args: null }
+        }
         active={game.state === "set"}
         label="Set"
       />
       <ActionButton
         action={
-          game.state === "playing"
+          game.phase === "penaltyShootout"
+            ? { type: "freePenaltyShot", args: null }
+            : game.state === "playing"
             ? { type: "finishSetPlay", args: null }
             : { type: "freeSetPlay", args: null }
         }
@@ -24,7 +30,11 @@ const StatePanel = ({ game }) => {
         label="Playing"
       />
       <ActionButton
-        action={{ type: "finishHalf", args: null }}
+        action={
+          game.phase === "penaltyShootout"
+            ? { type: "finishPenaltyShot", args: null }
+            : { type: "finishHalf", args: null }
+        }
         active={game.state === "finished"}
         label="Finish"
       />
