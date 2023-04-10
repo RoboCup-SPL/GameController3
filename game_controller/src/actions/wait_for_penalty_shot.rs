@@ -21,6 +21,7 @@ impl Action for WaitForPenaltyShot {
             run_condition: RunCondition::Playing,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
+        game.secondary_timer = Timer::Stopped; // This can be set from a previous timeout.
         game.teams[game.kicking_side].penalty_shot += 1;
     }
 

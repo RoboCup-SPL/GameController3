@@ -21,8 +21,10 @@ impl Action for Timeout {
             })
         });
 
-        // The next kick-off is for the other team.
-        game.kicking_side = -self.side;
+        if game.phase != Phase::PenaltyShootout {
+            // The next kick-off is for the other team.
+            game.kicking_side = -self.side;
+        }
         game.secondary_timer = Timer::Started {
             // In some cases, an existing timer is modified to avoid situations like "We are going
             // to take a timeout once their timeout is over".
