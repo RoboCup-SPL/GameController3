@@ -2,6 +2,19 @@ import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
 import { applyAction } from "../../api.js";
 
+const textClasses = {
+  red: "text-red-600",
+  blue: "text-blue-600",
+  yellow: "text-yellow-400",
+  black: "text-black",
+  white: "text-black",
+  green: "text-green-600",
+  orange: "text-orange-400",
+  purple: "text-purple-600",
+  brown: "text-amber-800",
+  gray: "text-gray-600",
+};
+
 const TeamPanel = ({
   connectionStatus,
   game,
@@ -10,6 +23,7 @@ const TeamPanel = ({
   setSelectedPenaltyCall,
   side,
   sign,
+  teamNames,
 }) => {
   const team = game.teams[side];
   const teamConnectionStatus = connectionStatus[side];
@@ -41,7 +55,13 @@ const TeamPanel = ({
         >
           <circle cx="7" cy="7" r="7" />
         </svg>
-        <h1 className="text-center text-2xl font-semibold">{side}</h1>
+        <h1
+          className={`text-center text-2xl font-semibold ${
+            textClasses[teamParams.fieldPlayerColor]
+          }`}
+        >
+          {teamNames[side]}
+        </h1>
       </div>
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
         <div className="flex flex-col gap-2 flex-1">
