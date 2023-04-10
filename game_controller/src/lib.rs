@@ -116,7 +116,7 @@ impl GameController {
     /// This function applies an action, given that it is legal. Some special cases will be
     /// filtered here. The action as well as the resulting game state is logged.
     pub fn apply(&mut self, action: VAction, source: ActionSource) {
-        if !action.is_legal(&self.game) {
+        if !action.is_legal(&self.game, &self.params) {
             return;
         }
         action.execute(&mut self.game, &self.params);

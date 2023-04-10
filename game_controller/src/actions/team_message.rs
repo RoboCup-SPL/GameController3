@@ -23,7 +23,7 @@ impl Action for TeamMessage {
         }
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         // Team messages are only counted during those states.
         game.phase != Phase::PenaltyShootout
             && (game.state == State::Ready

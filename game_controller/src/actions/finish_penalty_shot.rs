@@ -13,7 +13,7 @@ impl Action for FinishPenaltyShot {
         game.state = State::Finished;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.phase == Phase::PenaltyShootout && game.state == State::Playing
     }
 }

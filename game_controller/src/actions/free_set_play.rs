@@ -23,7 +23,7 @@ impl Action for FreeSetPlay {
         game.state = State::Playing;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.state == State::Set && game.set_play != SetPlay::NoSetPlay
     }
 }

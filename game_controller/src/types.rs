@@ -58,6 +58,10 @@ pub struct CompetitionParams {
     pub messages_per_team: u16,
     /// The score difference at which a game is finished automatically.
     pub mercy_rule_score_difference: u8,
+    /// The number of regular penalty shots each team takes in a penalty shoot-out.
+    pub penalty_shots: u8,
+    /// The number of sudden death penalty shots that each team can take before a coin is tossed.
+    pub sudden_death_penalty_shots: u8,
     /// The duration of a penalty kick in a penalty shoot-out.
     pub penalty_shot_duration: Duration,
 }

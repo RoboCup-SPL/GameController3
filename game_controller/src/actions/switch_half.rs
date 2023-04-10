@@ -23,7 +23,7 @@ impl Action for SwitchHalf {
         };
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.phase == Phase::FirstHalf && game.state == State::Finished
     }
 }

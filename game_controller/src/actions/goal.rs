@@ -48,7 +48,7 @@ impl Action for Goal {
         }
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.state == State::Playing
             && (game.phase != Phase::PenaltyShootout || self.side == game.kicking_side)
     }

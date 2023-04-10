@@ -51,7 +51,7 @@ impl Action for Substitute {
         }
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         self.player_in != self.player_out
             && game.teams[self.side][self.player_in].penalty == Penalty::Substitute
             && game.teams[self.side][self.player_out].penalty != Penalty::Substitute

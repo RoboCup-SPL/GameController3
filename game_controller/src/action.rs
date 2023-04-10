@@ -14,7 +14,7 @@ pub trait Action {
     fn execute(&self, game: &mut Game, params: &Params);
 
     /// This function returns whether the action is legal in the given game state.
-    fn is_legal(&self, game: &Game) -> bool;
+    fn is_legal(&self, game: &Game, params: &Params) -> bool;
 }
 
 trait_enum! {

@@ -16,7 +16,7 @@ impl Action for FinishSetPlay {
         game.set_play = SetPlay::NoSetPlay;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.state == State::Playing && game.set_play != SetPlay::NoSetPlay
     }
 }

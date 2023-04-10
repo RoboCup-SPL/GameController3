@@ -121,7 +121,7 @@ impl Action for Penalize {
         }
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         (game.teams[self.side][self.player].penalty == Penalty::NoPenalty
             || (self.call == PenaltyCall::RequestForPickUp
                 && game.teams[self.side][self.player].penalty != Penalty::PickedUp))

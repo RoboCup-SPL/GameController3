@@ -38,7 +38,7 @@ impl Action for StartPenaltyShootout {
         game.secondary_timer = Timer::Stopped;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.phase == Phase::SecondHalf
             && game.state == State::Finished
             && game.teams[Side::Home].score == game.teams[Side::Away].score

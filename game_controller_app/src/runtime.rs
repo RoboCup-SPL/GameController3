@@ -165,7 +165,7 @@ async fn event_loop(
             legal_actions: subscribed_actions_receiver
                 .borrow_and_update()
                 .iter()
-                .map(|action| action.is_legal(&game_controller.game))
+                .map(|action| action.is_legal(&game_controller.game, &game_controller.params))
                 .collect(),
         })?;
         control_sender.send(game_controller.game.clone())?;

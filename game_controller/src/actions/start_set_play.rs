@@ -61,7 +61,7 @@ impl Action for StartSetPlay {
         game.kicking_side = self.side;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         self.set_play != SetPlay::NoSetPlay
             && game.phase != Phase::PenaltyShootout
             && (if self.set_play == SetPlay::KickOff {

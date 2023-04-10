@@ -20,7 +20,7 @@ impl Action for Unpenalize {
         game.teams[self.side][self.player].penalty = Penalty::NoPenalty;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.teams[self.side][self.player].penalty != Penalty::NoPenalty
             && game.teams[self.side][self.player].penalty != Penalty::Substitute
             && (game.teams[self.side][self.player]

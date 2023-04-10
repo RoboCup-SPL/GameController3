@@ -41,7 +41,7 @@ impl Action for Timeout {
         game.teams[self.side].timeout_budget -= 1;
     }
 
-    fn is_legal(&self, game: &Game) -> bool {
+    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
         game.state != State::Playing
             && game.state != State::Finished
             && (game.phase != Phase::PenaltyShootout
