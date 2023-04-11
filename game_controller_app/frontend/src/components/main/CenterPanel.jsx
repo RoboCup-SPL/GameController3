@@ -3,13 +3,20 @@ import PenaltyPanel from "./PenaltyPanel";
 import PhasePanel from "./PhasePanel";
 import StatePanel from "./StatePanel";
 
-const CenterPanel = ({ game, selectedPenaltyCall, setSelectedPenaltyCall }) => {
+const CenterPanel = ({
+  game,
+  legalGameActions,
+  legalPenaltyActions,
+  selectedPenaltyCall,
+  setSelectedPenaltyCall,
+}) => {
   return (
     <div className="flex flex-col gap-4">
       <ClockPanel game={game} />
-      <PhasePanel game={game} />
-      <StatePanel game={game} />
+      <PhasePanel game={game} legalGameActions={legalGameActions} />
+      <StatePanel game={game} legalGameActions={legalGameActions} />
       <PenaltyPanel
+        legalPenaltyActions={legalPenaltyActions}
         selectedPenaltyCall={selectedPenaltyCall}
         setSelectedPenaltyCall={setSelectedPenaltyCall}
       />

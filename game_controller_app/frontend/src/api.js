@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
+import { NUM_OF_ACTIONS } from "./actions.js";
 
 export const getLaunchData = async () => {
   if (window.__TAURI_METADATA__) {
@@ -133,7 +134,7 @@ export const listenForState = async (handler) => {
           },
         },
       },
-      legalActions: [],
+      legalActions: new Array(NUM_OF_ACTIONS),
       connectionStatus: {
         home: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],
         away: [1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0],

@@ -1,5 +1,6 @@
 import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
+import * as actions from "../../actions.js";
 import { applyAction } from "../../api.js";
 
 const textClasses = {
@@ -18,6 +19,8 @@ const textClasses = {
 const TeamPanel = ({
   connectionStatus,
   game,
+  legalPenaltyActions,
+  legalTeamActions,
   params,
   selectedPenaltyCall,
   setSelectedPenaltyCall,
@@ -29,12 +32,16 @@ const TeamPanel = ({
   const teamConnectionStatus = connectionStatus[side];
   const teamParams = params.game.teams[side];
   const handlePlayerClick = (player) => {
-    if (selectedPenaltyCall) {
+    if (selectedPenaltyCall != null) {
       applyAction({
         type: "penalize",
-        args: { side: side, player: player.number, call: selectedPenaltyCall },
+        args: {
+          side: side,
+          player: player.number,
+          call: actions.PENALTIES[selectedPenaltyCall][1],
+        },
       });
-      if (selectedPenaltyCall != "motionInSet") {
+      if (actions.PENALTIES[selectedPenaltyCall][1] != "motionInSet") {
         setSelectedPenaltyCall(null);
       }
     } else {
@@ -69,14 +76,20 @@ const TeamPanel = ({
             action={{ type: "timeout", args: { side: side } }}
             active={game.state === "timeout" && game.kickingSide != side}
             label="Timeout"
+            legal={legalTeamActions[actions.TIMEOUT]}
           />
           <ActionButton
             action={{ type: "globalGameStuck", args: { side: side } }}
             label="Global Game Stuck"
+            legal={legalTeamActions[actions.GLOBAL_GAME_STUCK]}
           />
         </div>
         <div className="flex-1">
-          <ActionButton action={{ type: "goal", args: { side: side } }} label="+" />
+          <ActionButton
+            action={{ type: "goal", args: { side: side } }}
+            label="+"
+            legal={legalTeamActions[actions.GOAL]}
+          />
         </div>
         <dl className="flex-1">
           <dt className="sr-only">Score</dt>
@@ -119,6 +132,12 @@ const TeamPanel = ({
                 ? teamParams.goalkeeperColor
                 : teamParams.fieldPlayerColor
             }
+            legal={actions.isPenaltyCallLegalForPlayer(
+              legalPenaltyActions,
+              side,
+              player.number,
+              selectedPenaltyCall
+            )}
             onClick={() => handlePlayerClick(player)}
             player={player}
           />
@@ -128,16 +147,19 @@ const TeamPanel = ({
           action={{ type: "startSetPlay", args: { side: side, setPlay: "goalKick" } }}
           active={game.setPlay === "goalKick" && game.kickingSide === side}
           label="Goal Kick"
+          legal={legalTeamActions[actions.GOAL_KICK]}
         />
         <ActionButton
           action={{ type: "startSetPlay", args: { side: side, setPlay: "kickIn" } }}
           active={game.setPlay === "kickIn" && game.kickingSide === side}
           label="Kick-in"
+          legal={legalTeamActions[actions.KICK_IN]}
         />
         <ActionButton
           action={{ type: "startSetPlay", args: { side: side, setPlay: "cornerKick" } }}
           active={game.setPlay === "cornerKick" && game.kickingSide === side}
           label="Corner Kick"
+          legal={legalTeamActions[actions.CORNER_KICK]}
         />
       </div>
     </div>

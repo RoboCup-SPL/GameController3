@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import CenterPanel from "./main/CenterPanel";
 import TeamPanel from "./main/TeamPanel";
-import { getLaunchData, listenForState, syncWithBackend } from "../api.js";
+import {
+  getActions,
+  extractGameActions,
+  extractPenaltyActions,
+  extractTeamActions,
+  isPenaltyCallLegal,
+  NUM_OF_ACTIONS,
+} from "../actions.js";
+import { getLaunchData, declareActions, listenForState, syncWithBackend } from "../api.js";
 
 const Main = () => {
   const [connectionStatus, setConnectionStatus] = useState(null);
@@ -12,11 +20,21 @@ const Main = () => {
   const [teamNames, setTeamNames] = useState(null);
 
   useEffect(() => {
+    if (
+      legalActions != null &&
+      selectedPenaltyCall != null &&
+      !isPenaltyCallLegal(extractPenaltyActions(legalActions), selectedPenaltyCall)
+    ) {
+      setSelectedPenaltyCall(null);
+    }
+  }, [legalActions]);
+
+  useEffect(() => {
     const thePromise = (async () => {
       const unlisten = await listenForState((state) => {
         setConnectionStatus(state.connectionStatus);
-        setLegalActions(state.legalActions);
         setGame(state.game);
+        setLegalActions(state.legalActions);
       });
       // listen must have completed before starting the next call because the core may send a state
       // event once syncWithBackend is called that must not be missed.
@@ -31,6 +49,10 @@ const Main = () => {
           ])
         )
       );
+      // syncWithBackend must have completed before the next call because declareActions fails if
+      // certain things have not been initialized that are only guaranteed to be initialized after
+      // syncWithBackend.
+      declareActions(getActions());
       return unlisten;
     })();
     return () => {
@@ -41,6 +63,8 @@ const Main = () => {
   if (
     connectionStatus != null &&
     game != null &&
+    legalActions != null &&
+    legalActions.length == NUM_OF_ACTIONS &&
     params != null &&
     teamNames != null
   ) {
@@ -55,6 +79,8 @@ const Main = () => {
           <TeamPanel
             connectionStatus={connectionStatus}
             game={game}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
+            legalTeamActions={extractTeamActions(legalActions, "home")}
             params={params}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
@@ -66,6 +92,8 @@ const Main = () => {
         <div className="grow">
           <CenterPanel
             game={game}
+            legalGameActions={extractGameActions(legalActions)}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
           />
@@ -74,6 +102,8 @@ const Main = () => {
           <TeamPanel
             connectionStatus={connectionStatus}
             game={game}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
+            legalTeamActions={extractTeamActions(legalActions, "away")}
             params={params}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
