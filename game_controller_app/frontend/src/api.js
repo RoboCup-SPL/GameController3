@@ -54,10 +54,15 @@ export const getLaunchData = async () => {
         { id: "lo0", address: "127.0.0.1", broadcast: "127.0.0.1" },
       ],
       defaultSettings: {
-        competition: { id: "champions_cup", playOff: false },
-        teams: {
-          home: { number: 0, fieldPlayerColor: "blue", goalkeeperColor: "yellow" },
-          away: { number: 0, fieldPlayerColor: "red", goalkeeperColor: "black" },
+        competition: { id: "champions_cup" },
+        game: {
+          teams: {
+            home: { number: 0, fieldPlayerColor: "blue", goalkeeperColor: "yellow" },
+            away: { number: 0, fieldPlayerColor: "red", goalkeeperColor: "black" },
+          },
+          long: false,
+          kickOffSide: "home",
+          sideMapping: "homeDefendsLeftGoal",
         },
         window: { fullscreen: false },
         network: { interface: "en0", broadcast: false, multicast: false },

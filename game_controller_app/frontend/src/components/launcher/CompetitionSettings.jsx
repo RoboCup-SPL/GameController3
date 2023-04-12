@@ -13,13 +13,6 @@ const CompetitionSettings = ({ competitions, competition, setCompetition }) => {
           </option>
         ))}
       </select>
-      <label htmlFor="play-off">Play-off</label>
-      <input
-        type="checkbox"
-        checked={competition.playOff}
-        id="play-off"
-        onChange={(e) => setCompetition({ ...competition, playOff: e.target.checked })}
-      />
     </div>
   );
 };

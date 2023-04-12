@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CompetitionSettings from "./launcher/CompetitionSettings";
+import GameSettings from "./launcher/GameSettings";
 import NetworkSettings from "./launcher/NetworkSettings";
-import TeamSettings from "./launcher/TeamSettings";
 import WindowSettings from "./launcher/WindowSettings";
 import { getLaunchData, launch } from "../api";
 
@@ -13,12 +13,17 @@ const Launcher = () => {
 
   const launchSettingsAreLegal =
     launchSettings != null &&
-    launchSettings.teams.home.number != launchSettings.teams.away.number &&
-    launchSettings.teams.home.fieldPlayerColor != launchSettings.teams.away.fieldPlayerColor &&
-    launchSettings.teams.home.fieldPlayerColor != launchSettings.teams.home.goalkeeperColor &&
-    launchSettings.teams.home.fieldPlayerColor != launchSettings.teams.away.goalkeeperColor &&
-    launchSettings.teams.away.fieldPlayerColor != launchSettings.teams.away.goalkeeperColor &&
-    launchSettings.teams.away.fieldPlayerColor != launchSettings.teams.home.goalkeeperColor;
+    launchSettings.game.teams.home.number != launchSettings.game.teams.away.number &&
+    launchSettings.game.teams.home.fieldPlayerColor !=
+      launchSettings.game.teams.away.fieldPlayerColor &&
+    launchSettings.game.teams.home.fieldPlayerColor !=
+      launchSettings.game.teams.home.goalkeeperColor &&
+    launchSettings.game.teams.home.fieldPlayerColor !=
+      launchSettings.game.teams.away.goalkeeperColor &&
+    launchSettings.game.teams.away.fieldPlayerColor !=
+      launchSettings.game.teams.away.goalkeeperColor &&
+    launchSettings.game.teams.away.fieldPlayerColor !=
+      launchSettings.game.teams.home.goalkeeperColor;
 
   useEffect(() => {
     getLaunchData().then((data) => {
@@ -71,25 +76,10 @@ const Launcher = () => {
           />
         </div>
         <div>
-          <TeamSettings
+          <GameSettings
             teams={teamsInThisCompetition}
-            team={launchSettings.teams.home}
-            setTeam={(team) =>
-              setLaunchSettings({
-                ...launchSettings,
-                teams: { home: team, away: launchSettings.teams.away },
-              })
-            }
-          />
-          <TeamSettings
-            teams={teamsInThisCompetition}
-            team={launchSettings.teams.away}
-            setTeam={(team) =>
-              setLaunchSettings({
-                ...launchSettings,
-                teams: { home: launchSettings.teams.home, away: team },
-              })
-            }
+            game={launchSettings.game}
+            setGame={(game) => setLaunchSettings({ ...launchSettings, game: game })}
           />
         </div>
         <div>

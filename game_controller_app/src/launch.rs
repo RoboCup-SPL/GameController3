@@ -3,12 +3,12 @@
 use std::{collections::hash_map::HashMap, fs::File, net::IpAddr, path::Path};
 
 use anyhow::{anyhow, bail, Context, Result};
-use enum_map::{enum_map, EnumMap};
+use enum_map::enum_map;
 use network_interface::NetworkInterfaceConfig;
 use serde::{Deserialize, Serialize};
 use tauri::api::cli::ArgData;
 
-use game_controller::types::{Color, CompetitionParams, Side, TeamParams};
+use game_controller::types::{Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams};
 
 /// This struct describes a single entry in `config/teams.yaml`.
 #[derive(Clone, Deserialize, Serialize)]
@@ -55,12 +55,10 @@ pub struct NetworkInterface {
 pub struct CompetitionSettings {
     /// The ID of the competition (must match some [Competition::id]).
     pub id: String,
-    /// Whether the game is a play-off game (main timer pauses in Ready and Set).
-    pub play_off: bool,
 }
 
-/// This struct describes settings of a competing team.
-pub type TeamSettings = TeamParams;
+/// This struct describes settings of the game.
+pub type GameSettings = GameParams;
 
 /// This struct describes settings related to the main window.
 #[derive(Clone, Deserialize, Serialize)]
@@ -88,8 +86,8 @@ pub struct NetworkSettings {
 pub struct LaunchSettings {
     /// Settings related to the competition type.
     pub competition: CompetitionSettings,
-    /// Settings of the two competing teams.
-    pub teams: EnumMap<Side, TeamSettings>,
+    /// Settings of the game.
+    pub game: GameSettings,
     /// Settings related to the main window.
     pub window: WindowSettings,
     /// Settings for the network.
@@ -275,7 +273,7 @@ pub fn make_launch_data(
             {
                 bail!("{} is not part of the selected competition", team.name);
             }
-            Ok(Some(TeamSettings {
+            Ok(Some(TeamParams {
                 number: team.number,
                 field_player_color: team.field_player_colors[0],
                 goalkeeper_color: team.goalkeeper_colors[0],
@@ -289,31 +287,35 @@ pub fn make_launch_data(
         competition: CompetitionSettings {
             // competition_id cannot be moved because it is still referenced by parse_team.
             id: competition_id.clone(),
-            play_off: matches!(
+        },
+        game: GameSettings {
+            teams: enum_map! {
+                Side::Home => parse_team(args.get("home-team"))
+                    .context("could not set home team")?
+                    .unwrap_or(TeamParams
+                {
+                    number: default_team.number,
+                    field_player_color: default_team.field_player_colors[0],
+                    goalkeeper_color: default_team.goalkeeper_colors[0],
+                }),
+                Side::Away => parse_team(args.get("away-team"))
+                    .context("could not set away team")?
+                    .unwrap_or(TeamParams
+                {
+                    number: default_team.number,
+                    field_player_color: default_team.field_player_colors[1],
+                    goalkeeper_color: default_team.goalkeeper_colors[1],
+                }),
+            },
+            long: matches!(
                 args.get("play-off"),
                 Some(ArgData {
                     occurrences: 1..,
                     ..
                 })
             ),
-        },
-        teams: enum_map! {
-            Side::Home => parse_team(args.get("home-team"))
-                .context("could not set home team")?
-                .unwrap_or(TeamSettings
-            {
-                number: default_team.number,
-                field_player_color: default_team.field_player_colors[0],
-                goalkeeper_color: default_team.goalkeeper_colors[0],
-            }),
-            Side::Away => parse_team(args.get("away-team"))
-                .context("could not set away team")?
-                .unwrap_or(TeamSettings
-            {
-                number: default_team.number,
-                field_player_color: default_team.field_player_colors[1],
-                goalkeeper_color: default_team.goalkeeper_colors[1],
-            }),
+            kick_off_side: Side::Home,
+            side_mapping: SideMapping::HomeDefendsLeftGoal,
         },
         window: WindowSettings {
             fullscreen: matches!(

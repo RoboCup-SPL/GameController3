@@ -26,7 +26,7 @@ use game_controller::{
     action::VAction,
     actions::TeamMessage,
     log::{LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage},
-    types::{ActionSource, Game, GameParams, Params, PlayerNumber, Side, SideMapping},
+    types::{ActionSource, Game, Params, PlayerNumber, Side},
     GameController,
 };
 use game_controller_msgs::{MonitorRequest, StatusMessage};
@@ -305,15 +305,10 @@ pub async fn start_runtime(
             .context("could not open competition params")?,
         )
         .context("could not parse competition params")?,
-        game: GameParams {
-            teams: settings.teams.clone(),
-            long: settings.competition.play_off,
-            kick_off_side: Side::Home,
-            side_mapping: SideMapping::HomeDefendsLeftGoal,
-        },
+        game: settings.game.clone(),
     };
 
-    let team_names = settings.teams.clone().map(|_side, team| {
+    let team_names = settings.game.teams.clone().map(|_side, team| {
         teams
             .iter()
             .find(|t| team.number == t.number)
@@ -363,7 +358,12 @@ pub async fn start_runtime(
         },
         network_interface.address,
         settings.network.multicast,
-        settings.teams.values().map(|team| team.number).collect(),
+        settings
+            .game
+            .teams
+            .values()
+            .map(|team| team.number)
+            .collect(),
     );
 
     let (action_sender, action_receiver) = mpsc::unbounded_channel();
