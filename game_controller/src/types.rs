@@ -92,6 +92,10 @@ pub struct GameParams {
     /// Otherwise (if false), all Ready/Set states except for the time before the first kick-off in
     /// a half count as playing time.
     pub long: bool,
+    /// The side which has kick-off in the first half.
+    pub kick_off_side: Side,
+    /// The side mapping for the first half.
+    pub side_mapping: SideMapping,
 }
 
 impl GameParams {

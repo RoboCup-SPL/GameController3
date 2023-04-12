@@ -19,8 +19,7 @@ use crate::action::VAction;
 use crate::log::{LogEntry, LoggedAction, Logger, TimestampedLogEntry};
 use crate::timer::{BehaviorAtZero, EvaluatedRunConditions, RunCondition, Timer};
 use crate::types::{
-    ActionSource, Game, Params, Penalty, Phase, Player, PlayerNumber, SetPlay, Side, SideMapping,
-    State, Team,
+    ActionSource, Game, Params, Penalty, Phase, Player, PlayerNumber, SetPlay, State, Team,
 };
 
 /// This struct handles the main logic of the GameController.
@@ -38,11 +37,11 @@ impl GameController {
     /// This function creates a new instance with given parameters and a logger.
     pub fn new(params: Params, logger: Box<dyn Logger + Send>) -> Self {
         let game = Game {
-            sides: SideMapping::HomeDefendsLeftGoal,
+            sides: params.game.side_mapping,
             phase: Phase::FirstHalf,
             state: State::Initial,
             set_play: SetPlay::NoSetPlay,
-            kicking_side: Side::Home,
+            kicking_side: params.game.kick_off_side,
             primary_timer: Timer::Started {
                 remaining: params.competition.half_duration.try_into().unwrap(),
                 run_condition: RunCondition::Playing,

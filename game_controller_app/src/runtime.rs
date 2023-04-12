@@ -26,7 +26,7 @@ use game_controller::{
     action::VAction,
     actions::TeamMessage,
     log::{LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage},
-    types::{ActionSource, Game, GameParams, Params, PlayerNumber, Side},
+    types::{ActionSource, Game, GameParams, Params, PlayerNumber, Side, SideMapping},
     GameController,
 };
 use game_controller_msgs::{MonitorRequest, StatusMessage};
@@ -308,6 +308,8 @@ pub async fn start_runtime(
         game: GameParams {
             teams: settings.teams.clone(),
             long: settings.competition.play_off,
+            kick_off_side: Side::Home,
+            side_mapping: SideMapping::HomeDefendsLeftGoal,
         },
     };
 
