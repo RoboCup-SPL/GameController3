@@ -11,7 +11,7 @@ pub mod log;
 pub mod timer;
 pub mod types;
 
-use std::{cmp::min, time::Duration};
+use std::{cmp::min, iter::once, time::Duration};
 
 use enum_map::enum_map;
 
@@ -27,8 +27,9 @@ use crate::types::{
 pub struct GameController {
     /// The constant parameters of the game.
     pub params: Params,
-    /// The current dynamic state of the game.
-    pub game: Game,
+    game: Game,
+    delayed_game: Option<Game>,
+    delayed_game_timer: Timer,
     time: Duration,
     logger: Box<dyn Logger + Send>,
 }
@@ -79,8 +80,20 @@ impl GameController {
         Self {
             params,
             game,
+            delayed_game: None,
+            delayed_game_timer: Timer::Stopped,
             time: Duration::ZERO,
             logger,
+        }
+    }
+
+    /// This function returns the dynamic state of the game. The caller can request if the game
+    /// state should be the delayed game state.
+    pub fn get_game(&self, delayed: bool) -> &Game {
+        if delayed {
+            self.delayed_game.as_ref().unwrap_or(&self.game)
+        } else {
+            &self.game
         }
     }
 
@@ -90,19 +103,36 @@ impl GameController {
         // We must split the time when timers expire in the meantime, because they can have actions
         // which must be applied at the right point in time.
         while !dt.is_zero() {
-            let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
-
             // Find out how far we can seek at most in this iteration.
-            let this_dt = self.clip_next_timer_expiration(&run_conditions, dt);
+            let this_dt = self.clip_next_timer_expiration(dt);
 
             // Update current time and remaining offset.
             self.time += this_dt;
             dt -= this_dt;
 
+            let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
+
+            // Update delayed game state. This is not really elegant at the moment.
+            self.delayed_game_timer.seek(this_dt, &run_conditions);
+            if matches!(self.delayed_game_timer, Timer::Stopped) {
+                self.delayed_game = None;
+            } else if let Some(delayed_game) = self.delayed_game.as_mut() {
+                let delayed_run_conditions =
+                    EvaluatedRunConditions::new(delayed_game, &self.params);
+                let delayed_actions: Vec<VAction> = delayed_game
+                    .timers_mut()
+                    .filter_map(|timer| timer.seek(this_dt, &delayed_run_conditions))
+                    .flatten()
+                    .collect();
+                for action in delayed_actions {
+                    self.apply_delayed(&action);
+                }
+            }
+
             // Seek timers and obtain actions of timers that expire at the end of this iteration.
             let actions: Vec<VAction> = self
+                .game
                 .timers_mut()
-                .iter_mut()
                 .filter_map(|timer| timer.seek(this_dt, &run_conditions))
                 .flatten()
                 .collect();
@@ -119,6 +149,23 @@ impl GameController {
         if !action.is_legal(&self.game, &self.params) {
             return;
         }
+
+        // Some actions are intercepted here because their effects are delayed. Only actions that
+        // are not triggered by a timer are forwarded to the delayed state, because timers may
+        // differ and timers from the delayed state call directly into the corresponding function.
+        // I'm not sure if timer-triggered actions from the non-delayed state should still cancel
+        // the delayed state if they are illegal.
+        if self.game.phase != Phase::PenaltyShootout && matches!(action, VAction::Goal(_)) {
+            self.hide(self.params.competition.delay_after_goal);
+        } else if matches!(
+            action,
+            VAction::FreePenaltyShot(_) | VAction::FreeSetPlay(_)
+        ) {
+            self.hide(self.params.competition.delay_after_playing);
+        } else if source != ActionSource::Timer {
+            self.apply_delayed(&action);
+        }
+
         action.execute(&mut self.game, &self.params);
         self.log_now(LogEntry::Action(LoggedAction { source, action }));
         self.log_now(LogEntry::GameState(Box::new(self.game.clone())));
@@ -134,84 +181,96 @@ impl GameController {
 
     /// This function clips a given timestamp (given as duration from now) to the time when the
     /// next timer expires.
-    pub fn clip_next_timer_expiration(
-        &self,
-        run_conditions: &EvaluatedRunConditions,
-        max: Duration,
-    ) -> Duration {
-        if let Some(next) = self
+    pub fn clip_next_timer_expiration(&self, max: Duration) -> Duration {
+        let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
+        self.game
             .timers()
-            .iter()
-            .filter(|timer| timer.will_expire() && timer.is_running(run_conditions))
+            .chain(once(&self.delayed_game_timer))
+            .filter(|timer| timer.will_expire() && timer.is_running(&run_conditions))
             // At this point, we can be sure that the remaining time is not negative.
             .map(|timer| timer.get_remaining().try_into().unwrap())
+            .chain(
+                self.delayed_game
+                    .as_ref()
+                    .map(|delayed_game| {
+                        let delayed_run_conditions =
+                            EvaluatedRunConditions::new(delayed_game, &self.params);
+                        delayed_game
+                            .timers()
+                            .filter(move |timer| {
+                                timer.will_expire() && timer.is_running(&delayed_run_conditions)
+                            })
+                            // At this point, we can be sure that the remaining time is not
+                            // negative.
+                            .map(|timer| timer.get_remaining().try_into().unwrap())
+                    })
+                    .into_iter()
+                    .flatten(),
+            )
             .min()
-        {
-            min(next, max)
-        } else {
-            max
-        }
+            .map_or(max, |next| min(next, max))
     }
 
     /// This function clips a given timestamp (given as duration from now) to the time when the
     /// next timer, when rounded to seconds in a particular way, changes.
-    pub fn clip_next_timer_wrap(
-        &self,
-        run_conditions: &EvaluatedRunConditions,
-        max: Duration,
-    ) -> Duration {
-        if let Some(next) = self
+    pub fn clip_next_timer_wrap(&self, max: Duration) -> Duration {
+        let next_wrap = |timer: &Timer| {
+            Duration::from_nanos(
+                ({
+                    let nanos = timer.get_remaining().subsec_nanoseconds();
+                    if nanos <= 0 {
+                        nanos + 1_000_000_000
+                    } else {
+                        nanos
+                    }
+                })
+                .try_into()
+                .unwrap(),
+            )
+        };
+        let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
+        self.game
             .timers()
-            .iter()
-            .filter(|timer| timer.is_running(run_conditions))
-            .map(|timer| {
-                Duration::from_nanos(
-                    ({
-                        let nanos = timer.get_remaining().subsec_nanoseconds();
-                        if nanos <= 0 {
-                            nanos + 1_000_000_000
-                        } else {
-                            nanos
-                        }
+            .filter(|timer| timer.is_running(&run_conditions))
+            .map(next_wrap)
+            .chain(
+                self.delayed_game
+                    .as_ref()
+                    .map(|delayed_game| {
+                        let delayed_run_conditions =
+                            EvaluatedRunConditions::new(delayed_game, &self.params);
+                        delayed_game
+                            .timers()
+                            .filter(move |timer| timer.is_running(&delayed_run_conditions))
+                            .map(next_wrap)
                     })
-                    .try_into()
-                    .unwrap(),
-                )
-            })
+                    .into_iter()
+                    .flatten(),
+            )
             .min()
-        {
-            min(next, max)
-        } else {
-            max
+            .map_or(max, |next| min(next, max))
+    }
+
+    fn apply_delayed(&mut self, action: &VAction) {
+        if let Some(delayed_game) = self.delayed_game.as_mut() {
+            // FinishSetPlay is not a reason to cancel the delayed state because that would mean
+            // that e.g. a kick-off is delayed for only 10 seconds.
+            if action.is_legal(delayed_game, &self.params) {
+                action.execute(delayed_game, &self.params);
+            } else if !matches!(action, VAction::FinishSetPlay(_)) {
+                self.delayed_game = None;
+                self.delayed_game_timer = Timer::Stopped;
+            }
         }
     }
 
-    fn timers(&self) -> Vec<&Timer> {
-        let mut timers: Vec<&Timer> = vec![&self.game.primary_timer, &self.game.secondary_timer];
-        let mut penalty_timers: Vec<&Timer> = self
-            .game
-            .teams
-            .values()
-            .flat_map(|team| team.players.iter().map(|player| &player.penalty_timer))
-            .collect();
-        timers.append(&mut penalty_timers);
-        timers
-    }
-
-    fn timers_mut(&mut self) -> Vec<&mut Timer> {
-        let mut timers = vec![&mut self.game.primary_timer, &mut self.game.secondary_timer];
-        let mut penalty_timers: Vec<&mut Timer> = self
-            .game
-            .teams
-            .values_mut()
-            .flat_map(|team| {
-                team.players
-                    .iter_mut()
-                    .map(|player| &mut player.penalty_timer)
-            })
-            .collect();
-        timers.append(&mut penalty_timers);
-        timers
+    fn hide(&mut self, duration: Duration) {
+        self.delayed_game_timer = Timer::Started {
+            remaining: duration.try_into().unwrap(),
+            run_condition: RunCondition::Always,
+            behavior_at_zero: BehaviorAtZero::Expire(vec![]),
+        };
+        self.delayed_game = Some(self.game.clone());
     }
 }
 

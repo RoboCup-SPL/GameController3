@@ -136,3 +136,9 @@ suddenDeathPenaltyShots: 3
 penaltyShotDuration:
   secs: 30
   nanos: 0
+delayAfterGoal:
+  secs: 15
+  nanos: 0
+delayAfterPlaying:
+  secs: 15
+  nanos: 0

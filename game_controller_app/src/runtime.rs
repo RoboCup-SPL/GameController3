@@ -26,7 +26,6 @@ use game_controller::{
     action::VAction,
     actions::TeamMessage,
     log::{LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage},
-    timer::EvaluatedRunConditions,
     types::{ActionSource, Game, GameParams, Params, PlayerNumber, Side},
     GameController,
 };
@@ -154,6 +153,7 @@ async fn event_loop(
     let mut players = HashSet::<IpAddr>::new();
     let mut aliveness_timestamps = AlivenessTimestampMap::new();
     let (status_forward_sender, _) = broadcast::channel(16);
+    let (true_control_sender, _) = watch::channel(game_controller.get_game(false).clone());
 
     // We must wait for the main window before sending the first UI state.
     ui_notify.notified().await;
@@ -161,26 +161,24 @@ async fn event_loop(
     loop {
         send_ui_state(UiState {
             connection_status: get_connection_status_map(&aliveness_timestamps, &last),
-            game: game_controller.game.clone(),
+            game: game_controller.get_game(false).clone(),
             legal_actions: subscribed_actions_receiver
                 .borrow_and_update()
                 .iter()
-                .map(|action| action.is_legal(&game_controller.game, &game_controller.params))
+                .map(|action| {
+                    action.is_legal(game_controller.get_game(false), &game_controller.params)
+                })
                 .collect(),
         })?;
-        control_sender.send(game_controller.game.clone())?;
+        control_sender.send(game_controller.get_game(true).clone())?;
+        let _ = true_control_sender.send(game_controller.get_game(false).clone());
 
         let next_connection_status_change =
             get_next_connection_status_change(&aliveness_timestamps, &last);
-        let run_conditions =
-            EvaluatedRunConditions::new(&game_controller.game, &game_controller.params);
-        let dt = game_controller.clip_next_timer_wrap(
-            &run_conditions,
-            game_controller.clip_next_timer_expiration(
-                &run_conditions,
+        let dt = game_controller
+            .clip_next_timer_wrap(game_controller.clip_next_timer_expiration(
                 next_connection_status_change.unwrap_or(Duration::MAX),
-            ),
-        );
+            ));
 
         let deadline = last.checked_add(dt);
 
@@ -212,8 +210,7 @@ async fn event_loop(
                             monitor_join_set.spawn(run_control_message_sender(
                                 host,
                                 game_controller.params.clone(),
-                                // TODO: use the sender with "true" data here
-                                control_sender.subscribe(),
+                                true_control_sender.subscribe(),
                                 true
                             ));
                             monitor_join_set.spawn(run_status_message_forwarder(
@@ -355,7 +352,7 @@ pub async fn start_runtime(
         .unwrap();
 
     let (event_receiver, control_sender, network_join_set) = start_network(
-        game_controller.game.clone(),
+        game_controller.get_game(true).clone(),
         game_controller.params.clone(),
         if settings.network.broadcast {
             IpAddr::V4(Ipv4Addr::BROADCAST)

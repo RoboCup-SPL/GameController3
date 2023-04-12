@@ -64,6 +64,10 @@ pub struct CompetitionParams {
     pub sudden_death_penalty_shots: u8,
     /// The duration of a penalty kick in a penalty shoot-out.
     pub penalty_shot_duration: Duration,
+    /// The duration for which the true game state is hidden after a goal.
+    pub delay_after_goal: Duration,
+    /// The duration for which the true game state is hidden after switching to the Playing state.
+    pub delay_after_playing: Duration,
 }
 
 /// This struct contains constant parameters for one team.
@@ -325,6 +329,28 @@ pub struct Game {
     pub teams: EnumMap<Side, Team>,
 }
 
+impl Game {
+    /// This function returns an iterator over all timers in the game.
+    pub fn timers(&self) -> impl Iterator<Item = &Timer> {
+        self.teams
+            .values()
+            .flat_map(|team| team.players.iter().map(|player| &player.penalty_timer))
+            .chain([&self.primary_timer, &self.secondary_timer].into_iter())
+    }
+
+    /// This function returns a mutable iterator over all timers in the game.
+    pub fn timers_mut(&mut self) -> impl Iterator<Item = &mut Timer> {
+        self.teams
+            .values_mut()
+            .flat_map(|team| {
+                team.players
+                    .iter_mut()
+                    .map(|player| &mut player.penalty_timer)
+            })
+            .chain([&mut self.primary_timer, &mut self.secondary_timer].into_iter())
+    }
+}
+
 /// This struct contains the dynamic state of a team.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -374,7 +400,7 @@ pub struct Player {
 }
 
 /// This enumerates the possible sources that can trigger actions.
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ActionSource {
     /// The action was triggered by a network packet. It should be replayed and even kept if
