@@ -94,13 +94,10 @@ const TeamPanel = ({
         <dl className="flex-1">
           <dt className="sr-only">Score</dt>
           <dd
-            className={`font-bold text-4xl ${sign > 0 ? "text-right" : "text-left"} tabular-nums`}
+            className={`font-bold text-4xl ${sign > 0 ? "text-right" : "text-left"} tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}
           >
             {team.score}
           </dd>
-
-          <dt>Penalties</dt>
-          <dd className="tabular-nums">{team.penaltyCounter}</dd>
 
           {game.phase === "penaltyShootout" ? (
             <>
@@ -109,10 +106,13 @@ const TeamPanel = ({
             </>
           ) : (
             <>
-              <dt>Messages</dt>
-              <dd className="tabular-nums">{team.messageBudget}</dd>
+              <dt className={team.illegalCommunication ? "text-fuchsia-400" : ""}>Messages</dt>
+              <dd className={`tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}>{team.messageBudget}</dd>
             </>
           )}
+
+          <dt>Penalties</dt>
+          <dd className="tabular-nums">{team.penaltyCounter}</dd>
         </dl>
       </div>
       {team.players
