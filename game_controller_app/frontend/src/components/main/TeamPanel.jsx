@@ -94,7 +94,9 @@ const TeamPanel = ({
         <dl className="flex-1">
           <dt className="sr-only">Score</dt>
           <dd
-            className={`font-bold text-4xl ${sign > 0 ? "text-right" : "text-left"} tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}
+            className={`font-bold text-4xl ${sign > 0 ? "text-right" : "text-left"} tabular-nums ${
+              team.illegalCommunication ? "text-fuchsia-400" : ""
+            }`}
           >
             {team.score}
           </dd>
@@ -107,7 +109,9 @@ const TeamPanel = ({
           ) : (
             <>
               <dt className={team.illegalCommunication ? "text-fuchsia-400" : ""}>Messages</dt>
-              <dd className={`tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}>{team.messageBudget}</dd>
+              <dd className={`tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}>
+                {team.messageBudget}
+              </dd>
             </>
           )}
 
