@@ -46,16 +46,19 @@ const Launcher = () => {
       setLaunchSettings({
         ...launchSettings,
         competition: competition,
-        teams: {
-          home: {
-            number: defaultTeam.number,
-            fieldPlayerColor: defaultTeam.fieldPlayerColors[0],
-            goalkeeperColor: defaultTeam.goalkeeperColors[0],
-          },
-          away: {
-            number: defaultTeam.number,
-            fieldPlayerColor: defaultTeam.fieldPlayerColors[1],
-            goalkeeperColor: defaultTeam.goalkeeperColors[1],
+        game: {
+          ...launchSettings.game,
+          teams: {
+            home: {
+              number: defaultTeam.number,
+              fieldPlayerColor: defaultTeam.fieldPlayerColors[0],
+              goalkeeperColor: defaultTeam.goalkeeperColors[0],
+            },
+            away: {
+              number: defaultTeam.number,
+              fieldPlayerColor: defaultTeam.fieldPlayerColors[1],
+              goalkeeperColor: defaultTeam.goalkeeperColors[1],
+            },
           },
         },
       });
