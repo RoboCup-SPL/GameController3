@@ -28,6 +28,7 @@ trait_enum! {
     #[derive(Clone, Debug, Deserialize, Serialize)]
     #[serde(tag = "type", content = "args", rename_all = "camelCase")]
     pub enum VAction: Action {
+        AddExtraTime,
         FinishHalf,
         FinishPenaltyShot,
         FinishSetPlay,
