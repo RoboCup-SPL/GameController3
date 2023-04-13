@@ -26,7 +26,7 @@
 - name: B-Human
   number: 5
   fieldPlayerColors: [black, red]
-  goalkeeperColors: [black, red]
+  goalkeeperColors: [purple, blue]
 
 - name: Cerberus
   number: 6
@@ -168,7 +168,7 @@
   fieldPlayerColors: [blue, red]
   goalkeeperColors: [blue, red]
 
-- name: blue Spider
+- name: Blue Spider
   number: 35
   fieldPlayerColors: [blue, red]
   goalkeeperColors: [blue, red]
@@ -220,8 +220,8 @@
 
 - name: Naova
   number: 45
-  fieldPlayerColors: [red, blue]
-  goalkeeperColors: [red, blue]
+  fieldPlayerColors: [black, red]
+  goalkeeperColors: [black, red]
 
 - name: Recife Soccer
   number: 46
