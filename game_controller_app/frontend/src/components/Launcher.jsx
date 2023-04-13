@@ -70,40 +70,34 @@ const Launcher = () => {
       thisCompetition.teams.includes(team.number)
     );
     return (
-      <>
-        <div>
-          <CompetitionSettings
-            competitions={competitions}
-            competition={launchSettings.competition}
-            setCompetition={setCompetition}
-          />
-        </div>
-        <div>
-          <GameSettings
-            teams={teamsInThisCompetition}
-            game={launchSettings.game}
-            setGame={(game) => setLaunchSettings({ ...launchSettings, game: game })}
-          />
-        </div>
-        <div>
-          <WindowSettings
-            window={launchSettings.window}
-            setWindow={(window) => setLaunchSettings({ ...launchSettings, window: window })}
-          />
-        </div>
-        <div>
-          <NetworkSettings
-            interfaces={networkInterfaces}
-            network={launchSettings.network}
-            setNetwork={(network) => setLaunchSettings({ ...launchSettings, network: network })}
-          />
-        </div>
-        <div>
-          <button disabled={!launchSettingsAreLegal} onClick={() => launch(launchSettings)}>
-            Start
-          </button>
-        </div>
-      </>
+      <div className="flex flex-col items-center p-4 gap-2">
+        <CompetitionSettings
+          competitions={competitions}
+          competition={launchSettings.competition}
+          setCompetition={setCompetition}
+        />
+        <GameSettings
+          teams={teamsInThisCompetition}
+          game={launchSettings.game}
+          setGame={(game) => setLaunchSettings({ ...launchSettings, game: game })}
+        />
+        <WindowSettings
+          window={launchSettings.window}
+          setWindow={(window) => setLaunchSettings({ ...launchSettings, window: window })}
+        />
+        <NetworkSettings
+          interfaces={networkInterfaces}
+          network={launchSettings.network}
+          setNetwork={(network) => setLaunchSettings({ ...launchSettings, network: network })}
+        />
+        <button
+          className="px-8 py-2 rounded-md border border-black disabled:bg-slate-400"
+          disabled={!launchSettingsAreLegal}
+          onClick={() => launch(launchSettings)}
+        >
+          Start
+        </button>
+      </div>
     );
   } else {
     return <></>;

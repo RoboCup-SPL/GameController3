@@ -1,6 +1,6 @@
 const CompetitionSettings = ({ competitions, competition, setCompetition }) => {
   return (
-    <div>
+    <div className="flex flex-row items-center gap-2">
       <label htmlFor="competition">Competition</label>
       <select
         value={competition.id}

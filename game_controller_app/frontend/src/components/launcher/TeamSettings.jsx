@@ -13,18 +13,26 @@ const TeamSettings = ({ teams, team, setTeam }) => {
   };
   const teamOptions = teams.find((t) => t.number === team.number);
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <TeamSelector teams={teams} number={team.number} setNumber={setNumber} />
-      <TeamColorSelector
-        colors={teamOptions.fieldPlayerColors}
-        color={team.fieldPlayerColor}
-        setColor={(color) => setTeam({ ...team, fieldPlayerColor: color })}
-      />
-      <TeamColorSelector
-        colors={teamOptions.goalkeeperColors}
-        color={team.goalkeeperColor}
-        setColor={(color) => setTeam({ ...team, goalkeeperColor: color })}
-      />
+      <div className="flex flex-row gap-2">
+        <div className="flex flex-col gap-1">
+          <label>Field Player Color</label>
+          <TeamColorSelector
+            colors={teamOptions.fieldPlayerColors}
+            color={team.fieldPlayerColor}
+            setColor={(color) => setTeam({ ...team, fieldPlayerColor: color })}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label>Goalkeeper Color</label>
+          <TeamColorSelector
+            colors={teamOptions.goalkeeperColors}
+            color={team.goalkeeperColor}
+            setColor={(color) => setTeam({ ...team, goalkeeperColor: color })}
+          />
+        </div>
+      </div>
     </div>
   );
 };

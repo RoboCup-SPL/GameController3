@@ -1,6 +1,6 @@
 const TeamSelector = ({ teams, number, setNumber }) => {
   return (
-    <select value={number} onChange={(e) => setNumber(parseInt(e.target.value))}>
+    <select className="w-full" value={number} onChange={(e) => setNumber(parseInt(e.target.value))}>
       {teams
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((team) => (

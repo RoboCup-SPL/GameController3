@@ -1,6 +1,6 @@
 const WindowSettings = ({ window, setWindow }) => {
   return (
-    <div>
+    <div className="flex flex-row items-center gap-2">
       <label htmlFor="fullscreen">Fullscreen</label>
       <input
         type="checkbox"
