@@ -162,13 +162,14 @@ async fn event_loop(
         send_ui_state(UiState {
             connection_status: get_connection_status_map(&aliveness_timestamps, &last),
             game: game_controller.get_game(false).clone(),
-            legal_actions: subscribed_actions_receiver
-                .borrow_and_update()
-                .iter()
-                .map(|action| {
-                    action.is_legal(game_controller.get_game(false), &game_controller.params)
-                })
-                .collect(),
+            legal_actions: {
+                let context = game_controller.get_context(false);
+                subscribed_actions_receiver
+                    .borrow_and_update()
+                    .iter()
+                    .map(|action| action.is_legal(&context))
+                    .collect()
+            },
         })?;
         control_sender.send(game_controller.get_game(true).clone())?;
         let _ = true_control_sender.send(game_controller.get_game(false).clone());

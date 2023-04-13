@@ -15,20 +15,26 @@ use std::{cmp::min, iter::once, time::Duration};
 
 use enum_map::enum_map;
 
-use crate::action::VAction;
+use crate::action::{ActionContext, VAction};
 use crate::log::{LogEntry, LoggedAction, Logger, TimestampedLogEntry};
 use crate::timer::{BehaviorAtZero, EvaluatedRunConditions, RunCondition, Timer};
 use crate::types::{
     ActionSource, Game, Params, Penalty, Phase, Player, PlayerNumber, SetPlay, State, Team,
 };
 
+/// This struct encapsulates a delayed game state.
+pub struct DelayHandler {
+    game: Game,
+    timer: Timer,
+    ignore: Box<dyn Fn(&VAction) -> bool + Send>,
+}
+
 /// This struct handles the main logic of the GameController.
 pub struct GameController {
     /// The constant parameters of the game.
     pub params: Params,
     game: Game,
-    delayed_game: Option<Game>,
-    delayed_game_timer: Timer,
+    delay: Option<DelayHandler>,
     time: Duration,
     logger: Box<dyn Logger + Send>,
 }
@@ -79,8 +85,7 @@ impl GameController {
         Self {
             params,
             game,
-            delayed_game: None,
-            delayed_game_timer: Timer::Stopped,
+            delay: None,
             time: Duration::ZERO,
             logger,
         }
@@ -90,10 +95,28 @@ impl GameController {
     /// state should be the delayed game state.
     pub fn get_game(&self, delayed: bool) -> &Game {
         if delayed {
-            self.delayed_game.as_ref().unwrap_or(&self.game)
+            self.delay.as_ref().map_or(&self.game, |delay| &delay.game)
         } else {
             &self.game
         }
+    }
+
+    /// This function returns an action context for the game. Although there is nothing that
+    /// prevents it from being used in other ways, it should only be used to check if actions are
+    /// legal. (I'm too lazy at the moment to create different types of contexts for is_legal and
+    /// execute.)
+    pub fn get_context(&mut self, delayed: bool) -> ActionContext {
+        ActionContext::new(
+            if delayed {
+                self.delay
+                    .as_mut()
+                    .map_or(&mut self.game, |delay| &mut delay.game)
+            } else {
+                &mut self.game
+            },
+            &self.params,
+            None,
+        )
     }
 
     /// This function lets time progress. Timers are updated and expiration actions applied when
@@ -111,20 +134,25 @@ impl GameController {
 
             let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
 
-            // Update delayed game state. This is not really elegant at the moment.
-            self.delayed_game_timer.seek(this_dt, &run_conditions);
-            if matches!(self.delayed_game_timer, Timer::Stopped) {
-                self.delayed_game = None;
-            } else if let Some(delayed_game) = self.delayed_game.as_mut() {
-                let delayed_run_conditions =
-                    EvaluatedRunConditions::new(delayed_game, &self.params);
-                let delayed_actions: Vec<VAction> = delayed_game
-                    .timers_mut()
-                    .filter_map(|timer| timer.seek(this_dt, &delayed_run_conditions))
-                    .flatten()
-                    .collect();
-                for action in delayed_actions {
-                    self.apply_delayed(&action);
+            // Update the delayed game state.
+            if let Some(delay) = self.delay.as_mut() {
+                delay.timer.seek(this_dt, &run_conditions);
+                if matches!(delay.timer, Timer::Stopped) {
+                    // The delay is over, so it can be switched back to the true state.
+                    self.delay = None;
+                } else {
+                    // Seek timers in the delayed game state and apply their actions.
+                    let delayed_run_conditions =
+                        EvaluatedRunConditions::new(&delay.game, &self.params);
+                    let delayed_actions: Vec<VAction> = delay
+                        .game
+                        .timers_mut()
+                        .filter_map(|timer| timer.seek(this_dt, &delayed_run_conditions))
+                        .flatten()
+                        .collect();
+                    for action in delayed_actions {
+                        self.apply_delayed(&action);
+                    }
                 }
             }
 
@@ -145,27 +173,17 @@ impl GameController {
     /// This function applies an action, given that it is legal. Some special cases will be
     /// filtered here. The action as well as the resulting game state is logged.
     pub fn apply(&mut self, action: VAction, source: ActionSource) {
-        if !action.is_legal(&self.game, &self.params) {
+        let mut context = ActionContext::new(&mut self.game, &self.params, Some(&mut self.delay));
+        if !action.is_legal(&context) {
             return;
         }
 
-        // Some actions are intercepted here because their effects are delayed. Only actions that
-        // are not triggered by a timer are forwarded to the delayed state, because timers may
-        // differ and timers from the delayed state call directly into the corresponding function.
+        action.execute(&mut context);
         // I'm not sure if timer-triggered actions from the non-delayed state should still cancel
         // the delayed state if they are illegal.
-        if self.game.phase != Phase::PenaltyShootout && matches!(action, VAction::Goal(_)) {
-            self.hide(self.params.competition.delay_after_goal);
-        } else if matches!(
-            action,
-            VAction::FreePenaltyShot(_) | VAction::FreeSetPlay(_)
-        ) {
-            self.hide(self.params.competition.delay_after_playing);
-        } else if source != ActionSource::Timer {
+        if source != ActionSource::Timer {
             self.apply_delayed(&action);
         }
-
-        action.execute(&mut self.game, &self.params);
         self.log_now(LogEntry::Action(LoggedAction { source, action }));
         self.log_now(LogEntry::GameState(Box::new(self.game.clone())));
     }
@@ -184,17 +202,24 @@ impl GameController {
         let run_conditions = EvaluatedRunConditions::new(&self.game, &self.params);
         self.game
             .timers()
-            .chain(once(&self.delayed_game_timer))
+            .chain(
+                self.delay
+                    .as_ref()
+                    .map(|delay| once(&delay.timer))
+                    .into_iter()
+                    .flatten(),
+            )
             .filter(|timer| timer.will_expire() && timer.is_running(&run_conditions))
             // At this point, we can be sure that the remaining time is not negative.
             .map(|timer| timer.get_remaining().try_into().unwrap())
             .chain(
-                self.delayed_game
+                self.delay
                     .as_ref()
-                    .map(|delayed_game| {
+                    .map(|delay| {
                         let delayed_run_conditions =
-                            EvaluatedRunConditions::new(delayed_game, &self.params);
-                        delayed_game
+                            EvaluatedRunConditions::new(&delay.game, &self.params);
+                        delay
+                            .game
                             .timers()
                             .filter(move |timer| {
                                 timer.will_expire() && timer.is_running(&delayed_run_conditions)
@@ -233,12 +258,13 @@ impl GameController {
             .filter(|timer| timer.is_running(&run_conditions))
             .map(next_wrap)
             .chain(
-                self.delayed_game
+                self.delay
                     .as_ref()
-                    .map(|delayed_game| {
+                    .map(|delay| {
                         let delayed_run_conditions =
-                            EvaluatedRunConditions::new(delayed_game, &self.params);
-                        delayed_game
+                            EvaluatedRunConditions::new(&delay.game, &self.params);
+                        delay
+                            .game
                             .timers()
                             .filter(move |timer| timer.is_running(&delayed_run_conditions))
                             .map(next_wrap)
@@ -251,25 +277,14 @@ impl GameController {
     }
 
     fn apply_delayed(&mut self, action: &VAction) {
-        if let Some(delayed_game) = self.delayed_game.as_mut() {
-            // FinishSetPlay is not a reason to cancel the delayed state because that would mean
-            // that e.g. a kick-off is delayed for only 10 seconds.
-            if action.is_legal(delayed_game, &self.params) {
-                action.execute(delayed_game, &self.params);
-            } else if !matches!(action, VAction::FinishSetPlay(_)) {
-                self.delayed_game = None;
-                self.delayed_game_timer = Timer::Stopped;
+        if let Some(delay) = self.delay.as_mut() {
+            let mut context = ActionContext::new(&mut delay.game, &self.params, None);
+            if action.is_legal(&context) {
+                action.execute(&mut context);
+            } else if !(delay.ignore)(action) {
+                self.delay = None;
             }
         }
-    }
-
-    fn hide(&mut self, duration: Duration) {
-        self.delayed_game_timer = Timer::Started {
-            remaining: duration.try_into().unwrap(),
-            run_condition: RunCondition::Always,
-            behavior_at_zero: BehaviorAtZero::Expire(vec![]),
-        };
-        self.delayed_game = Some(self.game.clone());
     }
 }
 

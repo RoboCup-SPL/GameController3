@@ -2,10 +2,10 @@ use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
 
-use crate::action::{Action, VAction};
+use crate::action::{Action, ActionContext, VAction};
 use crate::actions::{StartSetPlay, Unpenalize};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
-use crate::types::{Game, Params, Penalty, PenaltyCall, Phase, PlayerNumber, SetPlay, Side, State};
+use crate::types::{Penalty, PenaltyCall, Phase, PlayerNumber, SetPlay, Side, State};
 
 /// This struct defines an action to apply a penalty to players.
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -20,12 +20,12 @@ pub struct Penalize {
 }
 
 impl Action for Penalize {
-    fn execute(&self, game: &mut Game, params: &Params) {
+    fn execute(&self, c: &mut ActionContext) {
         // Map the penalty call to a penalty.
         let penalty = match self.call {
             PenaltyCall::RequestForPickUp => Penalty::PickedUp,
             PenaltyCall::IllegalPosition => {
-                if game.state == State::Set {
+                if c.game.state == State::Set {
                     Penalty::IllegalPositionInSet
                 } else {
                     Penalty::IllegalPosition
@@ -43,9 +43,9 @@ impl Action for Penalize {
             PenaltyCall::LeavingTheField => Penalty::LeavingTheField,
         };
 
-        game.teams[self.side][self.player].penalty_timer = if penalty == Penalty::PickedUp
+        c.game.teams[self.side][self.player].penalty_timer = if penalty == Penalty::PickedUp
             && matches!(
-                game.state,
+                c.game.state,
                 State::Initial | State::Finished | State::Timeout
             ) {
             // Picking up a player does not start a timer in "halted" game states.
@@ -55,22 +55,22 @@ impl Action for Penalize {
                 remaining: ({
                     // The duration is composed of the base duration plus the increment for each
                     // previous incremental penalty of this team.
-                    let duration = params.competition.penalties[penalty].duration
-                        + if params.competition.penalties[penalty].incremental {
-                            params.competition.penalty_duration_increment
-                                * game.teams[self.side].penalty_counter
+                    let duration = c.params.competition.penalties[penalty].duration
+                        + if c.params.competition.penalties[penalty].incremental {
+                            c.params.competition.penalty_duration_increment
+                                * c.game.teams[self.side].penalty_counter
                         } else {
                             Duration::ZERO
                         };
-                    let previous_penalty = game.teams[self.side][self.player].penalty;
+                    let previous_penalty = c.game.teams[self.side][self.player].penalty;
                     if penalty == Penalty::PickedUp && previous_penalty != Penalty::NoPenalty {
                         // Picking up a player in other states should keep the previous timer if
                         // the player was  already penalized, but enforce that the total penalty
                         // time is at least that of the pick-up penalty.
                         let extra_penalty_duration = TryInto::<SignedDuration>::try_into(duration)
                             .unwrap()
-                            - params.competition.penalties[previous_penalty].duration;
-                        game.teams[self.side][self.player]
+                            - c.params.competition.penalties[previous_penalty].duration;
+                        c.game.teams[self.side][self.player]
                             .penalty_timer
                             .get_remaining()
                             + if extra_penalty_duration.is_positive() {
@@ -79,7 +79,7 @@ impl Action for Penalize {
                                 // don't want to introduce extra complexity only for this special
                                 // case as long as it isn't necessary.
                                 assert!(
-                                    !params.competition.penalties[previous_penalty].incremental
+                                    !c.params.competition.penalties[previous_penalty].incremental
                                 );
                                 extra_penalty_duration
                             } else {
@@ -102,9 +102,9 @@ impl Action for Penalize {
             }
         };
 
-        game.teams[self.side][self.player].penalty = penalty;
-        if params.competition.penalties[penalty].incremental {
-            game.teams[self.side].penalty_counter += 1;
+        c.game.teams[self.side][self.player].penalty = penalty;
+        if c.params.competition.penalties[penalty].incremental {
+            c.game.teams[self.side].penalty_counter += 1;
         }
 
         // If this call requires switching to a set play, it is started here.
@@ -117,49 +117,51 @@ impl Action for Penalize {
                 side: -self.side,
                 set_play,
             }
-            .execute(game, params);
+            .execute(c);
         }
     }
 
-    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
-        (game.teams[self.side][self.player].penalty == Penalty::NoPenalty
+    fn is_legal(&self, c: &ActionContext) -> bool {
+        (c.game.teams[self.side][self.player].penalty == Penalty::NoPenalty
             || (self.call == PenaltyCall::RequestForPickUp
-                && game.teams[self.side][self.player].penalty != Penalty::PickedUp))
+                && c.game.teams[self.side][self.player].penalty != Penalty::PickedUp))
             && (match self.call {
                 PenaltyCall::RequestForPickUp => true,
                 PenaltyCall::IllegalPosition => {
-                    game.phase != Phase::PenaltyShootout
-                        && (game.state == State::Set || game.state == State::Playing)
+                    c.game.phase != Phase::PenaltyShootout
+                        && (c.game.state == State::Set || c.game.state == State::Playing)
                 }
-                PenaltyCall::MotionInSet => game.state == State::Set,
+                PenaltyCall::MotionInSet => c.game.state == State::Set,
                 PenaltyCall::FallenInactive => {
-                    game.state == State::Ready
-                        || game.state == State::Set
-                        || game.state == State::Playing
+                    c.game.state == State::Ready
+                        || c.game.state == State::Set
+                        || c.game.state == State::Playing
                 }
                 PenaltyCall::LocalGameStuck => {
-                    game.phase != Phase::PenaltyShootout && game.state == State::Playing
+                    c.game.phase != Phase::PenaltyShootout && c.game.state == State::Playing
                 }
-                PenaltyCall::BallHolding => game.state == State::Playing,
+                PenaltyCall::BallHolding => c.game.state == State::Playing,
                 PenaltyCall::PlayerStance => {
-                    game.state == State::Ready
-                        || game.state == State::Set
-                        || game.state == State::Playing
+                    c.game.state == State::Ready
+                        || c.game.state == State::Set
+                        || c.game.state == State::Playing
                 }
-                PenaltyCall::Pushing => game.state == State::Ready || game.state == State::Playing,
+                PenaltyCall::Pushing => {
+                    c.game.state == State::Ready || c.game.state == State::Playing
+                }
                 PenaltyCall::Foul => {
-                    game.phase != Phase::PenaltyShootout
-                        && game.state == State::Playing
-                        && game.set_play == SetPlay::NoSetPlay
+                    c.game.phase != Phase::PenaltyShootout
+                        && c.game.state == State::Playing
+                        && c.game.set_play == SetPlay::NoSetPlay
                 }
                 PenaltyCall::PenaltyKick => {
-                    game.phase != Phase::PenaltyShootout
-                        && game.state == State::Playing
-                        && game.set_play == SetPlay::NoSetPlay
+                    c.game.phase != Phase::PenaltyShootout
+                        && c.game.state == State::Playing
+                        && c.game.set_play == SetPlay::NoSetPlay
                 }
-                PenaltyCall::PlayingWithArmsHands => game.state == State::Playing,
+                PenaltyCall::PlayingWithArmsHands => c.game.state == State::Playing,
                 PenaltyCall::LeavingTheField => {
-                    game.state == State::Ready || game.state == State::Playing
+                    c.game.state == State::Ready || c.game.state == State::Playing
                 }
             })
     }

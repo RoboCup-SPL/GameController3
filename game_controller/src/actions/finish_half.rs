@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::action::Action;
+use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Game, Params, Phase, SetPlay, State};
+use crate::types::{Phase, SetPlay, State};
 
 /// This struct defines an action which corresponds to the referee call "Finish" (or rather
 /// two/three successive whistles).
@@ -10,22 +10,23 @@ use crate::types::{Game, Params, Phase, SetPlay, State};
 pub struct FinishHalf;
 
 impl Action for FinishHalf {
-    fn execute(&self, game: &mut Game, params: &Params) {
+    fn execute(&self, c: &mut ActionContext) {
         // Cancel all penalty timers.
-        game.teams.values_mut().for_each(|team| {
+        c.game.teams.values_mut().for_each(|team| {
             team.players.iter_mut().for_each(|player| {
                 player.penalty_timer = Timer::Stopped;
             })
         });
 
-        game.secondary_timer = Timer::Stopped;
-        game.set_play = SetPlay::NoSetPlay;
-        game.state = State::Finished;
+        c.game.secondary_timer = Timer::Stopped;
+        c.game.set_play = SetPlay::NoSetPlay;
+        c.game.state = State::Finished;
 
         // After the first half, a timer counts down the half-time break.
-        if game.phase == Phase::FirstHalf {
-            game.secondary_timer = Timer::Started {
-                remaining: params
+        if c.game.phase == Phase::FirstHalf {
+            c.game.secondary_timer = Timer::Started {
+                remaining: c
+                    .params
                     .competition
                     .half_time_break_duration
                     .try_into()
@@ -36,10 +37,10 @@ impl Action for FinishHalf {
         }
     }
 
-    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
-        game.phase != Phase::PenaltyShootout
-            && (game.state == State::Playing
-                || game.state == State::Ready
-                || game.state == State::Set)
+    fn is_legal(&self, c: &ActionContext) -> bool {
+        c.game.phase != Phase::PenaltyShootout
+            && (c.game.state == State::Playing
+                || c.game.state == State::Ready
+                || c.game.state == State::Set)
     }
 }

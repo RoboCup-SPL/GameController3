@@ -2,9 +2,9 @@ use std::mem::replace;
 
 use serde::{Deserialize, Serialize};
 
-use crate::action::Action;
+use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Game, Params, Penalty, PlayerNumber, Side, State};
+use crate::types::{Penalty, PlayerNumber, Side, State};
 
 /// This struct defines an action to substitute players.
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -19,41 +19,41 @@ pub struct Substitute {
 }
 
 impl Action for Substitute {
-    fn execute(&self, game: &mut Game, params: &Params) {
-        if game.teams[self.side][self.player_out].penalty == Penalty::NoPenalty
-            && matches!(game.state, State::Ready | State::Set | State::Playing)
+    fn execute(&self, c: &mut ActionContext) {
+        if c.game.teams[self.side][self.player_out].penalty == Penalty::NoPenalty
+            && matches!(c.game.state, State::Ready | State::Set | State::Playing)
         {
             // Players that are substituted while not being penalized must still wait as if they
             // were picked-up.
-            assert!(!params.competition.penalties[Penalty::PickedUp].incremental);
-            game.teams[self.side][self.player_in].penalty = Penalty::PickedUp;
-            game.teams[self.side][self.player_in].penalty_timer = Timer::Started {
-                remaining: params.competition.penalties[Penalty::PickedUp]
+            assert!(!c.params.competition.penalties[Penalty::PickedUp].incremental);
+            c.game.teams[self.side][self.player_in].penalty = Penalty::PickedUp;
+            c.game.teams[self.side][self.player_in].penalty_timer = Timer::Started {
+                remaining: c.params.competition.penalties[Penalty::PickedUp]
                     .duration
                     .try_into()
                     .unwrap(),
                 run_condition: RunCondition::ReadyOrPlaying,
                 behavior_at_zero: BehaviorAtZero::Clip,
             };
-            game.teams[self.side][self.player_out].penalty_timer = Timer::Stopped;
+            c.game.teams[self.side][self.player_out].penalty_timer = Timer::Stopped;
         } else {
             // Inherit the penalty and the timer.
-            game.teams[self.side][self.player_in].penalty =
-                game.teams[self.side][self.player_out].penalty;
-            game.teams[self.side][self.player_in].penalty_timer = replace(
-                &mut game.teams[self.side][self.player_out].penalty_timer,
+            c.game.teams[self.side][self.player_in].penalty =
+                c.game.teams[self.side][self.player_out].penalty;
+            c.game.teams[self.side][self.player_in].penalty_timer = replace(
+                &mut c.game.teams[self.side][self.player_out].penalty_timer,
                 Timer::Stopped,
             );
         }
-        game.teams[self.side][self.player_out].penalty = Penalty::Substitute;
-        if game.teams[self.side].goalkeeper == self.player_out {
-            game.teams[self.side].goalkeeper = self.player_in;
+        c.game.teams[self.side][self.player_out].penalty = Penalty::Substitute;
+        if c.game.teams[self.side].goalkeeper == self.player_out {
+            c.game.teams[self.side].goalkeeper = self.player_in;
         }
     }
 
-    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
+    fn is_legal(&self, c: &ActionContext) -> bool {
         self.player_in != self.player_out
-            && game.teams[self.side][self.player_in].penalty == Penalty::Substitute
-            && game.teams[self.side][self.player_out].penalty != Penalty::Substitute
+            && c.game.teams[self.side][self.player_in].penalty == Penalty::Substitute
+            && c.game.teams[self.side][self.player_out].penalty != Penalty::Substitute
     }
 }

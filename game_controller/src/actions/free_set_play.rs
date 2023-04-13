@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::action::{Action, VAction};
+use crate::action::{Action, ActionContext, VAction};
 use crate::actions::FinishSetPlay;
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Game, Params, SetPlay, State};
+use crate::types::{SetPlay, State};
 
 /// This struct defines an action which corresponds to the referee call "Playing". It is the third
 /// part of "complex" set plays which have a Ready and Set state.
@@ -11,19 +11,27 @@ use crate::types::{Game, Params, SetPlay, State};
 pub struct FreeSetPlay;
 
 impl Action for FreeSetPlay {
-    fn execute(&self, game: &mut Game, params: &Params) {
-        game.secondary_timer = Timer::Started {
-            remaining: params.competition.set_plays[game.set_play]
+    fn execute(&self, c: &mut ActionContext) {
+        // FinishSetPlay is not a reason to cancel the delayed state because that would mean that
+        // e.g. a kick-off is delayed for only 10 seconds instead of the desired 15 seconds.
+        if !c.fork(c.params.competition.delay_after_playing, |action| {
+            matches!(action, VAction::FinishSetPlay(_))
+        }) {
+            return;
+        }
+
+        c.game.secondary_timer = Timer::Started {
+            remaining: c.params.competition.set_plays[c.game.set_play]
                 .duration
                 .try_into()
                 .unwrap(),
             run_condition: RunCondition::Always,
             behavior_at_zero: BehaviorAtZero::Expire(vec![VAction::FinishSetPlay(FinishSetPlay)]),
         };
-        game.state = State::Playing;
+        c.game.state = State::Playing;
     }
 
-    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
-        game.state == State::Set && game.set_play != SetPlay::NoSetPlay
+    fn is_legal(&self, c: &ActionContext) -> bool {
+        c.game.state == State::Set && c.game.set_play != SetPlay::NoSetPlay
     }
 }

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::action::Action;
-use crate::types::{Game, Params, Phase, State};
+use crate::action::{Action, ActionContext};
+use crate::types::{Phase, State};
 
 /// This struct defines an action which corresponds to the referee call "Playing" in a penalty
 /// shoot-out.
@@ -9,11 +9,15 @@ use crate::types::{Game, Params, Phase, State};
 pub struct FreePenaltyShot;
 
 impl Action for FreePenaltyShot {
-    fn execute(&self, game: &mut Game, _params: &Params) {
-        game.state = State::Playing;
+    fn execute(&self, c: &mut ActionContext) {
+        if !c.fork(c.params.competition.delay_after_playing, |_| false) {
+            return;
+        }
+
+        c.game.state = State::Playing;
     }
 
-    fn is_legal(&self, game: &Game, _params: &Params) -> bool {
-        game.phase == Phase::PenaltyShootout && game.state == State::Set
+    fn is_legal(&self, c: &ActionContext) -> bool {
+        c.game.phase == Phase::PenaltyShootout && c.game.state == State::Set
     }
 }
