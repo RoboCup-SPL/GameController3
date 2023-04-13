@@ -42,8 +42,9 @@ export const FINISH_HALF = 8;
 export const START_KICK_OFF_HOME = 9;
 export const START_KICK_OFF_AWAY = 10;
 export const ADD_EXTRA_TIME = 11;
+export const REFEREE_TIMEOUT = 12;
 
-const NUM_OF_GAME_ACTIONS = 12;
+const NUM_OF_GAME_ACTIONS = 13;
 
 const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
@@ -76,6 +77,7 @@ export const getActions = () => {
   actions.push({ type: "startSetPlay", args: { side: "home", setPlay: "kickOff" } });
   actions.push({ type: "startSetPlay", args: { side: "away", setPlay: "kickOff" } });
   actions.push({ type: "addExtraTime", args: null });
+  actions.push({ type: "timeout", args: { side: null } });
   for (const penalty of PENALTIES) {
     for (const side of ["home", "away"]) {
       for (let number = 1; number <= NUM_OF_PLAYERS; ++number) {

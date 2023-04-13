@@ -129,6 +129,9 @@ timeoutDuration:
   secs: 300
   nanos: 0
 timeoutsPerTeam: 1
+refereeTimeoutDuration:
+  secs: 600
+  nanos: 0
 messagesPerTeam: 1200
 messagesPerTeamPerExtraMinute: 60
 mercyRuleScoreDifference: 10

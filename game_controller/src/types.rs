@@ -54,6 +54,8 @@ pub struct CompetitionParams {
     pub timeout_duration: Duration,
     /// The number of timeouts a team can take during a game.
     pub timeouts_per_team: u8,
+    /// The duration of a referee timeout.
+    pub referee_timeout_duration: Duration,
     /// The number of team messages a team can send during a game.
     pub messages_per_team: u16,
     /// The number of team messages by which a team's budget is increased per minute of extra time.
@@ -150,7 +152,7 @@ pub enum State {
     Playing,
     /// This state is active after each half and each penalty shot.
     Finished,
-    /// This state is active during a timeout.
+    /// This state is active during a timeout (either for a team or by the referee).
     Timeout,
 }
 

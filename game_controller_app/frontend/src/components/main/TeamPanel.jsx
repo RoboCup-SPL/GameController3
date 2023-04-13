@@ -74,7 +74,6 @@ const TeamPanel = ({
         <div className="flex flex-col gap-2 flex-1">
           <ActionButton
             action={{ type: "timeout", args: { side: side } }}
-            active={game.state === "timeout" && game.kickingSide != side}
             label="Timeout"
             legal={legalTeamActions[actions.TIMEOUT]}
           />

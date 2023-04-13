@@ -17,6 +17,11 @@ const PhasePanel = ({ game, legalGameActions }) => {
         label="Penalty Shots"
         legal={legalGameActions[actions.START_PENALTY_SHOOTOUT]}
       />
+      <ActionButton
+        action={{ type: "timeout", args: { side: null } }}
+        label="Referee Timeout"
+        legal={legalGameActions[actions.REFEREE_TIMEOUT]}
+      />
     </div>
   );
 };

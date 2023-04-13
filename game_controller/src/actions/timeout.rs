@@ -4,12 +4,12 @@ use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
 use crate::types::{Phase, SetPlay, Side, State};
 
-/// This struct defines an action for when a team takes a timeout.
+/// This struct defines an action for when a team or the referee takes a timeout.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Timeout {
-    /// The side which takes the timeout.
-    pub side: Side,
+    /// The side which takes the timeout or [None] for a referee timeout.
+    pub side: Option<Side>,
 }
 
 impl Action for Timeout {
@@ -22,25 +22,34 @@ impl Action for Timeout {
         });
 
         if c.game.phase != Phase::PenaltyShootout {
-            // The next kick-off is for the other team.
-            c.game.kicking_side = -self.side;
+            if let Some(side) = self.side {
+                // The next kick-off is for the other team.
+                c.game.kicking_side = -side;
+            }
         }
+        let duration = if self.side.is_some() {
+            c.params.competition.timeout_duration
+        } else {
+            c.params.competition.referee_timeout_duration
+        };
         c.game.secondary_timer = Timer::Started {
             // In some cases, an existing timer is modified to avoid situations like "We are going
             // to take a timeout once their timeout is over".
             remaining: if c.game.state == State::Timeout
                 || (c.game.state == State::Initial && c.game.phase == Phase::SecondHalf)
             {
-                c.game.secondary_timer.get_remaining() + c.params.competition.timeout_duration
+                c.game.secondary_timer.get_remaining() + duration
             } else {
-                c.params.competition.timeout_duration.try_into().unwrap()
+                duration.try_into().unwrap()
             },
             run_condition: RunCondition::Always,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
         c.game.state = State::Timeout;
         c.game.set_play = SetPlay::NoSetPlay;
-        c.game.teams[self.side].timeout_budget -= 1;
+        if let Some(side) = self.side {
+            c.game.teams[side].timeout_budget -= 1;
+        }
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
@@ -53,6 +62,6 @@ impl Action for Timeout {
             // don't explicitly rule this out (I think), but it would be ridiculous if it was
             // legal.
             && (c.game.set_play == SetPlay::NoSetPlay || c.game.set_play == SetPlay::KickOff)
-            && c.game.teams[self.side].timeout_budget > 0
+            && self.side.map_or(true, |side| c.game.teams[side].timeout_budget > 0)
     }
 }
