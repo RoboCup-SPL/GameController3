@@ -1,7 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 use crate::action::Action;
 use crate::types::{Game, Params, Phase, Side, State};
-
-use serde::{Deserialize, Serialize};
 
 /// This struct defines an action that is triggered when a team message is received.
 #[derive(Clone, Debug, Deserialize, Serialize)]
