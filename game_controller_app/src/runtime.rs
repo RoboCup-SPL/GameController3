@@ -31,8 +31,8 @@ use game_controller::{
 };
 use game_controller_msgs::{MonitorRequest, StatusMessage};
 use game_controller_net::{
-    run_control_message_sender, run_monitor_request_receiver, run_status_message_forwarder,
-    run_status_message_receiver, run_team_message_receiver, Event,
+    ControlMessageSender, Event, MonitorRequestReceiver, StatusMessageForwarder,
+    StatusMessageReceiver, TeamMessageReceiver,
 };
 
 use crate::connection_status::{
@@ -83,52 +83,42 @@ pub struct RuntimeState {
 /// This function starts all network services that are not tied to a specific monitor. It returns a
 /// receiver for incoming network events, a sender for the game state (that will be published to the
 /// players) and a join set in which all tasks were spawned.
-fn start_network(
+async fn start_network(
     initial_game: Game,
     params: Params,
     broadcast_address: IpAddr,
     local_address: IpAddr,
     multicast: bool,
     teams: Vec<u8>,
-) -> (
+) -> Result<(
     mpsc::UnboundedReceiver<Event>,
     watch::Sender<Game>,
     JoinSet<()>,
-) {
+)> {
     let (event_sender, event_receiver) = mpsc::unbounded_channel();
     let (control_sender, control_receiver) = watch::channel(initial_game);
 
     let mut join_set = JoinSet::new();
 
-    join_set.spawn(async move {
-        run_control_message_sender(broadcast_address, params, control_receiver, false)
-            .await
-            .unwrap()
-    });
+    let control_message_sender =
+        ControlMessageSender::new(broadcast_address, params, control_receiver, false).await?;
 
-    teams.into_iter().for_each(|team| {
-        let team_sender = event_sender.clone();
-        join_set.spawn(async move {
-            run_team_message_receiver(local_address, multicast, team, team_sender)
-                .await
-                .unwrap()
-        });
-    });
+    join_set.spawn(async move { control_message_sender.run().await.unwrap() });
 
-    let status_sender = event_sender.clone();
-    join_set.spawn(async move {
-        run_status_message_receiver(local_address, status_sender)
-            .await
-            .unwrap()
-    });
+    for team in teams {
+        let team_message_receiver =
+            TeamMessageReceiver::new(local_address, multicast, team, event_sender.clone()).await?;
+        join_set.spawn(async move { team_message_receiver.run().await.unwrap() });
+    }
 
-    join_set.spawn(async move {
-        run_monitor_request_receiver(local_address, event_sender)
-            .await
-            .unwrap()
-    });
+    let status_message_receiver =
+        StatusMessageReceiver::new(local_address, event_sender.clone()).await?;
+    join_set.spawn(async move { status_message_receiver.run().await.unwrap() });
 
-    (event_receiver, control_sender, join_set)
+    let monitor_request_receiver = MonitorRequestReceiver::new(local_address, event_sender).await?;
+    join_set.spawn(async move { monitor_request_receiver.run().await.unwrap() });
+
+    Ok((event_receiver, control_sender, join_set))
 }
 
 /// This function is the interfaces the GameController to external events. Each loop iteration
@@ -208,16 +198,35 @@ async fn event_loop(
                             && !monitors.contains_key(&host)
                         {
                             let mut monitor_join_set = JoinSet::new();
-                            monitor_join_set.spawn(run_control_message_sender(
-                                host,
-                                game_controller.params.clone(),
-                                true_control_sender.subscribe(),
-                                true
-                            ));
-                            monitor_join_set.spawn(run_status_message_forwarder(
-                                host,
-                                status_forward_sender.subscribe()
-                            ));
+                            {
+                                let params = game_controller.params.clone();
+                                let receiver = true_control_sender.subscribe();
+                                monitor_join_set.spawn(async move {
+                                    ControlMessageSender::new(
+                                        host,
+                                        params,
+                                        receiver,
+                                        true
+                                    )
+                                    .await
+                                    .unwrap()
+                                    .run()
+                                    .await
+                                });
+                            }
+                            {
+                                let receiver = status_forward_sender.subscribe();
+                                monitor_join_set.spawn(async move {
+                                    StatusMessageForwarder::new(
+                                        host,
+                                        receiver,
+                                    )
+                                    .await
+                                    .unwrap()
+                                    .run()
+                                    .await
+                                });
+                            }
                             monitors.insert(host, monitor_join_set);
                         }
                     },
@@ -349,23 +358,28 @@ pub async fn start_runtime(
         .find(|network_interface| network_interface.id == settings.network.interface)
         .unwrap();
 
-    let (event_receiver, control_sender, network_join_set) = start_network(
-        game_controller.get_game(true).clone(),
-        game_controller.params.clone(),
-        if settings.network.broadcast {
-            IpAddr::V4(Ipv4Addr::BROADCAST)
-        } else {
-            network_interface.broadcast
-        },
-        network_interface.address,
-        settings.network.multicast,
-        settings
-            .game
-            .teams
-            .values()
-            .map(|team| team.number)
-            .collect(),
-    );
+    let (event_receiver, control_sender, network_join_set) = {
+        let game = game_controller.get_game(true).clone();
+        let params = game_controller.params.clone();
+        start_network(
+            game,
+            params,
+            if settings.network.broadcast {
+                IpAddr::V4(Ipv4Addr::BROADCAST)
+            } else {
+                network_interface.broadcast
+            },
+            network_interface.address,
+            settings.network.multicast,
+            settings
+                .game
+                .teams
+                .values()
+                .map(|team| team.number)
+                .collect(),
+        )
+        .await?
+    };
 
     let (action_sender, action_receiver) = mpsc::unbounded_channel();
     let (subscribed_actions_sender, subscribed_actions_receiver) = watch::channel(vec![]);
