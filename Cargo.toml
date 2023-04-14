@@ -16,6 +16,7 @@ game_controller_msgs = { path = "game_controller_msgs" }
 game_controller_net = { path = "game_controller_net" }
 serde = { version = "1.0", features = ["derive"] }
 serde_with = { version = "2.3", features = ["base64", "time_0_3"] }
+socket2 = { version = "0.5", features = ["all"] }
 time = { version = "0.3", features = ["formatting", "serde"] }
 tokio = { version = "1.0", features = ["macros", "net", "sync", "time"] }
 trait_enum = { version = "0.5" }
