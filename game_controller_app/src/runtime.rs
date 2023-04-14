@@ -101,21 +101,21 @@ async fn start_network(
     let mut join_set = JoinSet::new();
 
     let control_message_sender =
-        ControlMessageSender::new(broadcast_address, params, control_receiver, false).await?;
+        ControlMessageSender::new(broadcast_address, params, control_receiver, false).await.context("could not create control message sender")?;
 
     join_set.spawn(async move { control_message_sender.run().await.unwrap() });
 
     for team in teams {
         let team_message_receiver =
-            TeamMessageReceiver::new(local_address, multicast, team, event_sender.clone()).await?;
+            TeamMessageReceiver::new(local_address, multicast, team, event_sender.clone()).await.context("could not create team message receiver")?;
         join_set.spawn(async move { team_message_receiver.run().await.unwrap() });
     }
 
     let status_message_receiver =
-        StatusMessageReceiver::new(local_address, event_sender.clone()).await?;
+        StatusMessageReceiver::new(local_address, event_sender.clone()).await.context("could not create status message receiver")?;
     join_set.spawn(async move { status_message_receiver.run().await.unwrap() });
 
-    let monitor_request_receiver = MonitorRequestReceiver::new(local_address, event_sender).await?;
+    let monitor_request_receiver = MonitorRequestReceiver::new(local_address, event_sender).await.context("could not create monitor request receiver")?;
     join_set.spawn(async move { monitor_request_receiver.run().await.unwrap() });
 
     Ok((event_receiver, control_sender, join_set))
@@ -378,7 +378,7 @@ pub async fn start_runtime(
                 .map(|team| team.number)
                 .collect(),
         )
-        .await?
+        .await.context("could not start network services")?
     };
 
     let (action_sender, action_receiver) = mpsc::unbounded_channel();

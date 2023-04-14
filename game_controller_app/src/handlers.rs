@@ -2,7 +2,7 @@
 
 use std::sync::Arc;
 
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use tauri::{
     command, generate_handler, AppHandle, InvokeHandler, Manager, State, Window, WindowBuilder,
     WindowUrl, Wry,
@@ -59,29 +59,36 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     };
 
     let launch_data = app.state::<LaunchData>();
-    app.manage(
-        start_runtime(
-            // TODO: This will probably not work in production.
-            &app.path_resolver()
-                .resource_dir()
-                .unwrap()
-                .join("..")
-                .join("..")
-                .join("config"),
-            &app.path_resolver()
-                .resource_dir()
-                .unwrap()
-                .join("..")
-                .join("..")
-                .join("logs"),
-            &settings,
-            &launch_data.teams,
-            &launch_data.network_interfaces,
-            Box::new(send_ui_state),
-        )
-        .await
-        .unwrap(),
-    );
+    match start_runtime(
+        // TODO: This will probably not work in production.
+        &app.path_resolver()
+            .resource_dir()
+            .unwrap()
+            .join("..")
+            .join("..")
+            .join("config"),
+        &app.path_resolver()
+            .resource_dir()
+            .unwrap()
+            .join("..")
+            .join("..")
+            .join("logs"),
+        &settings,
+        &launch_data.teams,
+        &launch_data.network_interfaces,
+        Box::new(send_ui_state),
+    )
+    .await
+    .context("could not start runtime")
+    {
+        Ok(runtime_state) => {
+            app.manage(runtime_state);
+        }
+        Err(error) => {
+            eprintln!("{error:?}");
+            app.exit(1);
+        }
+    }
 
     // Now that the RuntimeState is managed, we can tell the UI that it can proceed.
     runtime_notify.notify_one();
