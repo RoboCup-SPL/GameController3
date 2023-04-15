@@ -124,7 +124,8 @@ impl Action for Penalize {
     fn is_legal(&self, c: &ActionContext) -> bool {
         (c.game.teams[self.side][self.player].penalty == Penalty::NoPenalty
             || (self.call == PenaltyCall::RequestForPickUp
-                && c.game.teams[self.side][self.player].penalty != Penalty::PickedUp))
+                && c.game.teams[self.side][self.player].penalty != Penalty::PickedUp
+                && c.game.teams[self.side][self.player].penalty != Penalty::Substitute))
             && (match self.call {
                 PenaltyCall::RequestForPickUp => true,
                 PenaltyCall::IllegalPosition => {
