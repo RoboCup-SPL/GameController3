@@ -1,14 +1,15 @@
 //! This module defines the launcher backend of the GameController application.
 
-use std::{collections::hash_map::HashMap, fs::File, net::IpAddr, path::Path};
+use std::{fs::File, net::IpAddr, path::Path};
 
 use anyhow::{anyhow, bail, Context, Result};
 use enum_map::enum_map;
 use network_interface::NetworkInterfaceConfig;
 use serde::{Deserialize, Serialize};
-use tauri::api::cli::ArgData;
 
 use game_controller::types::{Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams};
+
+use crate::cli::Args;
 
 /// This struct describes a single entry in `config/teams.yaml`.
 #[derive(Clone, Deserialize, Serialize)]
@@ -182,10 +183,7 @@ fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
 
 /// This function creates [LaunchData] from a path to the `config` directory and a map of command
 /// line arguments that can initialize certain values of the default settings.
-pub fn make_launch_data(
-    config_directory: &Path,
-    args: HashMap<String, ArgData>,
-) -> Result<LaunchData> {
+pub fn make_launch_data(config_directory: &Path, args: Args) -> Result<LaunchData> {
     let teams = get_teams(config_directory).context("could not read teams")?;
     if teams.is_empty() {
         bail!("there are no teams");
@@ -232,13 +230,7 @@ pub fn make_launch_data(
         bail!("there are no network interfaces");
     }
 
-    let competition_id = if let Some(ArgData {
-        value: id,
-        occurrences: 1..,
-        ..
-    }) = args.get("competition")
-    {
-        let id = id.as_str().unwrap().to_string();
+    let competition_id = if let Some(id) = args.competition {
         if !competitions.iter().any(|competition| competition.id == id) {
             let competition_ids = competitions
                 .iter()
@@ -251,17 +243,11 @@ pub fn make_launch_data(
         competitions[0].id.clone()
     };
 
-    let parse_team = |arg: Option<&ArgData>| {
-        if let Some(ArgData {
-            value: team_id,
-            occurrences: 1..,
-            ..
-        }) = arg
-        {
-            let team_id = team_id.as_str().unwrap();
+    let parse_team = |arg: Option<&String>| {
+        if let Some(team_id) = arg {
             let team = match team_id.parse::<u8>() {
                 Ok(number) => teams.iter().find(|team| team.number == number),
-                _ => teams.iter().find(|team| team.name == team_id),
+                _ => teams.iter().find(|team| &team.name == team_id),
             }
             .ok_or(anyhow!("unknown team: {team_id}"))?;
             if !competitions
@@ -290,7 +276,7 @@ pub fn make_launch_data(
         },
         game: GameSettings {
             teams: enum_map! {
-                Side::Home => parse_team(args.get("home-team"))
+                Side::Home => parse_team(args.home_team.as_ref())
                     .context("could not set home team")?
                     .unwrap_or(TeamParams
                 {
@@ -298,7 +284,7 @@ pub fn make_launch_data(
                     field_player_color: default_team.field_player_colors[0],
                     goalkeeper_color: default_team.goalkeeper_colors[0],
                 }),
-                Side::Away => parse_team(args.get("away-team"))
+                Side::Away => parse_team(args.away_team.as_ref())
                     .context("could not set away team")?
                     .unwrap_or(TeamParams
                 {
@@ -307,34 +293,16 @@ pub fn make_launch_data(
                     goalkeeper_color: default_team.goalkeeper_colors[1],
                 }),
             },
-            long: matches!(
-                args.get("play-off"),
-                Some(ArgData {
-                    occurrences: 1..,
-                    ..
-                })
-            ),
+            long: args.play_off,
             kick_off_side: Side::Home,
             side_mapping: SideMapping::HomeDefendsLeftGoal,
         },
         window: WindowSettings {
-            fullscreen: matches!(
-                args.get("fullscreen"),
-                Some(ArgData {
-                    occurrences: 1..,
-                    ..
-                })
-            ),
+            fullscreen: args.fullscreen,
         },
         network: NetworkSettings {
             interface: {
-                if let Some(ArgData {
-                    value: interface,
-                    occurrences: 1..,
-                    ..
-                }) = args.get("interface")
-                {
-                    let id = interface.as_str().unwrap().to_string();
+                if let Some(id) = args.interface {
                     if !network_interfaces
                         .iter()
                         .any(|network_interface| network_interface.id == id)
@@ -350,20 +318,8 @@ pub fn make_launch_data(
                     network_interfaces[0].id.clone()
                 }
             },
-            broadcast: matches!(
-                args.get("broadcast"),
-                Some(ArgData {
-                    occurrences: 1..,
-                    ..
-                })
-            ),
-            multicast: matches!(
-                args.get("multicast"),
-                Some(ArgData {
-                    occurrences: 1..,
-                    ..
-                })
-            ),
+            broadcast: args.broadcast,
+            multicast: args.multicast,
         },
     };
 

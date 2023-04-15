@@ -5,14 +5,17 @@
     windows_subsystem = "windows"
 )]
 
+use clap::Parser;
 use tauri::{async_runtime, generate_context, Manager, RunEvent, WindowBuilder, WindowUrl};
 
+mod cli;
 mod connection_status;
 mod handlers;
 mod launch;
 mod logger;
 mod runtime;
 
+use cli::Args;
 use handlers::get_invoke_handler;
 use launch::make_launch_data;
 use runtime::{shutdown_runtime, RuntimeState};
@@ -21,6 +24,10 @@ use runtime::{shutdown_runtime, RuntimeState};
 /// launcher in which the user can configure the settings for the game. When the user is done with
 /// that, the main window and network services are started and shut down when the app is quit.
 fn main() {
+    // Parse the command line arguments first. This includes handling the version and help commands
+    // and wrong arguments.
+    let args = Args::parse();
+
     // We want to manage an external tokio runtime, mainly to keep dependencies to tauri minimal,
     // but also because I don't know how to do the shutdown correctly otherwise.
     let runtime = tokio::runtime::Builder::new_multi_thread()
@@ -31,35 +38,17 @@ fn main() {
 
     let app = tauri::Builder::default()
         .setup(|app| {
-            // We don't want to pass errors from command line argument parsing out of this closure
-            // (although that would be possible), because that would result in a panic! and we want
-            // to gracefully quit (but with nonzero error code) in most cases.
-            match app.get_cli_matches() {
-                Ok(matches) => {
-                    if matches.args.contains_key("help") {
-                        println!("{}", matches.args["help"].value.as_str().unwrap());
-                        app.handle().exit(0);
-                    } else if matches.args.contains_key("version") {
-                        println!("{} {}", app.package_info().name, app.package_info().version);
-                        app.handle().exit(0);
-                    }
-                    // TODO: This will probably not work in production.
-                    let config_directory = app
-                        .path_resolver()
-                        .resource_dir()
-                        .unwrap()
-                        .join("..")
-                        .join("..")
-                        .join("config");
-                    match make_launch_data(&config_directory, matches.args) {
-                        Ok(launch_data) => {
-                            app.manage(launch_data);
-                        }
-                        Err(error) => {
-                            eprintln!("{error:?}");
-                            app.handle().exit(1);
-                        }
-                    }
+            // TODO: This will probably not work in production.
+            let config_directory = app
+                .path_resolver()
+                .resource_dir()
+                .unwrap()
+                .join("..")
+                .join("..")
+                .join("config");
+            match make_launch_data(&config_directory, args) {
+                Ok(launch_data) => {
+                    app.manage(launch_data);
                 }
                 Err(error) => {
                     eprintln!("{error:?}");
