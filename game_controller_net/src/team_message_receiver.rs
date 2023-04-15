@@ -46,7 +46,7 @@ impl TeamMessageReceiver {
                     Socket::new(socket_address.domain(), Type::DGRAM, Some(Protocol::UDP))?;
                 #[cfg(target_os = "macos")]
                 raw_socket.set_reuse_port(true)?;
-                #[cfg(target_os = "linux")]
+                #[cfg(any(target_os = "linux", target_os = "windows"))]
                 raw_socket.set_reuse_address(true)?;
                 // Extend this for other operating systems when it's clear what the right thing is
                 // on that system.
