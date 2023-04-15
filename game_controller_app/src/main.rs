@@ -56,13 +56,11 @@ fn main() {
                 }
             };
 
-            let _launcher =
-                WindowBuilder::new(app, "launcher", WindowUrl::App("launcher.html".into()))
-                    .center()
-                    .inner_size(600.0, 450.0)
-                    .resizable(false)
-                    .title("GameController")
-                    .build()?;
+            let _window = WindowBuilder::new(app, "main", WindowUrl::App("index.html".into()))
+                .center()
+                .min_inner_size(1024.0, 768.0)
+                .title("GameController")
+                .build()?;
             Ok(())
         })
         .invoke_handler(get_invoke_handler())

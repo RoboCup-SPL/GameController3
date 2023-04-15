@@ -71,9 +71,9 @@ export const getLaunchData = async () => {
   }
 };
 
-export const launch = (settings) => {
+export const launch = async (settings) => {
   if (window.__TAURI_METADATA__) {
-    invoke("launch", { settings: settings });
+    await invoke("launch", { settings: settings });
   } else {
     console.log(settings);
   }

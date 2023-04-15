@@ -7,10 +7,7 @@ module.exports = (_, { mode }) => ({
     port: 3000,
     static: false,
   },
-  entry: {
-    main: path.resolve(__dirname, "src", "main.jsx"),
-    launcher: path.resolve(__dirname, "src", "launcher.jsx"),
-  },
+  entry: path.resolve(__dirname, "src", "index.jsx"),
   module: {
     rules: [
       {
@@ -62,20 +59,14 @@ module.exports = (_, { mode }) => ({
     ],
   },
   output: {
-    filename: "[name].js",
+    filename: "index.js",
     path: path.resolve(__dirname, "build"),
     clean: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
-      chunks: ["main"],
-      filename: "main.html",
+      filename: "index.html",
       title: "GameController",
-    }),
-    new HtmlWebpackPlugin({
-      chunks: ["launcher"],
-      filename: "launcher.html",
-      title: "GameController (Launcher)",
     }),
   ].concat(mode === "production" ? [new MiniCssExtractPlugin()] : []),
   resolve: {

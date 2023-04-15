@@ -3,10 +3,7 @@
 use std::sync::Arc;
 
 use anyhow::{anyhow, Context};
-use tauri::{
-    command, generate_handler, AppHandle, InvokeHandler, Manager, State, Window, WindowBuilder,
-    WindowUrl, Wry,
-};
+use tauri::{command, generate_handler, AppHandle, InvokeHandler, Manager, State, Window, Wry};
 use tokio::sync::Notify;
 
 use game_controller::{action::VAction, types::Params};
@@ -25,33 +22,18 @@ fn get_launch_data(launch_data: State<LaunchData>) -> LaunchData {
     launch_data.inner().clone()
 }
 
-/// This function is called when the user finishes the launcher window. It closes the launcher
-/// window, creates a game state, network services, and the main window, and spawns tasks to handle
-/// events.
+/// This function is called when the user finishes the launcher dialog. It creates a game state and
+/// network services, and spawns tasks to handle events.
 #[command]
 async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
-    assert_eq!(window.label(), "launcher");
-
     // The notify object must be managed before the window is created.
     let runtime_notify = Arc::new(Notify::new());
     app.manage(SyncState(runtime_notify.clone()));
 
-    // The window is created here so we can have a reference to it in send_ui_state without looking
-    // up the window by name each time (and other stuff would be complicated as well).
-    let main_window = WindowBuilder::new(&app, "main", WindowUrl::App("main.html".into()))
-        .center()
-        .min_inner_size(1024.0, 768.0)
-        .title("GameController")
-        .fullscreen(settings.window.fullscreen)
-        .build()
-        .unwrap();
-
-    // At least on Linux, the launcher must be closed after the main window was created, because
-    // otherwise the application wants to exit.
-    window.close().unwrap();
+    let _ = window.set_fullscreen(settings.window.fullscreen);
 
     let send_ui_state = move |ui_state| {
-        if let Err(error) = main_window.emit("state", ui_state) {
+        if let Err(error) = window.emit("state", ui_state) {
             Err(anyhow!(error))
         } else {
             Ok(())

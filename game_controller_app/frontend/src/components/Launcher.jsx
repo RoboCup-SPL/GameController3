@@ -5,7 +5,7 @@ import NetworkSettings from "./launcher/NetworkSettings";
 import WindowSettings from "./launcher/WindowSettings";
 import { getLaunchData, launch } from "../api";
 
-const Launcher = () => {
+const Launcher = ({ setLaunched }) => {
   const [competitions, setCompetitions] = useState(null);
   const [launchSettings, setLaunchSettings] = useState(null);
   const [networkInterfaces, setNetworkInterfaces] = useState(null);
@@ -93,7 +93,7 @@ const Launcher = () => {
         <button
           className="px-8 py-2 rounded-md border border-black disabled:bg-slate-400"
           disabled={!launchSettingsAreLegal}
-          onClick={() => launch(launchSettings)}
+          onClick={() => launch(launchSettings).then(() => setLaunched(true))}
         >
           Start
         </button>
