@@ -1,6 +1,6 @@
 const NetworkSettings = ({ interfaces, network, setNetwork }) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col items-center gap-2">
       <div className="flex flex-row items-center gap-2">
         <label htmlFor="interface">Interface</label>
         <select
