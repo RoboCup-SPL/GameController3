@@ -12,7 +12,7 @@ use std::{
 use anyhow::{Context, Result};
 use serde::Serialize;
 use serde_with::{serde_as, BoolFromInt};
-use time::{format_description::well_known::Rfc3339, OffsetDateTime};
+use time::{macros::format_description, OffsetDateTime};
 use tokio::{
     fs::create_dir_all,
     select,
@@ -340,9 +340,13 @@ pub async fn start_runtime(
     let logger = FileLogger::new(
         log_directory.join(format!(
             "log_{}_{}_{}.yaml",
+            date_time
+                .format(format_description!(
+                    "[year]-[month]-[day]_[hour]-[minute]-[second]"
+                ))
+                .context("could not create log file name")?,
             team_names[Side::Home],
             team_names[Side::Away],
-            date_time.format(&Rfc3339).unwrap(),
         )),
         &mut runtime_join_set,
         false, // TODO: This should be true at actual competitions so that logs are always
