@@ -102,20 +102,24 @@ const TeamPanel = ({
 
           {game.phase === "penaltyShootout" ? (
             <>
-              <dt>Penalty Shot{game.kickingSide === side ? "" : "s"}</dt>
-              <dd className="tabular-nums">{team.penaltyShot}</dd>
+              <dt>Shot{game.kickingSide === side ? "" : "s"}:</dt>
+              <dd className="tabular-nums text-right">{team.penaltyShot}</dd>
             </>
           ) : (
             <>
-              <dt className={team.illegalCommunication ? "text-fuchsia-400" : ""}>Messages</dt>
-              <dd className={`tabular-nums ${team.illegalCommunication ? "text-fuchsia-400" : ""}`}>
+              <dt className={team.illegalCommunication ? "text-fuchsia-400" : ""}>Messages:</dt>
+              <dd
+                className={`tabular-nums text-right ${
+                  team.illegalCommunication ? "text-fuchsia-400" : ""
+                }`}
+              >
                 {team.messageBudget}
               </dd>
             </>
           )}
 
-          <dt>Penalties</dt>
-          <dd className="tabular-nums">{team.penaltyCounter}</dd>
+          <dt>Penalties:</dt>
+          <dd className="tabular-nums text-right">{team.penaltyCounter}</dd>
         </dl>
       </div>
       {team.players
