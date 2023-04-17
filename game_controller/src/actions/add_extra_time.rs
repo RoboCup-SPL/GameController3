@@ -21,6 +21,19 @@ impl Action for AddExtraTime {
             run_condition: RunCondition::Playing,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
+        if let Some(primary_timer_before_stoppage_of_play) =
+            c.game.primary_timer_before_stoppage_of_play.as_mut()
+        {
+            assert!(matches!(
+                primary_timer_before_stoppage_of_play,
+                Timer::Started { .. }
+            ));
+            *primary_timer_before_stoppage_of_play = Timer::Started {
+                remaining: primary_timer_before_stoppage_of_play.get_remaining() + Self::MINUTE,
+                run_condition: RunCondition::Playing,
+                behavior_at_zero: BehaviorAtZero::Overflow,
+            };
+        }
         c.game.teams.values_mut().for_each(|team| {
             if !team.illegal_communication {
                 team.message_budget += c.params.competition.messages_per_team_per_extra_minute;

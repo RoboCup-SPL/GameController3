@@ -44,6 +44,9 @@ impl Action for StartSetPlay {
                 )]),
             };
             c.game.state = State::Ready;
+            // Remember the current value of the primary timer so that it can be restored when a
+            // timeout is taken.
+            c.game.primary_timer_before_stoppage_of_play = Some(c.game.primary_timer.clone());
         } else {
             c.game.secondary_timer = Timer::Started {
                 remaining: c.params.competition.set_plays[self.set_play]

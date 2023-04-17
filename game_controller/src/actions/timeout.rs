@@ -22,9 +22,16 @@ impl Action for Timeout {
         });
 
         if c.game.phase != Phase::PenaltyShootout {
+            // If this is not a referee timeout, the next kick-off is for the other team.
             if let Some(side) = self.side {
-                // The next kick-off is for the other team.
                 c.game.kicking_side = -side;
+            }
+            // If this is during Ready or Set, the primary timer is reset to the remaining time
+            // when that state started.
+            if let Some(primary_timer_before_stoppage_of_play) =
+                c.game.primary_timer_before_stoppage_of_play.take()
+            {
+                c.game.primary_timer = primary_timer_before_stoppage_of_play;
             }
         }
         let duration = if self.side.is_some() {

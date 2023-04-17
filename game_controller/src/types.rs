@@ -331,6 +331,8 @@ pub struct Game {
     pub kicking_side: Side,
     /// The timer which counts down the duration of a half or the current penalty shot.
     pub primary_timer: Timer,
+    /// The value of the primary timer when the current stoppage of play (Ready-Set-block) started.
+    pub primary_timer_before_stoppage_of_play: Option<Timer>,
     /// The timer which counts down set plays, timeouts, half-time break etc.
     pub secondary_timer: Timer,
     /// The two competing teams.
