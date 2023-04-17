@@ -18,8 +18,8 @@ impl Action for FinishHalf {
             })
         });
 
-        c.game.primary_timer_before_stoppage_of_play = None;
         c.game.secondary_timer = Timer::Stopped;
+        c.game.timeout_rewind_timer = Timer::Stopped;
         c.game.set_play = SetPlay::NoSetPlay;
         c.game.state = State::Finished;
 

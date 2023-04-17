@@ -26,13 +26,14 @@ impl Action for Timeout {
             if let Some(side) = self.side {
                 c.game.kicking_side = -side;
             }
-            // If this is during Ready or Set, the primary timer is reset to the remaining time
-            // when that state started.
-            if let Some(primary_timer_before_stoppage_of_play) =
-                c.game.primary_timer_before_stoppage_of_play.take()
-            {
-                c.game.primary_timer = primary_timer_before_stoppage_of_play;
-            }
+            // The primary timer is rewound to the time when the stoppage of play has started.
+            c.game.primary_timer = Timer::Started {
+                remaining: c.game.primary_timer.get_remaining()
+                    - c.game.timeout_rewind_timer.get_remaining(),
+                run_condition: RunCondition::Playing,
+                behavior_at_zero: BehaviorAtZero::Overflow,
+            };
+            c.game.timeout_rewind_timer = Timer::Stopped;
         }
         let duration = if self.side.is_some() {
             c.params.competition.timeout_duration

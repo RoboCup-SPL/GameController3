@@ -20,7 +20,6 @@ impl Action for FreeSetPlay {
             return;
         }
 
-        c.game.primary_timer_before_stoppage_of_play = None;
         c.game.secondary_timer = Timer::Started {
             remaining: c.params.competition.set_plays[c.game.set_play]
                 .duration
@@ -29,6 +28,7 @@ impl Action for FreeSetPlay {
             run_condition: RunCondition::Always,
             behavior_at_zero: BehaviorAtZero::Expire(vec![VAction::FinishSetPlay(FinishSetPlay)]),
         };
+        c.game.timeout_rewind_timer = Timer::Stopped;
         c.game.state = State::Playing;
     }
 

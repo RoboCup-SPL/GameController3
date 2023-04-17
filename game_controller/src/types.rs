@@ -331,10 +331,10 @@ pub struct Game {
     pub kicking_side: Side,
     /// The timer which counts down the duration of a half or the current penalty shot.
     pub primary_timer: Timer,
-    /// The value of the primary timer when the current stoppage of play (Ready-Set-block) started.
-    pub primary_timer_before_stoppage_of_play: Option<Timer>,
     /// The timer which counts down set plays, timeouts, half-time break etc.
     pub secondary_timer: Timer,
+    /// A timer that counts how much the primary timer has to be rewound when taking a timeout.
+    pub timeout_rewind_timer: Timer,
     /// The two competing teams.
     pub teams: EnumMap<Side, Team>,
 }
@@ -345,7 +345,14 @@ impl Game {
         self.teams
             .values()
             .flat_map(|team| team.players.iter().map(|player| &player.penalty_timer))
-            .chain([&self.primary_timer, &self.secondary_timer].into_iter())
+            .chain(
+                [
+                    &self.primary_timer,
+                    &self.secondary_timer,
+                    &self.timeout_rewind_timer,
+                ]
+                .into_iter(),
+            )
     }
 
     /// This function returns a mutable iterator over all timers in the game.
@@ -357,7 +364,14 @@ impl Game {
                     .iter_mut()
                     .map(|player| &mut player.penalty_timer)
             })
-            .chain([&mut self.primary_timer, &mut self.secondary_timer].into_iter())
+            .chain(
+                [
+                    &mut self.primary_timer,
+                    &mut self.secondary_timer,
+                    &mut self.timeout_rewind_timer,
+                ]
+                .into_iter(),
+            )
     }
 }
 

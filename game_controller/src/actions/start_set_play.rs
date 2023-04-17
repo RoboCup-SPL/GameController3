@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext, VAction};
 use crate::actions::{FinishSetPlay, WaitForSetPlay};
-use crate::timer::{BehaviorAtZero, RunCondition, Timer};
+use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
 use crate::types::{Phase, SetPlay, Side, State};
 
 /// This struct defines an action to start a set play. Depending on the set play type, this means
@@ -43,10 +43,16 @@ impl Action for StartSetPlay {
                     WaitForSetPlay,
                 )]),
             };
+            // This timer counts the time during the Ready and Set states (negatively) so it can be
+            // added back to the primary timer when taking a timeout. It uses the same run
+            // condition as the primary timer, so if the primary counter doesn't count down, the
+            // time won't be added back to it.
+            c.game.timeout_rewind_timer = Timer::Started {
+                remaining: SignedDuration::ZERO,
+                run_condition: RunCondition::Playing,
+                behavior_at_zero: BehaviorAtZero::Overflow,
+            };
             c.game.state = State::Ready;
-            // Remember the current value of the primary timer so that it can be restored when a
-            // timeout is taken.
-            c.game.primary_timer_before_stoppage_of_play = Some(c.game.primary_timer.clone());
         } else {
             c.game.secondary_timer = Timer::Started {
                 remaining: c.params.competition.set_plays[self.set_play]

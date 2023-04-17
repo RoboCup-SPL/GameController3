@@ -53,8 +53,8 @@ impl GameController {
                 run_condition: RunCondition::Playing,
                 behavior_at_zero: BehaviorAtZero::Overflow,
             },
-            primary_timer_before_stoppage_of_play: None,
             secondary_timer: Timer::Stopped,
+            timeout_rewind_timer: Timer::Stopped,
             teams: enum_map! {
                 _ => Team {
                     goalkeeper: PlayerNumber::new(1),
