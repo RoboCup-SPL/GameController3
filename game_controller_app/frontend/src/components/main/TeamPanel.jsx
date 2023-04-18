@@ -1,3 +1,4 @@
+import { useState } from "react";
 import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
 import * as actions from "../../actions.js";
@@ -28,11 +29,23 @@ const TeamPanel = ({
   sign,
   teamNames,
 }) => {
+  const [substitute, setSubstitute] = useState(false);
+  const [substitutedPlayer, setSubstitutedPlayer] = useState(null);
+
   const team = game.teams[side];
   const teamConnectionStatus = connectionStatus[side];
   const teamParams = params.game.teams[side];
   const handlePlayerClick = (player) => {
-    if (selectedPenaltyCall != null) {
+    if (substitute && substitutedPlayer != null) {
+      applyAction({
+        type: "substitute",
+        args: { side: side, playerOut: substitutedPlayer, playerIn: player.number },
+      });
+      setSubstitute(false);
+      setSubstitutedPlayer(null);
+    } else if (substitute) {
+      setSubstitutedPlayer(player.number);
+    } else if (selectedPenaltyCall != null) {
       applyAction({
         type: "penalize",
         args: {
@@ -73,15 +86,27 @@ const TeamPanel = ({
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
         <div className="flex flex-col gap-2 flex-1">
           <ActionButton
-            action={{ type: "timeout", args: { side: side } }}
-            label="Timeout"
-            legal={legalTeamActions[actions.TIMEOUT]}
+            action={() => {
+              setSubstitute(!substitute);
+              setSubstitutedPlayer(null);
+            }}
+            active={substitute}
+            label={game.phase === "penaltyShootout" ? "Select" : "Substitute"}
+            legal={true}
           />
-          <ActionButton
-            action={{ type: "globalGameStuck", args: { side: side } }}
-            label="Global Game Stuck"
-            legal={legalTeamActions[actions.GLOBAL_GAME_STUCK]}
-          />
+          {game.state != "playing" ? (
+            <ActionButton
+              action={{ type: "timeout", args: { side: side } }}
+              label="Timeout"
+              legal={legalTeamActions[actions.TIMEOUT]}
+            />
+          ) : (
+            <ActionButton
+              action={{ type: "globalGameStuck", args: { side: side } }}
+              label="Global Game Stuck"
+              legal={legalTeamActions[actions.GLOBAL_GAME_STUCK]}
+            />
+          )}
         </div>
         <div className="flex-1">
           <ActionButton
@@ -130,21 +155,29 @@ const TeamPanel = ({
             number: index + 1,
           };
         })
-        .filter((player) => player.penalty != "substitute")
+        .filter(
+          substitute && substitutedPlayer != null
+            ? (player) => player.penalty === "substitute"
+            : (player) => player.penalty != "substitute"
+        )
         .map((player) => (
           <PlayerButton
             key={player.number}
             color={
-              player.number == team.goalkeeper
+              (substitute && substitutedPlayer != null ? substitutedPlayer : player.number) ==
+              team.goalkeeper
                 ? teamParams.goalkeeperColor
                 : teamParams.fieldPlayerColor
             }
-            legal={actions.isPenaltyCallLegalForPlayer(
-              legalPenaltyActions,
-              side,
-              player.number,
-              selectedPenaltyCall
-            )}
+            legal={
+              substitute ||
+              actions.isPenaltyCallLegalForPlayer(
+                legalPenaltyActions,
+                side,
+                player.number,
+                selectedPenaltyCall
+              )
+            }
             onClick={() => handlePlayerClick(player)}
             player={player}
           />

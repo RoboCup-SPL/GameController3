@@ -7,7 +7,9 @@ const ActionButton = ({ action, active, label, legal }) => {
         active ? "bg-gray-300" : legal ? "" : "text-gray-300 bg-gray-100"
       }`}
       disabled={!legal}
-      onClick={action ? () => applyAction(action) : () => {}}
+      onClick={
+        action ? (typeof action === "function" ? action : () => applyAction(action)) : () => {}
+      }
     >
       {label}
     </button>
