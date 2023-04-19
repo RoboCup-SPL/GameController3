@@ -58,7 +58,8 @@ fn main() {
 
             let _window = WindowBuilder::new(app, "main", WindowUrl::App("index.html".into()))
                 .center()
-                .min_inner_size(1024.0, 768.0)
+                .inner_size(640.0, 480.0)
+                .resizable(false)
                 .title("GameController")
                 .build()?;
             Ok(())

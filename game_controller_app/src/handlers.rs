@@ -3,7 +3,9 @@
 use std::sync::Arc;
 
 use anyhow::{anyhow, Context};
-use tauri::{command, generate_handler, AppHandle, InvokeHandler, Manager, State, Window, Wry};
+use tauri::{
+    command, generate_handler, AppHandle, InvokeHandler, LogicalSize, Manager, State, Window, Wry,
+};
 use tokio::sync::Notify;
 
 use game_controller::{action::VAction, types::Params};
@@ -30,7 +32,10 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     let runtime_notify = Arc::new(Notify::new());
     app.manage(SyncState(runtime_notify.clone()));
 
+    let _ = window.set_min_size(Some(LogicalSize::<f64>::new(1024.0, 768.0)));
     let _ = window.set_fullscreen(settings.window.fullscreen);
+    let _ = window.set_resizable(true);
+    let _ = window.center();
 
     let send_ui_state = move |ui_state| {
         if let Err(error) = window.emit("state", ui_state) {
