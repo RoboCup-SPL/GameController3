@@ -70,44 +70,38 @@ const Main = () => {
   ) {
     const mirror = game.sides === "homeDefendsRightGoal";
     return (
-      <div className={`flex ${mirror ? "flex-row-reverse" : "flex-row"} h-full gap-4 p-2`}>
-        <div className="w-80">
-          <TeamPanel
-            connectionStatus={connectionStatus}
-            game={game}
-            legalPenaltyActions={extractPenaltyActions(legalActions)}
-            legalTeamActions={extractTeamActions(legalActions, "home")}
-            params={params}
-            selectedPenaltyCall={selectedPenaltyCall}
-            setSelectedPenaltyCall={setSelectedPenaltyCall}
-            side="home"
-            sign={mirror ? -1 : 1}
-            teamNames={teamNames}
-          />
-        </div>
-        <div className="grow">
-          <CenterPanel
-            game={game}
-            legalGameActions={extractGameActions(legalActions)}
-            legalPenaltyActions={extractPenaltyActions(legalActions)}
-            selectedPenaltyCall={selectedPenaltyCall}
-            setSelectedPenaltyCall={setSelectedPenaltyCall}
-          />
-        </div>
-        <div className="w-80">
-          <TeamPanel
-            connectionStatus={connectionStatus}
-            game={game}
-            legalPenaltyActions={extractPenaltyActions(legalActions)}
-            legalTeamActions={extractTeamActions(legalActions, "away")}
-            params={params}
-            selectedPenaltyCall={selectedPenaltyCall}
-            setSelectedPenaltyCall={setSelectedPenaltyCall}
-            side="away"
-            sign={mirror ? 1 : -1}
-            teamNames={teamNames}
-          />
-        </div>
+      <div className={`flex ${mirror ? "flex-row-reverse" : "flex-row"} w-screen h-screen gap-4 p-2`}>
+        <TeamPanel
+          connectionStatus={connectionStatus}
+          game={game}
+          legalPenaltyActions={extractPenaltyActions(legalActions)}
+          legalTeamActions={extractTeamActions(legalActions, "home")}
+          params={params}
+          selectedPenaltyCall={selectedPenaltyCall}
+          setSelectedPenaltyCall={setSelectedPenaltyCall}
+          side="home"
+          sign={mirror ? -1 : 1}
+          teamNames={teamNames}
+        />
+        <CenterPanel
+          game={game}
+          legalGameActions={extractGameActions(legalActions)}
+          legalPenaltyActions={extractPenaltyActions(legalActions)}
+          selectedPenaltyCall={selectedPenaltyCall}
+          setSelectedPenaltyCall={setSelectedPenaltyCall}
+        />
+        <TeamPanel
+          connectionStatus={connectionStatus}
+          game={game}
+          legalPenaltyActions={extractPenaltyActions(legalActions)}
+          legalTeamActions={extractTeamActions(legalActions, "away")}
+          params={params}
+          selectedPenaltyCall={selectedPenaltyCall}
+          setSelectedPenaltyCall={setSelectedPenaltyCall}
+          side="away"
+          sign={mirror ? 1 : -1}
+          teamNames={teamNames}
+        />
       </div>
     );
   } else {

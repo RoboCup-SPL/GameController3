@@ -16,7 +16,7 @@ const bgClasses = {
 const PlayerButton = ({ color, legal, onClick, player }) => {
   return (
     <button
-      className={`h-16 rounded-md border border-gray-600 ${bgClasses[color]} ${
+      className={`grow rounded-md border border-gray-600 ${bgClasses[color]} ${
         player.penalty === "noPenalty" ? "" : "text-gray-300"
       }`}
       disabled={!legal}

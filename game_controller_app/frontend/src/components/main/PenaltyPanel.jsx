@@ -3,7 +3,7 @@ import { isPenaltyCallLegal, PENALTIES } from "../../actions.js";
 
 const PenaltyPanel = ({ legalPenaltyActions, selectedPenaltyCall, setSelectedPenaltyCall }) => {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grow grid grid-cols-2 gap-2">
       {PENALTIES.map((penalty, index) => (
         <PenaltyButton
           key={penalty[1]}

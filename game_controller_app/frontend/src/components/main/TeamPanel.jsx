@@ -65,7 +65,7 @@ const TeamPanel = ({
     }
   };
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex-1 flex flex-col gap-2">
       <div className="flex items-center justify-center gap-2">
         <svg
           className={`${game.kickingSide === side ? "" : "invisible"} text-black`}
@@ -84,7 +84,7 @@ const TeamPanel = ({
         </h1>
       </div>
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
-        <div className="flex flex-col gap-2 flex-1">
+        <div className="flex-1 flex flex-col gap-2">
           <ActionButton
             action={() => {
               setSubstitute(!substitute);
@@ -111,7 +111,7 @@ const TeamPanel = ({
         <div className="flex-1">
           <ActionButton
             action={{ type: "goal", args: { side: side } }}
-            label="+"
+            label="Goal"
             legal={legalTeamActions[actions.GOAL]}
           />
         </div>
@@ -147,41 +147,43 @@ const TeamPanel = ({
           <dd className="tabular-nums text-right">{team.penaltyCounter}</dd>
         </dl>
       </div>
-      {team.players
-        .map((player, index) => {
-          return {
-            ...player,
-            connectionStatus: teamConnectionStatus[index],
-            number: index + 1,
-          };
-        })
-        .filter(
-          substitute && substitutedPlayer != null
-            ? (player) => player.penalty === "substitute"
-            : (player) => player.penalty != "substitute"
-        )
-        .map((player) => (
-          <PlayerButton
-            key={player.number}
-            color={
-              (substitute && substitutedPlayer != null ? substitutedPlayer : player.number) ==
-              team.goalkeeper
-                ? teamParams.goalkeeperColor
-                : teamParams.fieldPlayerColor
-            }
-            legal={
-              substitute ||
-              actions.isPenaltyCallLegalForPlayer(
-                legalPenaltyActions,
-                side,
-                player.number,
-                selectedPenaltyCall
-              )
-            }
-            onClick={() => handlePlayerClick(player)}
-            player={player}
-          />
-        ))}
+      <div className="grow flex flex-col gap-2 overflow-auto">
+        {team.players
+          .map((player, index) => {
+            return {
+              ...player,
+              connectionStatus: teamConnectionStatus[index],
+              number: index + 1,
+            };
+          })
+          .filter(
+            substitute && substitutedPlayer != null
+              ? (player) => player.penalty === "substitute"
+              : (player) => player.penalty != "substitute"
+          )
+          .map((player) => (
+            <PlayerButton
+              key={player.number}
+              color={
+                (substitute && substitutedPlayer != null ? substitutedPlayer : player.number) ==
+                team.goalkeeper
+                  ? teamParams.goalkeeperColor
+                  : teamParams.fieldPlayerColor
+              }
+              legal={
+                substitute ||
+                actions.isPenaltyCallLegalForPlayer(
+                  legalPenaltyActions,
+                  side,
+                  player.number,
+                  selectedPenaltyCall
+                )
+              }
+              onClick={() => handlePlayerClick(player)}
+              player={player}
+            />
+          ))}
+      </div>
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
         <ActionButton
           action={{ type: "startSetPlay", args: { side: side, setPlay: "goalKick" } }}
