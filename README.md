@@ -66,6 +66,28 @@ The user must ensure that all of the aforementioned network communication channe
 The GameController runs on a specific network interface, which generally specifies where packets are sent and from where they are received.
 The exceptions are that control messages can be configured to be sent to the limited broadcast address (`255.255.255.255`) instead of the interface's broadcast address, and that team messages are received from any address.
 
+## Usage
+
+### Start
+
+Given the absence of binary packages at this point, the user will have compiled the GameController at this point (or do it now).
+Consequently, the most convenient way to run it is by executing
+
+```bash
+cargo run [-r]
+```
+
+from a command line within any directory of this workspace.
+The program accepts command line arguments which can be passed to `cargo` after `--`.
+They override the defaults of the launcher.
+A list of arguments (that is always up to date, in contrast to what would be written here) can by obtained by running with the `-h` option:
+
+```bash
+cargo run -- -h
+```
+
+Note that release builds on Windows do not output any text.
+
 ## Logs
 
 The GameController writes log files to the directory `logs`.
