@@ -70,7 +70,7 @@ The exceptions are that control messages can be configured to be sent to the lim
 
 ### Start
 
-Given the absence of binary packages at this point, the user will have compiled the GameController at this point (or do it now).
+Given the absence of binary packages, the user will have compiled the GameController at this point (or do it now).
 Consequently, the most convenient way to run it is by executing
 
 ```bash
@@ -87,6 +87,20 @@ cargo run -- -h
 ```
 
 Note that release builds on Windows do not output any text.
+
+### Main Interface
+
+#### Substitution
+
+To substitute players, first click the "Substitute" button on the team's side.
+Then, click the player which should be removed from play.
+The list of players will now change to the list of available substitutes (note that this list is scrollable).
+From this list, the player that shall replace the previously selected player is clicked.
+Depending on the game state, the new player gets a penalty or inherits the penalty of the substituted player.
+The goalkeeper property is tranferred to the substitute, i.e. when the goalkeeper is substituted, the substitute is expected to wear a goalkeeper jersey and inherits the privileges of the goalkeeper.
+
+This feature must also be used before the start of a half in order to match the set of players in the GameController to the players that are actually on the field.
+If a team wants to play with a goalkeeper with a number from 2-7 (or 2-5 in the Challenge Shield), this must be done using three substitutions (e.g. if a team wants to play with players 1-7, but have the 3 be the goalkeeper, it must substitute 8 for 1, 1 for 3, 3 for 8).
 
 ## Logs
 
