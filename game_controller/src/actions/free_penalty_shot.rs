@@ -23,7 +23,7 @@ impl Action for FreePenaltyShot {
             && c.game.teams.values().all(|team| {
                 team.players
                     .iter()
-                    .filter(|player| player.penalty == Penalty::NoPenalty)
+                    .filter(|player| player.penalty != Penalty::Substitute)
                     .count()
                     == 1
             })

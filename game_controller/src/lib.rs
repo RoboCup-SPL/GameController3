@@ -57,7 +57,7 @@ impl GameController {
             timeout_rewind_timer: Timer::Stopped,
             teams: enum_map! {
                 _ => Team {
-                    goalkeeper: PlayerNumber::new(1),
+                    goalkeeper: Some(PlayerNumber::new(1)),
                     score: 0,
                     penalty_counter: 0,
                     timeout_budget: params.competition.timeouts_per_team,

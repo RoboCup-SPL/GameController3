@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Phase, Side, State};
+use crate::types::{Penalty, Phase, Side, State};
 
 /// This struct defines an action which corresponds to the referee call "Set" in a penalty
 /// shoot-out.
@@ -11,10 +11,21 @@ pub struct WaitForPenaltyShot;
 
 impl Action for WaitForPenaltyShot {
     fn execute(&self, c: &mut ActionContext) {
-        if c.game.state != State::Initial && c.game.state != State::Timeout {
+        // If we come from a previous shot, all players are reset to be substitutes and the sides
+        // are switched.
+        if c.game.state == State::Finished {
+            c.game.teams.values_mut().for_each(|team| {
+                team.goalkeeper = None;
+                team.players.iter_mut().for_each(|player| {
+                    player.penalty = Penalty::Substitute;
+                    player.penalty_timer = Timer::Stopped;
+                });
+            });
+
             c.game.sides = -c.game.sides;
             c.game.kicking_side = -c.game.kicking_side;
         }
+
         c.game.state = State::Set;
         c.game.primary_timer = Timer::Started {
             remaining: c

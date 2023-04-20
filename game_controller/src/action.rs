@@ -37,6 +37,7 @@ trait_enum! {
         GlobalGameStuck,
         Goal,
         Penalize,
+        SelectPenaltyShotPlayer,
         StartPenaltyShootout,
         StartSetPlay,
         Substitute,

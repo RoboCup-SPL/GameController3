@@ -32,11 +32,21 @@ const TeamPanel = ({
   const [substitute, setSubstitute] = useState(false);
   const [substitutedPlayer, setSubstitutedPlayer] = useState(null);
 
+  const selectingPlayerIn = substitute && substitutedPlayer != null;
+  const selectingPlayerInPSO = substitute && game.phase === "penaltyShootout";
+
   const team = game.teams[side];
   const teamConnectionStatus = connectionStatus[side];
   const teamParams = params.game.teams[side];
   const handlePlayerClick = (player) => {
-    if (substitute && substitutedPlayer != null) {
+    if (selectingPlayerInPSO) {
+      applyAction({
+        type: "selectPenaltyShotPlayer",
+        args: { side: side, player: player.number, goalkeeper: side != game.kickingSide /*TODO*/ },
+      });
+      setSubstitute(false);
+      setSubstitutedPlayer(null);
+    } else if (selectingPlayerIn) {
       applyAction({
         type: "substitute",
         args: { side: side, playerOut: substitutedPlayer, playerIn: player.number },
@@ -64,6 +74,7 @@ const TeamPanel = ({
       });
     }
   };
+
   return (
     <div className="flex-1 flex flex-col gap-2">
       <div className="flex items-center justify-center gap-2">
@@ -157,7 +168,9 @@ const TeamPanel = ({
             };
           })
           .filter(
-            substitute && substitutedPlayer != null
+            selectingPlayerInPSO
+              ? () => true
+              : selectingPlayerIn
               ? (player) => player.penalty === "substitute"
               : (player) => player.penalty != "substitute"
           )
@@ -165,8 +178,11 @@ const TeamPanel = ({
             <PlayerButton
               key={player.number}
               color={
-                (substitute && substitutedPlayer != null ? substitutedPlayer : player.number) ==
-                team.goalkeeper
+                (
+                  selectingPlayerInPSO
+                    ? side != game.kickingSide /*TODO*/
+                    : (selectingPlayerIn ? substitutedPlayer : player.number) === team.goalkeeper
+                )
                   ? teamParams.goalkeeperColor
                   : teamParams.fieldPlayerColor
               }

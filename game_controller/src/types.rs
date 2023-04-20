@@ -379,8 +379,8 @@ impl Game {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Team {
-    /// The player number of the goalkeeper.
-    pub goalkeeper: PlayerNumber,
+    /// The player number of the goalkeeper. Can be [None] (only) during a penalty shoot-out.
+    pub goalkeeper: Option<PlayerNumber>,
     /// The score of the team.
     pub score: u8,
     /// The penalty counter of the team.

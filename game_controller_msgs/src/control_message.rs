@@ -204,7 +204,9 @@ impl ControlMessage {
                 number: params.game.teams[side].number,
                 field_player_color: get_color(params.game.teams[side].field_player_color),
                 goalkeeper_color: get_color(params.game.teams[side].goalkeeper_color),
-                goalkeeper: game.teams[side].goalkeeper.into(),
+                goalkeeper: game.teams[side]
+                    .goalkeeper
+                    .map_or(0u8, |goalkeeper| goalkeeper.into()),
                 score: game.teams[side].score,
                 penalty_shot: game.teams[side].penalty_shot,
                 single_shots: game.teams[side].penalty_shot_mask,

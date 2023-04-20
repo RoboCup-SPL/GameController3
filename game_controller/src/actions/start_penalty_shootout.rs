@@ -19,14 +19,13 @@ impl Action for StartPenaltyShootout {
     fn execute(&self, c: &mut ActionContext) {
         // Make all players substitutes.
         c.game.teams.values_mut().for_each(|team| {
+            team.goalkeeper = None;
             team.penalty_shot = 0;
             team.penalty_shot_mask = 0;
             team.players.iter_mut().for_each(|player| {
                 player.penalty = Penalty::Substitute;
                 player.penalty_timer = Timer::Stopped;
             });
-            let n = team.goalkeeper;
-            team[n].penalty = Penalty::NoPenalty;
         });
 
         c.game.sides = self.sides;
