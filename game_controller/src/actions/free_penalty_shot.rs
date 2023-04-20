@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
-use crate::types::{Phase, State};
+use crate::types::{Penalty, Phase, State};
 
 /// This struct defines an action which corresponds to the referee call "Playing" in a penalty
 /// shoot-out.
@@ -18,6 +18,14 @@ impl Action for FreePenaltyShot {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
-        c.game.phase == Phase::PenaltyShootout && c.game.state == State::Set
+        c.game.phase == Phase::PenaltyShootout
+            && c.game.state == State::Set
+            && c.game.teams.values().all(|team| {
+                team.players
+                    .iter()
+                    .filter(|player| player.penalty == Penalty::NoPenalty)
+                    .count()
+                    == 1
+            })
     }
 }
