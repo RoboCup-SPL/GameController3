@@ -20,7 +20,7 @@ This is the GameController software for robot soccer games in the RoboCup Standa
 First, the frontend must be compiled:
 
 ```bash
-cd game_controller_app/frontend
+cd frontend
 npm install
 npm run build
 ```
