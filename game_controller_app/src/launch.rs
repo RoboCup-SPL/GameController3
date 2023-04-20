@@ -164,7 +164,7 @@ fn get_teams(config_directory: &Path) -> Result<Vec<Team>> {
 /// It can currently not handle network interfaces with multiple addresses (only the first IPv4
 /// address is used in that case).
 fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
-    Ok(network_interface::NetworkInterface::show()
+    let mut result: Vec<NetworkInterface> = network_interface::NetworkInterface::show()
         .context("could not enumerate network interfaces")?
         .into_iter()
         .filter_map(|interface| {
@@ -178,7 +178,9 @@ fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
                 None
             }
         })
-        .collect())
+        .collect();
+    result.sort_by(|i1, i2| i1.id.cmp(&i2.id));
+    Ok(result)
 }
 
 /// This function creates [LaunchData] from a path to the `config` directory and a map of command
