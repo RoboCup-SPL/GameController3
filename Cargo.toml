@@ -24,7 +24,7 @@ serde_repr = { version = "0.1" }
 serde_yaml = { version = "0.9" }
 socket2 = { version = "0.5", features = ["all"] }
 time = { version = "0.3", features = ["formatting", "local-offset", "macros", "serde"] }
-tokio = { version = "1.0", features = ["fs", "macros", "net", "sync", "time"] }
+tokio = { version = "1.0", features = ["fs", "io-util", "macros", "net", "rt", "sync", "time"] }
 tokio-util = { version = "0.7" }
 trait_enum = { version = "0.5" }
 
