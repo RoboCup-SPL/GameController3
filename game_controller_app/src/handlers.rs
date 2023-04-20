@@ -10,15 +10,18 @@ use tokio::sync::Notify;
 
 use game_controller::{action::VAction, types::Params};
 
-use crate::launch::{LaunchData, LaunchSettings};
-use crate::runtime::{start_runtime, RuntimeState};
+use game_controller_runtime::{
+    launch::{LaunchData, LaunchSettings},
+    start_runtime, RuntimeState,
+};
 
 /// This struct is used as state so that the [launch] function can communicate to
 /// [sync_with_backend] that the full [RuntimeState] is managed now.
 struct SyncState(Arc<Notify>);
 
 /// This function is called by the launcher to obtain its data. The data is read from a state
-/// variable that is created by [crate::launch::make_launch_data] and put there by [crate::main].
+/// variable that is created by [game_controller_runtime::launch::make_launch_data] and put there by
+/// [crate::main].
 #[command]
 fn get_launch_data(launch_data: State<LaunchData>) -> LaunchData {
     launch_data.inner().clone()

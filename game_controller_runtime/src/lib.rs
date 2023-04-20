@@ -35,12 +35,17 @@ use game_controller_net::{
     StatusMessageReceiver, TeamMessageReceiver,
 };
 
-use crate::connection_status::{
+pub mod cli;
+mod connection_status;
+pub mod launch;
+mod logger;
+
+use connection_status::{
     get_connection_status_map, get_next_connection_status_change, AlivenessTimestampMap,
     ConnectionStatusMap,
 };
-use crate::launch::{LaunchSettings, NetworkInterface, Team};
-use crate::logger::FileLogger;
+use launch::{LaunchSettings, NetworkInterface, Team};
+use logger::FileLogger;
 
 /// This struct represents the state that is sent to the UI.
 #[serde_as]

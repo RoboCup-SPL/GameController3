@@ -6,9 +6,9 @@ name = "game_controller_net"
 version = { workspace = true }
 
 [dependencies]
-anyhow.workspace = true
-bytes.workspace = true
-game_controller.workspace = true
-game_controller_msgs.workspace = true
-socket2.workspace = true
-tokio.workspace = true
+anyhow = { workspace = true }
+bytes = { workspace = true }
+game_controller = { workspace = true }
+game_controller_msgs = { workspace = true }
+socket2 = { workspace = true }
+tokio = { workspace = true }

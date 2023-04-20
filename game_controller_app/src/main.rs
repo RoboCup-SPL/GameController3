@@ -8,17 +8,13 @@
 use clap::Parser;
 use tauri::{async_runtime, generate_context, Manager, RunEvent, WindowBuilder, WindowUrl};
 
-mod cli;
-mod connection_status;
-mod handlers;
-mod launch;
-mod logger;
-mod runtime;
+use game_controller_runtime::{
+    cli::Args, launch::make_launch_data, shutdown_runtime, RuntimeState,
+};
 
-use cli::Args;
+mod handlers;
+
 use handlers::get_invoke_handler;
-use launch::make_launch_data;
-use runtime::{shutdown_runtime, RuntimeState};
 
 /// This function runs the tauri app. It first parses command line arguments and displays a
 /// launcher in which the user can configure the settings for the game. When the user is done with

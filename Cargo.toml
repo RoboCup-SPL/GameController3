@@ -4,21 +4,28 @@ members = [
   "game_controller_app",
   "game_controller_msgs",
   "game_controller_net",
+  "game_controller_runtime",
 ]
 
 [workspace.dependencies]
 anyhow = { version = "1.0" }
 bindgen = { version = "0.64" }
 bytes = { version = "1.0" }
+clap = { version = "4.2", features = ["derive"] }
 enum-map = { version = "2.5", features = ["serde"] }
 game_controller = { path = "game_controller" }
 game_controller_msgs = { path = "game_controller_msgs" }
 game_controller_net = { path = "game_controller_net" }
+game_controller_runtime = { path = "game_controller_runtime" }
+network-interface = { version = "1" }
 serde = { version = "1.0", features = ["derive"] }
 serde_with = { version = "2.3", features = ["base64", "time_0_3"] }
+serde_repr = { version = "0.1" }
+serde_yaml = { version = "0.9" }
 socket2 = { version = "0.5", features = ["all"] }
-time = { version = "0.3", features = ["formatting", "serde"] }
-tokio = { version = "1.0", features = ["macros", "net", "sync", "time"] }
+time = { version = "0.3", features = ["formatting", "local-offset", "macros", "serde"] }
+tokio = { version = "1.0", features = ["fs", "macros", "net", "sync", "time"] }
+tokio-util = { version = "0.7" }
 trait_enum = { version = "0.5" }
 
 [workspace.package]

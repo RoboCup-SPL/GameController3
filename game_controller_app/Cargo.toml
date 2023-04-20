@@ -13,19 +13,10 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 anyhow = { version = "1" }
 clap = { version = "4.2", features = ["derive"] }
-enum-map = { version = "2.5", features = ["serde"] }
 game_controller = { path = "../game_controller" }
-game_controller_msgs = { path = "../game_controller_msgs" }
-game_controller_net = { path = "../game_controller_net" }
-network-interface = { version = "1" }
-serde = { version = "1", features = ["derive"] }
-serde_with = { version = "2.3" }
-serde_repr = { version = "0.1" }
-serde_yaml = { version = "0.9" }
-tauri = { version = "1.2.4" }
-time = { version = "0.3", features = ["formatting", "local-offset", "macros"] }
-tokio = { version = "1.0", features = ["fs", "rt-multi-thread", "time"] }
-tokio-util = { version = "0.7" }
+game_controller_runtime = { path = "../game_controller_runtime" }
+tauri = { version = "1.2.4", features = [] }
+tokio = { version = "1.0", features = ["rt-multi-thread"] }
 
 [features]
 # by default Tauri runs in production mode
