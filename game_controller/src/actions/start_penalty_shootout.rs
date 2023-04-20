@@ -24,7 +24,9 @@ impl Action for StartPenaltyShootout {
             team.players.iter_mut().for_each(|player| {
                 player.penalty = Penalty::Substitute;
                 player.penalty_timer = Timer::Stopped;
-            })
+            });
+            let n = team.goalkeeper;
+            team[n].penalty = Penalty::NoPenalty;
         });
 
         c.game.sides = self.sides;

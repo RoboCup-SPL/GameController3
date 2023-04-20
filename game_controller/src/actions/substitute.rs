@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Penalty, PlayerNumber, Side, State};
+use crate::types::{Penalty, Phase, PlayerNumber, Side, State};
 
 /// This struct defines an action to substitute players.
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -21,6 +21,7 @@ pub struct Substitute {
 impl Action for Substitute {
     fn execute(&self, c: &mut ActionContext) {
         if c.game.teams[self.side][self.player_out].penalty == Penalty::NoPenalty
+            && c.game.phase != Phase::PenaltyShootout
             && matches!(c.game.state, State::Ready | State::Set | State::Playing)
         {
             // Players that are substituted while not being penalized must still wait as if they
@@ -52,7 +53,8 @@ impl Action for Substitute {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
-        self.player_in != self.player_out
+        (c.game.phase != Phase::PenaltyShootout || c.game.state != State::Playing)
+            && self.player_in != self.player_out
             && c.game.teams[self.side][self.player_in].penalty == Penalty::Substitute
             && c.game.teams[self.side][self.player_out].penalty != Penalty::Substitute
     }
