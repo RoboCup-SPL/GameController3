@@ -207,8 +207,13 @@ async fn event_loop(
                         // status messages, the monitor request is not ill-formed, or the host is
                         // already registered as a monitor.
                         if !players.contains(&host) && MonitorRequest::try_from(data).is_ok()
-                            && !monitors.contains_key(&host)
                         {
+                            // If the host is already registered as monitor, cancel all tasks
+                            // first. This is because the tasks can have crashed in the meantime
+                            // (because the host disappeared) and they need to be restarted now.
+                            if let Some(mut monitor_state) = monitors.remove(&host) {
+                                monitor_state.abort_all();
+                            }
                             let mut monitor_join_set = JoinSet::new();
                             {
                                 let params = game_controller.params.clone();
