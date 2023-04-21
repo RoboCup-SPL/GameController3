@@ -31,7 +31,11 @@ const ClockPanel = ({ game }) => {
     <div className="flex flex-col items-center">
       <p
         className={`tabular-nums text-8xl font-medium ${
-          game.primaryTimer.started ? "" : "invisible"
+          game.primaryTimer.started
+            ? game.primaryTimer.started.remaining[0] < 10
+              ? "timer-near-zero"
+              : ""
+            : "invisible"
         }`}
       >
         {formatMMSS(game.primaryTimer)}

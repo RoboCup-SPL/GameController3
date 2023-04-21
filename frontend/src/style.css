@@ -5,3 +5,13 @@
 body {
   overflow: hidden;
 }
+
+.timer-near-zero {
+  animation: flash 1s step-start 0s infinite;
+}
+
+@keyframes flash {
+  50% {
+    color: rgb(255%, 0%, 0%);
+  }
+}

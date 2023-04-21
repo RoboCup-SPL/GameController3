@@ -39,7 +39,15 @@ const PlayerButton = ({ color, legal, onClick, player }) => {
         </svg>
         {color.charAt(0).toUpperCase() + color.slice(1)} {player.number}
       </div>
-      <div className={player.penaltyTimer.started ? "" : "invisible"}>
+      <div
+        className={
+          player.penaltyTimer.started
+            ? player.penaltyTimer.started.remaining[0] < 10
+              ? "timer-near-zero"
+              : ""
+            : "invisible"
+        }
+      >
         {formatMMSS(player.penaltyTimer)}
       </div>
     </button>
