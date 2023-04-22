@@ -6,7 +6,7 @@ use enum_map::{enum_map, EnumMap};
 use serde_repr::Serialize_repr;
 use tokio::time::Instant;
 
-use game_controller::types::{PlayerNumber, Side};
+use game_controller_core::types::{PlayerNumber, Side};
 
 /// This enumerates the possible values of a player's connection status.
 #[derive(Clone, Copy, Serialize_repr)]

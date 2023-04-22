@@ -5,7 +5,7 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use tokio::{fs::File, io::AsyncWriteExt, sync::mpsc, task::JoinSet};
 
-use game_controller::log::{Logger, TimestampedLogEntry};
+use game_controller_core::log::{Logger, TimestampedLogEntry};
 
 /// This struct defines a log that is backed by a file. The actual writing happens asynchronously
 /// in a concurrent task.

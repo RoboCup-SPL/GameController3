@@ -8,8 +8,7 @@ use tauri::{
 };
 use tokio::sync::Notify;
 
-use game_controller::{action::VAction, types::Params};
-
+use game_controller_core::{action::VAction, types::Params};
 use game_controller_runtime::{
     launch::{LaunchData, LaunchSettings},
     start_runtime, RuntimeState,

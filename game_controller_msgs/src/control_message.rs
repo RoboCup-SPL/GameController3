@@ -1,8 +1,8 @@
 use bytes::{BufMut, Bytes, BytesMut};
 
-use game_controller::timer::SignedDuration;
-use game_controller::types::{
-    Color, Game, Params, Penalty, Phase, SetPlay, Side, SideMapping, State,
+use game_controller_core::{
+    timer::SignedDuration,
+    types::{Color, Game, Params, Penalty, Phase, SetPlay, Side, SideMapping, State},
 };
 
 use crate::bindings::{
@@ -149,10 +149,10 @@ fn get_color(color: Color) -> u8 {
 }
 
 impl ControlMessage {
-    /// This function creates a new [ControlMessage] from a given [game_controller::types::Game]
-    /// and [game_controller::types::Params]. The caller must also specify a packet number and if
-    /// the message is targeted at a monitor application or the players, since the header signature
-    /// is different.
+    /// This function creates a new [ControlMessage] from a given
+    /// [game_controller_core::types::Game] and [game_controller_core::types::Params]. The caller
+    /// must also specify a packet number and if the message is targeted at a monitor application or
+    /// the players, since the header signature is different.
     pub fn new(game: &Game, params: &Params, packet_number: u8, to_monitor: bool) -> Self {
         let team_order = match game.sides {
             SideMapping::HomeDefendsLeftGoal => [Side::Home, Side::Away],

@@ -1,7 +1,7 @@
 [workspace]
 members = [
-  "game_controller",
   "game_controller_app",
+  "game_controller_core",
   "game_controller_msgs",
   "game_controller_net",
   "game_controller_runtime",
@@ -13,7 +13,7 @@ bindgen = { version = "0.64" }
 bytes = { version = "1.0" }
 clap = { version = "4.2", features = ["derive"] }
 enum-map = { version = "2.5", features = ["serde"] }
-game_controller = { path = "game_controller" }
+game_controller_core = { path = "game_controller_core" }
 game_controller_msgs = { path = "game_controller_msgs" }
 game_controller_net = { path = "game_controller_net" }
 game_controller_runtime = { path = "game_controller_runtime" }

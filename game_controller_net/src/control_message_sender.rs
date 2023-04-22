@@ -7,7 +7,7 @@ use anyhow::Result;
 use bytes::Bytes;
 use tokio::{net::UdpSocket, sync::watch, time::interval};
 
-use game_controller::types::{Game, Params};
+use game_controller_core::types::{Game, Params};
 use game_controller_msgs::{ControlMessage, CONTROL_MESSAGE_PORT};
 
 /// This struct represents a sender for control messages. The messages are sent as UDP packets to

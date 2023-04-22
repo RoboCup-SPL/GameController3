@@ -13,7 +13,7 @@ tauri-build = { version = "1.2.1", features = [] }
 [dependencies]
 anyhow = { version = "1" }
 clap = { version = "4.2", features = ["derive"] }
-game_controller = { path = "../game_controller" }
+game_controller_core = { path = "../game_controller_core" }
 game_controller_runtime = { path = "../game_controller_runtime" }
 tauri = { version = "1.2.4", features = [] }
 tokio = { version = "1.0", features = ["rt-multi-thread"] }

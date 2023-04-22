@@ -36,7 +36,7 @@ cargo build [-r]
 Configuration files that are read at runtime are located in the directory `config`.
 The global `teams.yaml` is a list of all teams in the SPL, their names, and their available jersey colors both for field players and goalkeepers.
 Each (sub)competition has a subdirectory with two files:
-`params.yaml` corresponds to the Rust struct `game_controller::types::CompetitionParams` and sets (mostly numeric) constants for the competition.
+`params.yaml` corresponds to the Rust struct `game_controller_core::types::CompetitionParams` and sets (mostly numeric) constants for the competition.
 `teams.yaml` is a list of team numbers of the teams that participate in the competition.
 Only those teams can be selected when playing in this competition.
 Therefore, for a new team to appear in the UI, an entry must be added both to the global `teams.yaml` (with an unused team number) and in the competition's `teams.yaml` (referencing the team number).

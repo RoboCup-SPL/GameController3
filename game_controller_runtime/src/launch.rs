@@ -7,7 +7,9 @@ use enum_map::enum_map;
 use network_interface::NetworkInterfaceConfig;
 use serde::{Deserialize, Serialize};
 
-use game_controller::types::{Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams};
+use game_controller_core::types::{
+    Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams,
+};
 
 use crate::cli::Args;
 

@@ -9,7 +9,7 @@ version = { workspace = true }
 anyhow = { workspace = true }
 clap = { workspace = true }
 enum-map = { workspace = true }
-game_controller = { workspace = true }
+game_controller_core = { workspace = true }
 game_controller_msgs = { workspace = true }
 game_controller_net = { workspace = true }
 network-interface = { workspace = true }
