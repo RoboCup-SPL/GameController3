@@ -319,7 +319,14 @@ pub fn make_launch_data(config_directory: &Path, args: Args) -> Result<LaunchDat
                     }
                     id
                 } else {
-                    network_interfaces[0].id.clone()
+                    network_interfaces
+                        .iter()
+                        .find(|interface| {
+                            interface.broadcast == IpAddr::from([10u8, 0u8, 255u8, 255u8])
+                        })
+                        .unwrap_or(&network_interfaces[0])
+                        .id
+                        .clone()
                 }
             },
             broadcast: args.broadcast,
