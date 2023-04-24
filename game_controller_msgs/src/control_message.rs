@@ -2,7 +2,7 @@ use bytes::{BufMut, Bytes, BytesMut};
 
 use game_controller_core::{
     timer::SignedDuration,
-    types::{Color, Game, Params, Penalty, Phase, SetPlay, Side, SideMapping, State},
+    types::{Color, Game, Params, Penalty, Phase, PlayerNumber, SetPlay, Side, SideMapping, State},
 };
 
 use crate::bindings::{
@@ -204,9 +204,18 @@ impl ControlMessage {
                 number: params.game.teams[side].number,
                 field_player_color: get_color(params.game.teams[side].field_player_color),
                 goalkeeper_color: get_color(params.game.teams[side].goalkeeper_color),
-                goalkeeper: game.teams[side]
-                    .goalkeeper
-                    .map_or(0u8, |goalkeeper| goalkeeper.into()),
+                goalkeeper: game.teams[side].goalkeeper.map_or_else(
+                    || {
+                        game.teams[side]
+                            .players
+                            .iter()
+                            .enumerate()
+                            .find(|player| player.1.penalty == Penalty::Substitute)
+                            .map(|player| (player.0 as u8) + PlayerNumber::MIN)
+                            .unwrap_or(0u8)
+                    },
+                    |goalkeeper| goalkeeper.into(),
+                ),
                 score: game.teams[side].score,
                 penalty_shot: game.teams[side].penalty_shot,
                 single_shots: game.teams[side].penalty_shot_mask,
