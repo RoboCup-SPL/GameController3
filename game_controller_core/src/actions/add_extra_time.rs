@@ -33,6 +33,6 @@ impl Action for AddExtraTime {
             && c.game.state != State::Playing
             && matches!(c.game.primary_timer, Timer::Started { .. })
             && c.game.primary_timer.get_remaining() + Self::MINUTE
-                <= c.params.competition.half_duration
+                < c.params.competition.half_duration
     }
 }
