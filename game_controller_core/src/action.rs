@@ -44,6 +44,7 @@ trait_enum! {
         SwitchHalf,
         TeamMessage,
         Timeout,
+        Undo,
         Unpenalize,
         WaitForPenaltyShot,
         WaitForSetPlay,
