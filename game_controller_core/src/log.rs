@@ -108,14 +108,9 @@ pub trait Logger {
     fn append(&mut self, entry: TimestampedLogEntry);
 }
 
-/// This struct defines a logger that logs to memory.
-#[derive(Default)]
-pub struct MemoryLogger {
-    entries: Vec<TimestampedLogEntry>,
-}
+/// This struct defines a logger that does nothing.
+pub struct NullLogger;
 
-impl Logger for MemoryLogger {
-    fn append(&mut self, entry: TimestampedLogEntry) {
-        self.entries.push(entry);
-    }
+impl Logger for NullLogger {
+    fn append(&mut self, _entry: TimestampedLogEntry) {}
 }
