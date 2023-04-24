@@ -230,8 +230,8 @@
 
 - name: Rinobot-Jaguar
   number: 47
-  fieldPlayerColors: [red, blue]
-  goalkeeperColors: [red, blue]
+  fieldPlayerColors: [black, red]
+  goalkeeperColors: [yellow, blue]
 
 - name: Starkit
   number: 48
