@@ -36,6 +36,7 @@ pub struct GameController {
     game: Game,
     delay: Option<DelayHandler>,
     time: Duration,
+    history: Vec<Game>,
     logger: Box<dyn Logger + Send>,
 }
 
@@ -88,6 +89,7 @@ impl GameController {
             game,
             delay: None,
             time: Duration::ZERO,
+            history: vec![],
             logger,
         }
     }
@@ -117,6 +119,7 @@ impl GameController {
             },
             &self.params,
             None,
+            (!delayed).then_some(&mut self.history),
         )
     }
 
@@ -174,9 +177,18 @@ impl GameController {
     /// This function applies an action, given that it is legal. Some special cases will be
     /// filtered here. The action as well as the resulting game state is logged.
     pub fn apply(&mut self, action: VAction, source: ActionSource) {
-        let mut context = ActionContext::new(&mut self.game, &self.params, Some(&mut self.delay));
+        let mut context = ActionContext::new(
+            &mut self.game,
+            &self.params,
+            Some(&mut self.delay),
+            Some(&mut self.history),
+        );
         if !action.is_legal(&context) {
             return;
+        }
+
+        if source == ActionSource::User {
+            context.add_to_history();
         }
 
         action.execute(&mut context);
@@ -279,7 +291,7 @@ impl GameController {
 
     fn apply_delayed(&mut self, action: &VAction) {
         if let Some(delay) = self.delay.as_mut() {
-            let mut context = ActionContext::new(&mut delay.game, &self.params, None);
+            let mut context = ActionContext::new(&mut delay.game, &self.params, None, None);
             if action.is_legal(&context) {
                 action.execute(&mut context);
             } else if !(delay.ignore)(action) {

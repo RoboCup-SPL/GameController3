@@ -11,9 +11,11 @@ pub struct Undo {
 }
 
 impl Action for Undo {
-    fn execute(&self, _c: &mut ActionContext) {}
+    fn execute(&self, c: &mut ActionContext) {
+        c.undo(self.states);
+    }
 
-    fn is_legal(&self, _c: &ActionContext) -> bool {
-        true
+    fn is_legal(&self, c: &ActionContext) -> bool {
+        c.is_undo_available(self.states)
     }
 }

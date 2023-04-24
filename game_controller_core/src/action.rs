@@ -58,6 +58,7 @@ pub struct ActionContext<'a> {
     /// The parameters which the action uses.
     pub params: &'a Params,
     delay: Option<&'a mut Option<DelayHandler>>,
+    history: Option<&'a mut Vec<Game>>,
 }
 
 impl ActionContext<'_> {
@@ -66,11 +67,13 @@ impl ActionContext<'_> {
         game: &'a mut Game,
         params: &'a Params,
         delay: Option<&'a mut Option<DelayHandler>>,
+        history: Option<&'a mut Vec<Game>>,
     ) -> ActionContext<'a> {
         ActionContext {
             game,
             params,
             delay,
+            history,
         }
     }
 
@@ -97,6 +100,35 @@ impl ActionContext<'_> {
             true
         } else {
             false
+        }
+    }
+
+    /// This function adds the current game state to the (undo) history.
+    pub fn add_to_history(&mut self) {
+        if let Some(history) = self.history.as_mut() {
+            history.push(self.game.clone());
+        }
+    }
+
+    /// This function checks if a given number of previous actions can be undone.
+    pub fn is_undo_available(&self, back: u32) -> bool {
+        self.history
+            .as_ref()
+            .map_or(false, |history| history.len() >= (back as usize))
+    }
+
+    /// This function reverts the game state to the state before a given number of actions.
+    pub fn undo(&mut self, back: u32) {
+        if let Some(history) = self.history.as_mut() {
+            // If you think that there is an off-by-one error here, consider that when this
+            // function is called, the state immediately before the undo action has been added to
+            // the history as well (which was not there when is_undo_available was called).
+            for _i in 0..back {
+                history.pop();
+            }
+            if let Some(game) = history.pop() {
+                *self.game = game;
+            }
         }
     }
 }
