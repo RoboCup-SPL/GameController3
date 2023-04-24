@@ -7,6 +7,7 @@
 #include <stddef.h>
 
 #include "RoboCupGameControlData.h"
+#include "VisualRefereeChallenge.h"
 
 static const size_t GAMECONTROLLER_STRUCT_SIZE = sizeof(struct RoboCupGameControlData);
 static const size_t GAMECONTROLLER_RETURN_STRUCT_SIZE = sizeof(struct RoboCupGameControlReturnData);
