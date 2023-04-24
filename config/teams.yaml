@@ -26,7 +26,7 @@
 - name: B-Human
   number: 5
   fieldPlayerColors: [black, red]
-  goalkeeperColors: [purple, blue]
+  goalkeeperColors: [purple, blue, black, red]
 
 - name: Cerberus
   number: 6
@@ -120,8 +120,8 @@
 
 - name: HULKs
   number: 24
-  fieldPlayerColors: [gray, blue]
-  goalkeeperColors: [gray, blue]
+  fieldPlayerColors: [gray, red, green]
+  goalkeeperColors: [gray, red, green]
 
 - name: MRL-SPL
   number: 26
@@ -221,7 +221,7 @@
 - name: Naova
   number: 45
   fieldPlayerColors: [black, red]
-  goalkeeperColors: [black, red]
+  goalkeeperColors: [orange, black, red]
 
 - name: Recife Soccer
   number: 46
@@ -261,4 +261,4 @@
 - name: B-Team
   number: 70
   fieldPlayerColors: [red, black]
-  goalkeeperColors: [blue, purple]
+  goalkeeperColors: [blue, purple, red, black]
