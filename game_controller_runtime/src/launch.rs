@@ -170,15 +170,15 @@ fn get_network_interfaces() -> Result<Vec<NetworkInterface>> {
         .context("could not enumerate network interfaces")?
         .into_iter()
         .filter_map(|interface| {
-            if let Some(addr) = interface.addr.iter().find(|addr| addr.ip().is_ipv4()) {
-                Some(NetworkInterface {
+            interface
+                .addr
+                .iter()
+                .find(|addr| addr.ip().is_ipv4())
+                .map(|addr| NetworkInterface {
                     id: interface.name,
                     address: addr.ip(),
                     broadcast: addr.broadcast().unwrap_or(addr.ip()),
                 })
-            } else {
-                None
-            }
         })
         .collect();
     result.sort_by(|i1, i2| i1.id.cmp(&i2.id));
