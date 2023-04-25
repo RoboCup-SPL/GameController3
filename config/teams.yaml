@@ -66,7 +66,7 @@
 - name: HTWK Robots
   number: 13
   fieldPlayerColors: [blue, yellow]
-  goalkeeperColors: [blue, yellow]
+  goalkeeperColors: [green, blue, yellow]
 
 - name: Northern Bites
   number: 14
