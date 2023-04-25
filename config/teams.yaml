@@ -15,8 +15,8 @@
 
 - name: Bembelbots
   number: 3
-  fieldPlayerColors: [gray, blue]
-  goalkeeperColors: [gray, blue]
+  fieldPlayerColors: [gray, black, red]
+  goalkeeperColors: [red, gray, black]
 
 - name: Berlin United
   number: 4
