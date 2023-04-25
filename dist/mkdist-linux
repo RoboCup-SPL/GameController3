@@ -32,11 +32,9 @@ cp "${basedir}/README.md" "${archivedir}"
 cp -r "${basedir}/config" "${archivedir}"
 cp "${basedir}/target/${target}/${profile}/game_controller_app" "${archivedir}/target/release"
 cat >"${archivedir}/game_controller" <<EOF
-#!/bin/sh
-
+#!/bin/bash
 basedir="\$(cd "\$(dirname "\$(which "\${0}")")" && pwd)"
-
-"\${basedir}/target/release/game_controller_app"
+"\${basedir}/target/release/game_controller_app" "\$@"
 EOF
 chmod a+x "${archivedir}/game_controller"
 
