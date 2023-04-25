@@ -161,7 +161,7 @@
 - name: NomadZ
   number: 33
   fieldPlayerColors: [red, blue]
-  goalkeeperColors: [red, blue]
+  goalkeeperColors: [orange, black, red, blue]
 
 - name: SPURT
   number: 34
