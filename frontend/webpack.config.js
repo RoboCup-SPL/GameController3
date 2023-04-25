@@ -47,6 +47,22 @@ module.exports = (_, { mode }) => ({
                     "tailwindcss",
                     {
                       content: [path.resolve(__dirname, "src/**/*.jsx")],
+                      theme: {
+                        extend: {
+                          animation: {
+                            "flash-text": "flash-text 1s step-start 0s infinite",
+                            "flash-bg": "flash-bg 1s step-start 0s infinite",
+                          },
+                          keyframes: {
+                            "flash-text": {
+                              "50%": { color: "#facc15" },
+                            },
+                            "flash-bg": {
+                              "50%": { "background-color": "#facc15" },
+                            },
+                          },
+                        },
+                      },
                     },
                   ],
                   "autoprefixer",

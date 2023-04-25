@@ -33,7 +33,7 @@ const ClockPanel = ({ game }) => {
         className={`tabular-nums text-8xl font-medium ${
           game.primaryTimer.started
             ? game.primaryTimer.started.remaining[0] < 10
-              ? "timer-near-zero"
+              ? "animate-flash-text"
               : ""
             : "invisible"
         }`}
