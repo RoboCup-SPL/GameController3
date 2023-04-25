@@ -61,7 +61,7 @@
 - name: Nao Devils
   number: 12
   fieldPlayerColors: [yellow, black]
-  goalkeeperColors: [yellow, black]
+  goalkeeperColors: [red, yellow, black]
 
 - name: HTWK Robots
   number: 13
