@@ -50,8 +50,15 @@ const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
 const NUM_OF_PENALTY_ACTIONS = NUM_OF_TEAMS * NUM_OF_PLAYERS * (PENALTIES.length + 1); // The + 1 is the unpenalize action.
 
+const UNDO_ACTION_BASE = PENALTY_ACTION_BASE + NUM_OF_PENALTY_ACTIONS;
+
+const NUM_OF_UNDO_ACTIONS = 5;
+
 export const NUM_OF_ACTIONS =
-  NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS + NUM_OF_GAME_ACTIONS + NUM_OF_PENALTY_ACTIONS;
+  NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS +
+  NUM_OF_GAME_ACTIONS +
+  NUM_OF_PENALTY_ACTIONS +
+  NUM_OF_UNDO_ACTIONS;
 
 export const getActions = () => {
   var actions = [];
@@ -90,6 +97,9 @@ export const getActions = () => {
       actions.push({ type: "unpenalize", args: { side: side, player: number } });
     }
   }
+  for (let states = 1; states <= NUM_OF_UNDO_ACTIONS; ++states) {
+    actions.push({ type: "undo", args: { states: states } });
+  }
   return actions;
 };
 
@@ -108,6 +118,10 @@ export const extractGameActions = (legalActions) => {
 
 export const extractPenaltyActions = (legalActions) => {
   return legalActions.slice(PENALTY_ACTION_BASE, PENALTY_ACTION_BASE + NUM_OF_PENALTY_ACTIONS);
+};
+
+export const extractUndoActions = (legalActions) => {
+  return legalActions.slice(UNDO_ACTION_BASE, UNDO_ACTION_BASE + NUM_OF_UNDO_ACTIONS);
 };
 
 export const isPenaltyCallLegal = (legalPenaltyActions, callIndex) => {

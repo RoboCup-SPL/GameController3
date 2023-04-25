@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import CenterPanel from "./main/CenterPanel";
 import TeamPanel from "./main/TeamPanel";
+import UndoPanel from "./main/UndoPanel";
 import {
   getActions,
   extractGameActions,
   extractPenaltyActions,
   extractTeamActions,
+  extractUndoActions,
   isPenaltyCallLegal,
   NUM_OF_ACTIONS,
 } from "../actions.js";
@@ -68,44 +70,46 @@ const Main = () => {
     legalActions != null &&
     legalActions.length == NUM_OF_ACTIONS &&
     params != null &&
-    teamNames != null
+    teamNames != null &&
+    undoActions != null
   ) {
     const mirror = game.sides === "homeDefendsRightGoal";
     return (
-      <div
-        className={`flex ${mirror ? "flex-row-reverse" : "flex-row"} w-screen h-screen gap-4 p-2`}
-      >
-        <TeamPanel
-          connectionStatus={connectionStatus}
-          game={game}
-          legalPenaltyActions={extractPenaltyActions(legalActions)}
-          legalTeamActions={extractTeamActions(legalActions, "home")}
-          params={params}
-          selectedPenaltyCall={selectedPenaltyCall}
-          setSelectedPenaltyCall={setSelectedPenaltyCall}
-          side="home"
-          sign={mirror ? -1 : 1}
-          teamNames={teamNames}
-        />
-        <CenterPanel
-          game={game}
-          legalGameActions={extractGameActions(legalActions)}
-          legalPenaltyActions={extractPenaltyActions(legalActions)}
-          selectedPenaltyCall={selectedPenaltyCall}
-          setSelectedPenaltyCall={setSelectedPenaltyCall}
-        />
-        <TeamPanel
-          connectionStatus={connectionStatus}
-          game={game}
-          legalPenaltyActions={extractPenaltyActions(legalActions)}
-          legalTeamActions={extractTeamActions(legalActions, "away")}
-          params={params}
-          selectedPenaltyCall={selectedPenaltyCall}
-          setSelectedPenaltyCall={setSelectedPenaltyCall}
-          side="away"
-          sign={mirror ? 1 : -1}
-          teamNames={teamNames}
-        />
+      <div className="flex flex-col w-screen h-screen p-2 gap-4">
+        <div className={`grow h-[calc(100%-3.5rem)] flex ${mirror ? "flex-row-reverse" : "flex-row"} gap-4`}>
+          <TeamPanel
+            connectionStatus={connectionStatus}
+            game={game}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
+            legalTeamActions={extractTeamActions(legalActions, "home")}
+            params={params}
+            selectedPenaltyCall={selectedPenaltyCall}
+            setSelectedPenaltyCall={setSelectedPenaltyCall}
+            side="home"
+            sign={mirror ? -1 : 1}
+            teamNames={teamNames}
+          />
+          <CenterPanel
+            game={game}
+            legalGameActions={extractGameActions(legalActions)}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
+            selectedPenaltyCall={selectedPenaltyCall}
+            setSelectedPenaltyCall={setSelectedPenaltyCall}
+          />
+          <TeamPanel
+            connectionStatus={connectionStatus}
+            game={game}
+            legalPenaltyActions={extractPenaltyActions(legalActions)}
+            legalTeamActions={extractTeamActions(legalActions, "away")}
+            params={params}
+            selectedPenaltyCall={selectedPenaltyCall}
+            setSelectedPenaltyCall={setSelectedPenaltyCall}
+            side="away"
+            sign={mirror ? 1 : -1}
+            teamNames={teamNames}
+          />
+        </div>
+        <UndoPanel undoActions={undoActions} legalUndoActions={extractUndoActions(legalActions)} />
       </div>
     );
   } else {

@@ -174,7 +174,7 @@ async fn event_loop(
                     .map(|action| action.is_legal(&context))
                     .collect()
             },
-            undo_actions: game_controller.get_undo_actions(4),
+            undo_actions: game_controller.get_undo_actions(5),
         })?;
         control_sender.send(game_controller.get_game(true).clone())?;
         let _ = true_control_sender.send(game_controller.get_game(false).clone());
