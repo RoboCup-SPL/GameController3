@@ -18,6 +18,7 @@ const Main = () => {
   const [params, setParams] = useState(null);
   const [selectedPenaltyCall, setSelectedPenaltyCall] = useState(null);
   const [teamNames, setTeamNames] = useState(null);
+  const [undoActions, setUndoActions] = useState(null);
 
   useEffect(() => {
     if (
@@ -35,6 +36,7 @@ const Main = () => {
         setConnectionStatus(state.connectionStatus);
         setGame(state.game);
         setLegalActions(state.legalActions);
+        setUndoActions(state.undoActions);
       });
       // listen must have completed before starting the next call because the core may send a state
       // event once syncWithBackend is called that must not be missed.

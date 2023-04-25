@@ -58,7 +58,7 @@ pub struct ActionContext<'a> {
     /// The parameters which the action uses.
     pub params: &'a Params,
     delay: Option<&'a mut Option<DelayHandler>>,
-    history: Option<&'a mut Vec<Game>>,
+    history: Option<&'a mut Vec<(Game, VAction)>>,
 }
 
 impl ActionContext<'_> {
@@ -67,7 +67,7 @@ impl ActionContext<'_> {
         game: &'a mut Game,
         params: &'a Params,
         delay: Option<&'a mut Option<DelayHandler>>,
-        history: Option<&'a mut Vec<Game>>,
+        history: Option<&'a mut Vec<(Game, VAction)>>,
     ) -> ActionContext<'a> {
         ActionContext {
             game,
@@ -103,10 +103,11 @@ impl ActionContext<'_> {
         }
     }
 
-    /// This function adds the current game state to the (undo) history.
-    pub fn add_to_history(&mut self) {
+    /// This function adds the current game state to the (undo) history, together with the action
+    /// that will be applied now.
+    pub fn add_to_history(&mut self, action: VAction) {
         if let Some(history) = self.history.as_mut() {
-            history.push(self.game.clone());
+            history.push((self.game.clone(), action));
         }
     }
 
@@ -126,8 +127,8 @@ impl ActionContext<'_> {
             for _i in 0..back {
                 history.pop();
             }
-            if let Some(game) = history.pop() {
-                *self.game = game;
+            if let Some(entry) = history.pop() {
+                *self.game = entry.0;
             }
         }
     }

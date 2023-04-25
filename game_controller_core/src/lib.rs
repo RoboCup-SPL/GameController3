@@ -36,7 +36,7 @@ pub struct GameController {
     game: Game,
     delay: Option<DelayHandler>,
     time: Duration,
-    history: Vec<Game>,
+    history: Vec<(Game, VAction)>,
     logger: Box<dyn Logger + Send>,
 }
 
@@ -123,6 +123,17 @@ impl GameController {
         )
     }
 
+    /// This function returns the last n actions that can be undone.
+    pub fn get_undo_actions(&self, n: u32) -> Vec<VAction> {
+        return self
+            .history
+            .iter()
+            .rev()
+            .take(n as usize)
+            .map(|entry| entry.1.clone())
+            .collect();
+    }
+
     /// This function lets time progress. Timers are updated and expiration actions applied when
     /// necessary.
     pub fn seek(&mut self, mut dt: Duration) {
@@ -188,7 +199,7 @@ impl GameController {
         }
 
         if source == ActionSource::User {
-            context.add_to_history();
+            context.add_to_history(action.clone());
         }
 
         action.execute(&mut context);

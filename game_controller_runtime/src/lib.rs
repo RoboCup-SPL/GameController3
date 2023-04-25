@@ -59,6 +59,8 @@ pub struct UiState {
     /// The mask of legal actions in the order they were subscribed.
     #[serde_as(as = "Vec<BoolFromInt>")]
     legal_actions: Vec<bool>,
+    /// The list of the most recent actions that can be undone.
+    undo_actions: Vec<VAction>,
 }
 
 /// This struct encapsulates state that must be mutated.
@@ -172,6 +174,7 @@ async fn event_loop(
                     .map(|action| action.is_legal(&context))
                     .collect()
             },
+            undo_actions: game_controller.get_undo_actions(4),
         })?;
         control_sender.send(game_controller.get_game(true).clone())?;
         let _ = true_control_sender.send(game_controller.get_game(false).clone());
