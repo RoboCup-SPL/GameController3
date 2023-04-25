@@ -88,6 +88,27 @@ cargo run -- -h
 
 Note that release builds on Windows do not output any text.
 
+### Launcher
+
+When the GameController is started, a launcher is shown first.
+Some fields will be pre-filled by command line arguments, if they were specified.
+
+The following settings are exposed via the launcher:
+- Competition: This box selects the competition type of the game. It influences the behavior and constants of the GameController and narrows down the set of teams that can be selected.
+- Play-off: This checkbox selects if the game time stops during all Ready and Set states. Should be checked if the game is a quarterfinal, semifinal, final or 3rd place game.
+- Teams:
+    - Kick-off for (home / away) team: This box selects which team has the first kick-off, as a result of the coin tosses before the game.
+    - The main box selects the team on the respective side.
+    - Field player color and goalkeeper color: These boxes select the jersey colors of the team.
+- Mirror: This checkbox selects if the home (first on the schedule) team defends the right side (from the GameController's perspective) instead of the left side, as a result of the coin tosses before the game.
+- Fullscreen: This checkbox selects if the window should be switched to fullscreen mode when started.
+- Interface: This box selects the network interface to run on (see [above](#network-communication)). Not all interfaces that are listed will necessarily work.
+- Broadcast: This checkbox selects if control messages are sent to the limited broadcast address (`255.255.255.255`) instead of the interface's broadcast address. Should only be used when it is required that those messages are sent on all interfaces.
+- Multicast: This checkbox selects whether team communication is also received from a certain multicast group. Should only be used for simulated games, *never* for real competition games.
+
+The launcher allows to start a game only if the two teams are distinct and their jersey colors don't conflict, i.e. all four colors must be pairwise distinct, except for the goalkeeper colors which may be the same for both teams.
+Note that changing the sides or the kick-off team is not possible afterwards, so the switch to the main interface can only be done after the coin tosses.
+
 ### Main Interface
 
 #### Substitution
