@@ -17,7 +17,7 @@ const PlayerButton = ({ color, legal, onClick, player }) => {
   return (
     <button
       className={`grow rounded-md border border-gray-600 ${bgClasses[color]} ${
-        player.penalty === "noPenalty" ? "" : "text-gray-300"
+        legal ? "" : "text-gray-500"
       } ${
         player.penaltyTimer.started && player.penaltyTimer.started.remaining[0] < 10
           ? "animate-flash-bg"
@@ -43,8 +43,10 @@ const PlayerButton = ({ color, legal, onClick, player }) => {
         </svg>
         {color.charAt(0).toUpperCase() + color.slice(1)} {player.number}
       </div>
-      <div className={player.penaltyTimer.started ? "" : "invisible"}>
-        {formatMMSS(player.penaltyTimer)}
+      <div
+        className={player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"}
+      >
+        {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "P"}
       </div>
     </button>
   );
