@@ -76,7 +76,7 @@ const TeamPanel = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col gap-2">
+    <div className="min-w-80 flex flex-col gap-2">
       <div className="flex items-center justify-center gap-2">
         <svg
           className={`${game.kickingSide === side ? "" : "invisible"} text-black`}
