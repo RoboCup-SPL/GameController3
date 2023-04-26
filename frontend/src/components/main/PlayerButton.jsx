@@ -13,7 +13,7 @@ const bgClasses = {
   gray: "bg-gray-200",
 };
 
-const PlayerButton = ({ color, legal, onClick, player }) => {
+const PlayerButton = ({ color, legal, sign, onClick, player }) => {
   return (
     <button
       className={`grow rounded-md border border-gray-600 ${bgClasses[color]} ${
@@ -26,7 +26,15 @@ const PlayerButton = ({ color, legal, onClick, player }) => {
       disabled={!legal}
       onClick={onClick}
     >
-      <div className="flex items-center justify-center gap-2">
+      <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} items-center gap-4 px-4`}>
+        <div className="grow flex flex-col">
+          <p>{color.charAt(0).toUpperCase() + color.slice(1)}</p>
+          <p
+            className={player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"}
+          >
+            {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "P"}
+          </p>
+        </div>
         <svg
           className={
             player.connectionStatus >= 2
@@ -36,17 +44,12 @@ const PlayerButton = ({ color, legal, onClick, player }) => {
               : "text-red-600"
           }
           fill="currentColor"
-          height="10"
-          width="10"
+          height="14"
+          width="14"
         >
-          <circle cx="5" cy="5" r="5" />
+          <circle cx="7" cy="7" r="7" />
         </svg>
-        {color.charAt(0).toUpperCase() + color.slice(1)} {player.number}
-      </div>
-      <div
-        className={player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"}
-      >
-        {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "P"}
+        <p className="text-3xl tabular-nums">{player.number}</p>
       </div>
     </button>
   );

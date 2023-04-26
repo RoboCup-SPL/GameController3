@@ -195,6 +195,7 @@ const TeamPanel = ({
                   selectedPenaltyCall
                 )
               }
+              sign={sign}
               onClick={() => handlePlayerClick(player)}
               player={player}
             />
