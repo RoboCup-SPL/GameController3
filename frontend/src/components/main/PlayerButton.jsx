@@ -34,7 +34,7 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
               player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"
             }
           >
-            {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "P"}
+            {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "Penalized"}
           </p>
         </div>
         <svg
