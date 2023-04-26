@@ -246,7 +246,7 @@
 - name: R-ZWEI KICKERS
   number: 50
   fieldPlayerColors: [red, blue]
-  goalkeeperColors: [red, blue]
+  goalkeeperColors: [black, red, blue]
 
 - name: RedBackBots
   number: 51
