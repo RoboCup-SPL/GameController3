@@ -41,7 +41,7 @@
 - name: Dutch Nao Team
   number: 8
   fieldPlayerColors: [orange, blue]
-  goalkeeperColors: [orange, blue]
+  goalkeeperColors: [blue, red, orange]
 
 - name: Edinferno
   number: 9
