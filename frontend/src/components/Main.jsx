@@ -76,7 +76,11 @@ const Main = () => {
     const mirror = game.sides === "homeDefendsRightGoal";
     return (
       <div className="flex flex-col w-screen h-screen p-2 gap-4">
-        <div className={`grow h-[calc(100%-3.5rem)] flex ${mirror ? "flex-row-reverse" : "flex-row"} gap-4`}>
+        <div
+          className={`grow h-[calc(100%-3.5rem)] flex ${
+            mirror ? "flex-row-reverse" : "flex-row"
+          } gap-4`}
+        >
           <TeamPanel
             connectionStatus={connectionStatus}
             game={game}
