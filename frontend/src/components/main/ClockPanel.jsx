@@ -1,3 +1,5 @@
+import ActionButton from "./ActionButton";
+import * as actions from "../../actions.js";
 import { formatMMSS } from "../../utils.js";
 
 const getStateDescription = (game) => {
@@ -26,20 +28,33 @@ const getStateDescription = (game) => {
   return "";
 };
 
-const ClockPanel = ({ game }) => {
+const ClockPanel = ({ game, legalGameActions }) => {
   return (
     <div className="flex flex-col items-center">
-      <p
-        className={`tabular-nums text-8xl font-medium ${
-          game.primaryTimer.started
-            ? game.primaryTimer.started.remaining[0] < 10
-              ? "animate-flash-text"
-              : ""
-            : "invisible"
-        }`}
-      >
-        {formatMMSS(game.primaryTimer)}
-      </p>
+      <div className="relative">
+        <p
+          className={`tabular-nums text-8xl font-medium ${
+            game.primaryTimer.started
+              ? game.primaryTimer.started.remaining[0] < 10
+                ? "animate-flash-text"
+                : ""
+              : "invisible"
+          }`}
+        >
+          {formatMMSS(game.primaryTimer)}
+        </p>
+        <div
+          className={`absolute top-7 -right-8 ${
+            game.phase === "penaltyShootout" ? "invisible" : ""
+          }`}
+        >
+          <ActionButton
+            action={{ type: "addExtraTime", args: null }}
+            legal={legalGameActions[actions.ADD_EXTRA_TIME]}
+            label="+"
+          />
+        </div>
+      </div>
       <p className={`tabular-nums text-2xl ${game.secondaryTimer.started ? "" : "invisible"}`}>
         {formatMMSS(game.secondaryTimer)}
       </p>

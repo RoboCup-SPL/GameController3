@@ -12,7 +12,7 @@ const CenterPanel = ({
 }) => {
   return (
     <div className="grow flex flex-col gap-4">
-      <ClockPanel game={game} />
+      <ClockPanel game={game} legalGameActions={legalGameActions} />
       <PhasePanel game={game} legalGameActions={legalGameActions} />
       <StatePanel game={game} legalGameActions={legalGameActions} />
       <PenaltyPanel
