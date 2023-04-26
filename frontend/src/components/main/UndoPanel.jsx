@@ -53,13 +53,12 @@ const UndoPanel = ({ undoActions, legalUndoActions }) => {
   return (
     <div className="flex flex-row-reverse gap-2 h-10">
       {legalUndoActions.map((legal, index) => (
-        <div className={`w-1/5`} key={index}>
-          <ActionButton
-            action={{ type: "undo", args: { states: index + 1 } }}
-            label={index < undoActions.length ? getActionName(undoActions[index]) : "Undo"}
-            legal={legal}
-          />
-        </div>
+        <ActionButton
+          action={{ type: "undo", args: { states: index + 1 } }}
+          label={index < undoActions.length ? getActionName(undoActions[index]) : "Undo"}
+          legal={legal}
+          key={index}
+        />
       ))}
     </div>
   );
