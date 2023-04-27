@@ -130,7 +130,12 @@ impl Action for Penalize {
                 PenaltyCall::RequestForPickUp => true,
                 PenaltyCall::IllegalPosition => {
                     c.game.phase != Phase::PenaltyShootout
-                        && (c.game.state == State::Set || c.game.state == State::Playing)
+                        && (c.game.state == State::Ready // Not possible in this state, but can
+                                                         // happen if it happens shortly before a
+                                                         // goal and the GameController presses the
+                                                         // goal first.
+                            || c.game.state == State::Set
+                            || c.game.state == State::Playing)
                 }
                 PenaltyCall::MotionInSet => c.game.state == State::Set,
                 PenaltyCall::FallenInactive => {
@@ -141,14 +146,22 @@ impl Action for Penalize {
                 PenaltyCall::LocalGameStuck => {
                     c.game.phase != Phase::PenaltyShootout && c.game.state == State::Playing
                 }
-                PenaltyCall::BallHolding => c.game.state == State::Playing,
+                PenaltyCall::BallHolding => {
+                    c.game.state == State::Ready // Not possible in this state, but can happen in
+                                                 // Playing shortly before a goal and the
+                                                 // GameController operator clicks the goal first.
+                        || c.game.state == State::Playing
+                }
                 PenaltyCall::PlayerStance => {
                     c.game.state == State::Ready
                         || c.game.state == State::Set
                         || c.game.state == State::Playing
                 }
                 PenaltyCall::Pushing => {
-                    c.game.state == State::Ready || c.game.state == State::Playing
+                    c.game.state == State::Ready
+                        || c.game.state == State::Set // Not possible in this state, but can happen
+                                                      // in Ready shortly before the timer expires.
+                        || c.game.state == State::Playing
                 }
                 PenaltyCall::Foul => {
                     c.game.phase != Phase::PenaltyShootout
@@ -160,9 +173,17 @@ impl Action for Penalize {
                         && c.game.state == State::Playing
                         && c.game.set_play == SetPlay::NoSetPlay
                 }
-                PenaltyCall::PlayingWithArmsHands => c.game.state == State::Playing,
+                PenaltyCall::PlayingWithArmsHands => {
+                    c.game.state == State::Ready // Not possible in this state, but can happen in
+                                                 // Playing shortly before a goal and the
+                                                 // GameController oprtator clicks the goal first.
+                        || c.game.state == State::Playing
+                }
                 PenaltyCall::LeavingTheField => {
-                    c.game.state == State::Ready || c.game.state == State::Playing
+                    c.game.state == State::Ready
+                        || c.game.state == State::Set // Not possible in this state, but can happen
+                                                      // in Ready shortly before the timer expires.
+                        || c.game.state == State::Playing
                 }
             })
     }
