@@ -30,9 +30,10 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
         <div className="grow flex flex-col">
           <p>{color.charAt(0).toUpperCase() + color.slice(1)}</p>
           <p
-            className={
+            className={`${player.penaltyTimer.started ? "tabular-nums" : ""} ${
               player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"
             }
+            `}
           >
             {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "Penalized"}
           </p>
