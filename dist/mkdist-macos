@@ -4,7 +4,7 @@ set -e
 
 version=${1}
 profile=release-dist
-target=universal-apple-darwin
+target=aarch64-apple-darwin
 
 if [ -z ${version} ]; then
   >&2 echo "usage: ${0} <version>"
@@ -24,8 +24,7 @@ npm run build
 popd
 
 pushd "${basedir}"
-cargo build --target aarch64-apple-darwin --profile "${profile}"
-cargo build --target x86_64-apple-darwin --profile "${profile}"
+cargo build --target "${target}" --profile "${profile}"
 popd
 
 mkdir -p "${appdir}/Contents"
@@ -35,7 +34,7 @@ cp "${basedir}/README.md" "${appdir}/Contents"
 cp -r "${basedir}/config" "${appdir}/Contents"
 ln -s /tmp "${appdir}/Contents/logs"
 mkdir -p "${appdir}/Contents/target/release"
-lipo -create -output "${appdir}/Contents/target/release/game_controller_app" "${basedir}/target/aarch64-apple-darwin/${profile}/game_controller_app" "${basedir}/target/x86_64-apple-darwin/${profile}/game_controller_app"
+cp "${basedir}/target/${target}/${profile}/game_controller_app" "${appdir}/Contents/target/release"
 
 mkdir "${appdir}/Contents/MacOS"
 cat >"${appdir}/Contents/MacOS/GameController" <<EOF
