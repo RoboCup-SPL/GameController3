@@ -1,4 +1,5 @@
 import ActionButton from "./ActionButton";
+import * as actions from "../../actions.js";
 
 const getActionName = (action) => {
   switch (action.type) {
@@ -17,6 +18,10 @@ const getActionName = (action) => {
     case "goal":
       return "Goal";
     case "penalize":
+      const penalty = actions.PENALTIES.find((penalty) => penalty[1] === action.args.call);
+      if (penalty) {
+        return penalty[0];
+      }
       return "Penalize";
     case "selectPenaltyShotPlayer":
       return "Select";
