@@ -33,7 +33,7 @@ authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/RoboCup-SPL/GameController"
-version = "0.9.1-pre"
+version = "0.9.1"
 
 [profile.release-dist]
 inherits = "release"

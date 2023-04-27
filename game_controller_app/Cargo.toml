@@ -5,7 +5,7 @@ edition = "2021"  # tauri does not support importing this from the workspace yet
 license = "MIT"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 name = "game_controller_app"
 repository = "https://github.com/RoboCup-SPL/GameController"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
-version = "0.9.1-pre"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+version = "0.9.1"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 
 [build-dependencies]
 tauri-build = { version = "1.2.1", features = [] }
