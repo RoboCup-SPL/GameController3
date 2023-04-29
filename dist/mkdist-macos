@@ -69,7 +69,7 @@ cat >"${appdir}/Contents/Info.plist" <<EOF
 		<string>MacOSX</string>
 	</array>
 	<key>LSMinimumSystemVersion</key>
-	<string>13.3</string>
+	<string>12.6</string>
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
 	<key>NSPrincipleClass</key>
