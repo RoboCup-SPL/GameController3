@@ -3,11 +3,11 @@
 set -e
 
 version=${1}
+target=${2:-"$(rustc -vV | sed -n "s/^host: \(.*\)/\1/p")"}
 profile=release-dist
-target=aarch64-apple-darwin
 
 if [ -z ${version} ]; then
-  >&2 echo "usage: ${0} <version>"
+  >&2 echo "usage: ${0} <version> [target]"
   exit 1
 fi
 
