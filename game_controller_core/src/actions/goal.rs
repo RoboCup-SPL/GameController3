@@ -15,7 +15,14 @@ pub struct Goal {
 
 impl Action for Goal {
     fn execute(&self, c: &mut ActionContext) {
+        // Mercy rule: At a certain goal difference, the game is finished.
+        let mercy_rule = c.game.phase != Phase::PenaltyShootout
+            && !c.game.teams[self.side].illegal_communication
+            && (c.game.teams[self.side].score + 1)
+                >= c.game.teams[-self.side].score
+                    + c.params.competition.mercy_rule_score_difference;
         if c.game.phase != Phase::PenaltyShootout
+            && !mercy_rule
             && !c.fork(c.params.competition.delay_after_goal, |_| false)
         {
             return;
@@ -27,26 +34,21 @@ impl Action for Goal {
         if !c.game.teams[self.side].illegal_communication {
             c.game.teams[self.side].score += 1;
         }
-        if c.game.phase != Phase::PenaltyShootout {
-            if c.game.teams[self.side].score
-                >= c.game.teams[-self.side].score + c.params.competition.mercy_rule_score_difference
-            {
-                // Mercy rule: At a certain goal difference, the game is finished.
-                c.game.teams.values_mut().for_each(|team| {
-                    team.players.iter_mut().for_each(|player| {
-                        player.penalty_timer = Timer::Stopped;
-                    })
-                });
-                c.game.phase = Phase::SecondHalf;
-                c.game.state = State::Finished;
-            } else {
-                // A kick-off for the other team.
-                StartSetPlay {
-                    side: -self.side,
-                    set_play: SetPlay::KickOff,
-                }
-                .execute(c);
+        if mercy_rule {
+            c.game.teams.values_mut().for_each(|team| {
+                team.players.iter_mut().for_each(|player| {
+                    player.penalty_timer = Timer::Stopped;
+                })
+            });
+            c.game.phase = Phase::SecondHalf;
+            c.game.state = State::Finished;
+        } else if c.game.phase != Phase::PenaltyShootout {
+            // A kick-off for the other team.
+            StartSetPlay {
+                side: -self.side,
+                set_play: SetPlay::KickOff,
             }
+            .execute(c);
         } else {
             c.game.teams[self.side].penalty_shot_mask |=
                 1u16 << (c.game.teams[self.side].penalty_shot - 1);
