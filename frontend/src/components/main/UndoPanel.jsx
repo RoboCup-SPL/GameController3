@@ -17,12 +17,13 @@ const getActionName = (action) => {
       return "Global Game Stuck";
     case "goal":
       return "Goal";
-    case "penalize":
+    case "penalize": {
       const penalty = actions.PENALTIES.find((penalty) => penalty[1] === action.args.call);
       if (penalty) {
         return penalty[0];
       }
       return "Penalize";
+    }
     case "selectPenaltyShotPlayer":
       return "Select";
     case "startPenaltyShootout":
