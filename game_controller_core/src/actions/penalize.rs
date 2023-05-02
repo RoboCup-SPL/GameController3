@@ -96,6 +96,8 @@ impl Action for Penalize {
                         side: self.side,
                         player: self.player,
                     })])
+                } else if penalty == Penalty::PickedUp {
+                    BehaviorAtZero::Expire(vec![])
                 } else {
                     BehaviorAtZero::Clip
                 },

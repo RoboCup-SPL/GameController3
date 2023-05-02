@@ -13,16 +13,35 @@ const bgClasses = {
   gray: "bg-gray-200",
 };
 
+const penaltyDescriptions = {
+  noPenalty: "No Penalty",
+  substitute: "Substitute",
+  pickedUp: "Picked Up",
+  illegalPositionInSet: "Illegal Position",
+  illegalPosition: "Illegal Position",
+  motionInSet: "Motion in Set",
+  fallenInactive: "Fallen / Inactive",
+  localGameStuck: "Local Game Stuck",
+  ballHolding: "Ball Holding",
+  playerStance: "Player Stance",
+  playerPushing: "Pushing",
+  playingWithArmsHands: "Arms / Hands",
+  leavingTheField: "Leaving the Field",
+};
+
 const PlayerButton = ({ color, legal, sign, onClick, player }) => {
+  const shouldFlash =
+    player.penalty != "noPenalty" &&
+    player.penalty != "substitute" &&
+    player.penalty != "motionInSet" &&
+    (player.penaltyTimer.started
+      ? player.penaltyTimer.started.remaining[0] < 10
+      : player.penalty != "pickedUp");
   return (
     <button
       className={`grow rounded-md border border-gray-600 ${bgClasses[color]} ${
-        legal ? "" : "text-gray-500"
-      } ${
-        player.penaltyTimer.started && player.penaltyTimer.started.remaining[0] < 10
-          ? "animate-flash-bg"
-          : ""
-      }`}
+        shouldFlash ? "animate-flash-bg" : ""
+      } ${legal ? "" : "text-gray-500"}`}
       disabled={!legal}
       onClick={onClick}
     >
@@ -30,12 +49,17 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
         <div className="grow flex flex-col">
           <p>{color.charAt(0).toUpperCase() + color.slice(1)}</p>
           <p
-            className={`${player.penaltyTimer.started ? "tabular-nums" : ""} ${
-              player.penaltyTimer.started || player.penalty != "noPenalty" ? "" : "invisible"
+            className={
+              player.penaltyTimer.started
+                ? "tabular-nums"
+                : player.penalty === "noPenalty"
+                ? "invisible"
+                : ""
             }
-            `}
           >
-            {player.penaltyTimer.started ? formatMMSS(player.penaltyTimer) : "Penalized"}
+            {player.penaltyTimer.started
+              ? formatMMSS(player.penaltyTimer)
+              : penaltyDescriptions[player.penalty]}
           </p>
         </div>
         <svg
