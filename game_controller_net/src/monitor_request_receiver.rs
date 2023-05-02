@@ -1,4 +1,7 @@
-use std::{cmp::min, net::IpAddr};
+use std::{
+    cmp::min,
+    net::{IpAddr, Ipv4Addr, Ipv6Addr},
+};
 
 use anyhow::Result;
 use bytes::Bytes;
@@ -19,7 +22,14 @@ impl MonitorRequestReceiver {
     /// This function creates a new receiver for monitor requests.
     pub async fn new(address: IpAddr, event_sender: mpsc::UnboundedSender<Event>) -> Result<Self> {
         Ok(Self {
-            socket: UdpSocket::bind((address, MONITOR_REQUEST_PORT)).await?,
+            socket: UdpSocket::bind((
+                match address {
+                    IpAddr::V4(_) => IpAddr::V4(Ipv4Addr::UNSPECIFIED),
+                    IpAddr::V6(_) => IpAddr::V6(Ipv6Addr::UNSPECIFIED),
+                },
+                MONITOR_REQUEST_PORT,
+            ))
+            .await?,
             event_sender,
         })
     }

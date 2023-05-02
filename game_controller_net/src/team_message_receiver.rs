@@ -1,6 +1,6 @@
 use std::{
     cmp::min,
-    net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
+    net::{IpAddr, Ipv4Addr, SocketAddr},
 };
 
 use anyhow::Result;
@@ -34,14 +34,8 @@ impl TeamMessageReceiver {
         Ok(Self {
             socket: {
                 // This might be stuff that should not be done in an async function.
-                let socket_address: SockAddr = SocketAddr::new(
-                    match address {
-                        IpAddr::V4(_) => IpAddr::V4(Ipv4Addr::UNSPECIFIED),
-                        IpAddr::V6(_) => IpAddr::V6(Ipv6Addr::UNSPECIFIED),
-                    },
-                    TEAM_MESSAGE_PORT_BASE + (team as u16),
-                )
-                .into();
+                let socket_address: SockAddr =
+                    SocketAddr::new(address, TEAM_MESSAGE_PORT_BASE + (team as u16)).into();
                 let raw_socket =
                     Socket::new(socket_address.domain(), Type::DGRAM, Some(Protocol::UDP))?;
                 #[cfg(target_os = "macos")]
