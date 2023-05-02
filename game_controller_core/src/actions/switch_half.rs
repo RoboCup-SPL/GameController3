@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Phase, State};
+use crate::types::{Penalty, Phase, State};
 
 /// This struct defines an action that switches from the end of the first half to the beginning of
 /// the second half, including the switch of sides.
@@ -11,6 +11,18 @@ pub struct SwitchHalf;
 
 impl Action for SwitchHalf {
     fn execute(&self, c: &mut ActionContext) {
+        // Unpenalize all players that are not substitutes. Maybe picked up players should stay
+        // picked up, but the old GameController unpenalized them, too.
+        c.game.teams.values_mut().for_each(|team| {
+            team.players
+                .iter_mut()
+                .filter(|player| player.penalty != Penalty::Substitute)
+                .for_each(|player| {
+                    player.penalty = Penalty::NoPenalty;
+                    player.penalty_timer = Timer::Stopped;
+                })
+        });
+
         c.game.sides = -c.params.game.side_mapping;
         c.game.phase = Phase::SecondHalf;
         c.game.state = State::Initial;
