@@ -38,7 +38,7 @@ impl MonitorRequestReceiver {
     pub async fn run(&self) -> Result<()> {
         let mut buffer = vec![0u8; MONITOR_REQUEST_SIZE + 1];
         loop {
-            let (length, address) = self.socket.recv_from(&mut buffer).await?;
+            let (length, address) = crate::workaround::recv_from(&self.socket, &mut buffer).await?;
             self.event_sender.send(Event::MonitorRequest {
                 host: address.ip(),
                 data: Bytes::copy_from_slice(&buffer[0..min(length, MONITOR_REQUEST_SIZE)]),

@@ -65,7 +65,7 @@ impl TeamMessageReceiver {
         // maximum message length.
         let mut buffer = vec![0u8; TEAM_MESSAGE_MAX_SIZE + 1];
         loop {
-            let (length, address) = self.socket.recv_from(&mut buffer).await?;
+            let (length, address) = crate::workaround::recv_from(&self.socket, &mut buffer).await?;
             self.event_sender.send(Event::TeamMessage {
                 host: address.ip(),
                 team: self.team,

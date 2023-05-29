@@ -9,6 +9,7 @@ mod monitor_request_receiver;
 mod status_message_forwarder;
 mod status_message_receiver;
 mod team_message_receiver;
+mod workaround;
 
 pub use control_message_sender::ControlMessageSender;
 pub use monitor_request_receiver::MonitorRequestReceiver;

@@ -29,7 +29,7 @@ impl StatusMessageReceiver {
     pub async fn run(&self) -> Result<()> {
         let mut buffer = vec![0u8; STATUS_MESSAGE_SIZE + 1];
         loop {
-            let (length, address) = self.socket.recv_from(&mut buffer).await?;
+            let (length, address) = crate::workaround::recv_from(&self.socket, &mut buffer).await?;
             self.event_sender.send(Event::StatusMessage {
                 host: address.ip(),
                 data: Bytes::copy_from_slice(&buffer[0..min(length, STATUS_MESSAGE_SIZE)]),
