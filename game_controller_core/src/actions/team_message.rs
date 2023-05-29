@@ -18,7 +18,8 @@ impl Action for TeamMessage {
         if c.game.teams[self.side].message_budget == 0 || self.illegal {
             c.game.teams[self.side].illegal_communication = true;
             c.game.teams[self.side].score = 0;
-        } else {
+        }
+        if c.game.teams[self.side].message_budget > 0 {
             c.game.teams[self.side].message_budget -= 1;
         }
     }
