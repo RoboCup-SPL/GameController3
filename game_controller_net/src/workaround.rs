@@ -9,9 +9,7 @@ use tokio::net::UdpSocket;
 pub async fn recv_from(socket: &UdpSocket, buf: &mut [u8]) -> Result<(usize, SocketAddr)> {
     match socket.recv_from(buf).await {
         #[cfg(target_os = "windows")]
-        Err(error) if error.raw_os_error() == Some(10040) => {
-            Ok((buf.len(), socket.local_addr()?))
-        }
+        Err(error) if error.raw_os_error() == Some(10040) => Ok((buf.len(), socket.local_addr()?)),
         result => result,
     }
 }
