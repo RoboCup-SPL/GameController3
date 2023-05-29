@@ -6,7 +6,7 @@
 - name: UT Austin Villa
   number: 1
   fieldPlayerColors: [white, orange]
-  goalkeeperColors: [white, orange]
+  goalkeeperColors: [orange, white, blue, red]
 
 - name: Austrian Kangaroos
   number: 2
@@ -20,8 +20,8 @@
 
 - name: Berlin United
   number: 4
-  fieldPlayerColors: [blue, red]
-  goalkeeperColors: [blue, red]
+  fieldPlayerColors: [blue, purple]
+  goalkeeperColors: [white, blue, purple]
 
 - name: B-Human
   number: 5
@@ -86,17 +86,17 @@
 - name: RoboEireann
   number: 17
   fieldPlayerColors: [green, white]
-  goalkeeperColors: [green, white]
+  goalkeeperColors: [white, green, red]
 
 - name: rUNSWift
   number: 18
   fieldPlayerColors: [yellow, blue]
-  goalkeeperColors: [yellow, blue]
+  goalkeeperColors: [green, red, yellow, blue]
 
 - name: SPQR Team
   number: 19
   fieldPlayerColors: [red, blue]
-  goalkeeperColors: [red, blue]
+  goalkeeperColors: [black, red, blue]
 
 - name: TJArk
   number: 20
@@ -250,13 +250,13 @@
 
 - name: RedBackBots
   number: 51
-  fieldPlayerColors: [blue, red]
-  goalkeeperColors: [blue, red]
+  fieldPlayerColors: [black, red]
+  goalkeeperColors: [red, black, blue]
 
 - name: BadgerBots
   number: 52
-  fieldPlayerColors: [blue, red]
-  goalkeeperColors: [blue, red]
+  fieldPlayerColors: [white, red]
+  goalkeeperColors: [black, white, red]
 
 - name: B-Team
   number: 70
