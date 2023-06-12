@@ -2,35 +2,51 @@ import ActionButton from "./ActionButton";
 import * as actions from "../../actions.js";
 import { formatMMSS } from "../../utils.js";
 
-const getStateDescription = (game) => {
-  if (game.state === "timeout") {
-    return "Timeout";
-  } else if (
-    (game.phase === "firstHalf" && game.state === "finished") ||
-    (game.phase === "secondHalf" && game.state === "initial")
-  ) {
-    return "Half-Time Break";
-  }
-  switch (game.setPlay) {
-    case "kickOff":
-      return "Kick-off";
-    case "kickIn":
-      return "Kick-in";
-    case "goalKick":
-      return "Goal Kick";
-    case "cornerKick":
-      return "Corner Kick";
-    case "pushingFreeKick":
-      return "Pushing Free Kick";
-    case "penaltyKick":
-      return "Penalty Kick";
+const getPhaseDescription = (game) => {
+  switch (game.phase) {
+    case "firstHalf":
+      return game.state === "finished" ? "Half-Time Break" : "First Half";
+    case "secondHalf":
+      return game.state === "initial" ? "Half-Team Break" : "Second Half";
+    case "penaltyShootout":
+      return "Penalty Shoot-out";
   }
   return "";
+};
+
+const getStateDescription = (game) => {
+  switch (game.state) {
+    case "timeout":
+      return "Timeout";
+    case "initial":
+      return "Initial";
+    case "finished":
+      return "Finished";
+  }
+  let prefix = {
+    noSetPlay: "",
+    kickOff: "Kick-off",
+    kickIn: "Kick-in",
+    goalKick: "Goal Kick",
+    cornerKick: "Corner Kick",
+    pushingFreeKick: "Pushing Free Kick",
+    penaltyKick: "Penalty Kick",
+  }[game.setPlay];
+  let state = "";
+  if (game.state === "ready") {
+    state = " Ready";
+  } else if (game.state === "set") {
+    state = " Set";
+  } else if (prefix === "") {
+    state = "Playing";
+  }
+  return prefix + state;
 };
 
 const ClockPanel = ({ game, legalGameActions }) => {
   return (
     <div className="flex flex-col items-center">
+      <p className="h-6">{getPhaseDescription(game)}</p>
       <div className="relative">
         <p
           className={`tabular-nums text-8xl font-medium ${
@@ -55,10 +71,10 @@ const ClockPanel = ({ game, legalGameActions }) => {
           />
         </div>
       </div>
+      <p className="h-6">{getStateDescription(game)}</p>
       <p className={`tabular-nums text-2xl ${game.secondaryTimer.started ? "" : "invisible"}`}>
         {formatMMSS(game.secondaryTimer)}
       </p>
-      <p className="h-6">{getStateDescription(game)}</p>
     </div>
   );
 };
