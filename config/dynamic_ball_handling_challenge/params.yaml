@@ -1,4 +1,5 @@
 name: "Dynamic Ball Handling Challenge"
+challengeMode: dynamicBallHandling
 playersPerTeam: 3
 penalties:
   noPenalty:
