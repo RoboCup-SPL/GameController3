@@ -14,19 +14,19 @@ penalties:
     incremental: false
   pickedUp:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
     incremental: false
   illegalPositionInSet:
     duration:
-      secs: 15
+      secs: 240
       nanos: 0
     incremental: false
   illegalPosition:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
   motionInSet:
     duration:
       secs: 15
@@ -34,41 +34,41 @@ penalties:
     incremental: false
   fallenInactive:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
     incremental: false
   localGameStuck:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
     incremental: false
   ballHolding:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
   playerStance:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
   playerPushing:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
   playingWithArmsHands:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
   leavingTheField:
     duration:
-      secs: 45
+      secs: 240
       nanos: 0
-    incremental: true
+    incremental: false
 penaltyDurationIncrement:
-  secs: 10
+  secs: 0
   nanos: 0
 setPlays:
   noSetPlay:
