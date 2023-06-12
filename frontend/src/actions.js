@@ -30,21 +30,22 @@ const NUM_OF_TEAM_ACTIONS = 6;
 const GAME_ACTION_BASE = TEAM_ACTION_BASE + NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS;
 
 export const SWITCH_HALF = 0;
-export const START_PENALTY_SHOOTOUT = 1;
-export const WAIT_FOR_PENALTY_SHOT = 2;
-export const WAIT_FOR_SET_PLAY = 3;
-export const FREE_PENALTY_SHOT = 4;
-export const FINISH_SET_PLAY = 5;
-export const FREE_SET_PLAY = 6;
-export const FINISH_PENALTY_SHOT = 7;
-export const FINISH_HALF = 8;
+export const START_PENALTY_SHOOTOUT_LEFT = 1;
+export const START_PENALTY_SHOOTOUT_RIGHT = 2;
+export const WAIT_FOR_PENALTY_SHOT = 3;
+export const WAIT_FOR_SET_PLAY = 4;
+export const FREE_PENALTY_SHOT = 5;
+export const FINISH_SET_PLAY = 6;
+export const FREE_SET_PLAY = 7;
+export const FINISH_PENALTY_SHOT = 8;
+export const FINISH_HALF = 9;
 // These are game actions because they are part of the center panel.
-export const START_KICK_OFF_HOME = 9;
-export const START_KICK_OFF_AWAY = 10;
-export const ADD_EXTRA_TIME = 11;
-export const REFEREE_TIMEOUT = 12;
+export const START_KICK_OFF_HOME = 10;
+export const START_KICK_OFF_AWAY = 11;
+export const ADD_EXTRA_TIME = 12;
+export const REFEREE_TIMEOUT = 13;
 
-const NUM_OF_GAME_ACTIONS = 13;
+const NUM_OF_GAME_ACTIONS = 14;
 
 const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
@@ -74,6 +75,7 @@ export const getActions = () => {
   }
   actions.push({ type: "switchHalf", args: null });
   actions.push({ type: "startPenaltyShootout", args: { sides: "homeDefendsLeftGoal" } });
+  actions.push({ type: "startPenaltyShootout", args: { sides: "homeDefendsRightGoal" } });
   actions.push({ type: "waitForPenaltyShot", args: null });
   actions.push({ type: "waitForSetPlay", args: null });
   actions.push({ type: "freePenaltyShot", args: null });

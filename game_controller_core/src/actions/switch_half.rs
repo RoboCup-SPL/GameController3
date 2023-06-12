@@ -33,7 +33,7 @@ impl Action for SwitchHalf {
             run_condition: RunCondition::Playing,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
-        c.switch_half_timer = Timer::Stopped;
+        c.game.switch_half_timer = Timer::Stopped;
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
