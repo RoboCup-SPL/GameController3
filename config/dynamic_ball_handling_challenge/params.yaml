@@ -80,11 +80,11 @@ setPlays:
       nanos: 0
   kickOff:
     duration:
-      secs: 10
+      secs: 0
       nanos: 0
     readyDuration:
-      secs: 45
-      nanos: 0
+      secs: 0
+      nanos: 1
   kickIn:
     duration:
       secs: 30
