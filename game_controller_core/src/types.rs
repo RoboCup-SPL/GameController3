@@ -345,6 +345,9 @@ pub struct Game {
     pub secondary_timer: Timer,
     /// A timer that counts how much the primary timer has to be rewound when taking a timeout.
     pub timeout_rewind_timer: Timer,
+    /// A timer that counts down until the half is switched.
+    #[serde(skip)]
+    pub switch_half_timer: Timer,
     /// The two competing teams.
     pub teams: EnumMap<Side, Team>,
 }
@@ -360,6 +363,7 @@ impl Game {
                     &self.primary_timer,
                     &self.secondary_timer,
                     &self.timeout_rewind_timer,
+                    &self.switch_half_timer,
                 ]
                 .into_iter(),
             )
@@ -379,6 +383,7 @@ impl Game {
                     &mut self.primary_timer,
                     &mut self.secondary_timer,
                     &mut self.timeout_rewind_timer,
+                    &mut self.switch_half_timer,
                 ]
                 .into_iter(),
             )

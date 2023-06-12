@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::action::{Action, ActionContext};
+use crate::action::{Action, ActionContext, VAction};
+use crate::actions::SwitchHalf;
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
 use crate::types::{Phase, SetPlay, State};
 
@@ -34,6 +35,13 @@ impl Action for FinishHalf {
                     .unwrap(),
                 run_condition: RunCondition::Always,
                 behavior_at_zero: BehaviorAtZero::Overflow,
+            };
+            c.game.switch_half_timer = Timer::Started {
+                remaining: (c.params.competition.half_time_break_duration / 2)
+                    .try_into()
+                    .unwrap(),
+                run_condition: RunCondition::Always,
+                behavior_at_zero: BehaviorAtZero::Expire(vec![VAction::SwitchHalf(SwitchHalf)]),
             };
         }
     }

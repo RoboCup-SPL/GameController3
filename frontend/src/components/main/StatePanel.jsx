@@ -106,11 +106,10 @@ const StatePanel = ({ game, legalGameActions }) => {
     );
 
   // This button is still displayed when we are already in the Initial state of the second half.
-  // This is because the state can switch automatically to the second half (actually not yet) and
-  // it would be bad if the operator clicked the button exactly at that time, but the button
-  // switches its meaning to Ready before the button is actually clicked. Therefore, both buttons
-  // (Ready and Second Half) are displayed during the entire half-time break, even though only one
-  // of them can be legal.
+  // This is because the state can switch automatically to the second half and it would be bad if
+  // the operator clicked the button exactly at that time, but the button switches its meaning to
+  // Ready before the button is actually clicked. Therefore, both buttons (Ready and Second Half)
+  // are displayed during the entire half-time break, even though only one of them can be legal.
   let secondHalfButton =
     inHalfTimeBreak ? (
       <ActionButton

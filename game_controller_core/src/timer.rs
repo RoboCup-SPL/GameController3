@@ -74,7 +74,7 @@ pub enum BehaviorAtZero {
 }
 
 /// This struct describes the state of a timer. A timer can be either started or stopped.
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Timer {
     /// The timer is active with some parameters. It may still be paused.
@@ -88,6 +88,7 @@ pub enum Timer {
         behavior_at_zero: BehaviorAtZero,
     },
     /// The timer is currently not in use.
+    #[default]
     Stopped,
 }
 
