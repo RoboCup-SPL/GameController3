@@ -2,20 +2,23 @@ import ActionButton from "./ActionButton";
 import * as actions from "../../actions.js";
 
 const StatePanel = ({ game, legalGameActions }) => {
+  const inHalfTimeBreak = (game.phase === "firstHalf" && game.state === "finished") || (game.phase === "secondHalf" && game.state === "initial");
   let readyButton =
     game.phase != "penaltyShootout" &&
     (game.state === "initial" ||
       game.state === "timeout" ||
       (game.phase === "firstHalf" && game.state === "finished")) ? (
-      <ActionButton
-        action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}
-        label="Ready"
-        legal={
-          legalGameActions[
-            game.kickingSide === "home" ? actions.START_KICK_OFF_HOME : actions.START_KICK_OFF_AWAY
-          ]
-        }
-      />
+      <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
+        <ActionButton
+          action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}
+          label="Ready"
+          legal={
+            legalGameActions[
+              game.kickingSide === "home" ? actions.START_KICK_OFF_HOME : actions.START_KICK_OFF_AWAY
+            ]
+          }
+        />
+      </div>
     ) : (
       <></>
     );
@@ -49,19 +52,21 @@ const StatePanel = ({ game, legalGameActions }) => {
     game.state === "ready" ||
     game.state === "set" ||
     game.state === "playing" ? (
-      <ActionButton
-        action={
-          game.phase === "penaltyShootout"
-            ? { type: "freePenaltyShot", args: null }
-            : { type: "freeSetPlay", args: null }
-        }
-        label={"Playing"}
-        legal={
-          legalGameActions[
-            game.phase === "penaltyShootout" ? actions.FREE_PENALTY_SHOT : actions.FREE_SET_PLAY
-          ]
-        }
-      />
+      <div className={game.phase === "penaltyShootout" ? "col-span-2" : "col-span-1"}>
+        <ActionButton
+          action={
+            game.phase === "penaltyShootout"
+              ? { type: "freePenaltyShot", args: null }
+              : { type: "freeSetPlay", args: null }
+          }
+          label={"Playing"}
+          legal={
+            legalGameActions[
+              game.phase === "penaltyShootout" ? actions.FREE_PENALTY_SHOT : actions.FREE_SET_PLAY
+            ]
+          }
+        />
+      </div>
     ) : (
       <></>
     );
@@ -107,8 +112,7 @@ const StatePanel = ({ game, legalGameActions }) => {
   // (Ready and Second Half) are displayed during the entire half-time break, even though only one
   // of them can be legal.
   let secondHalfButton =
-    (game.phase === "firstHalf" && game.state === "finished") ||
-    (game.phase === "secondHalf" && game.state === "initial") ? (
+    inHalfTimeBreak ? (
       <ActionButton
         action={{ type: "switchHalf", args: null }}
         label="Second Half"
@@ -120,11 +124,13 @@ const StatePanel = ({ game, legalGameActions }) => {
 
   let penaltyShootoutButton =
     game.phase === "secondHalf" && game.state === "finished" ? (
-      <ActionButton
-        action={{ type: "startPenaltyShootout", args: { sides: "homeDefendsLeftGoal" } }}
-        label="Penalty Shoot-out"
-        legal={legalGameActions[actions.START_PENALTY_SHOOTOUT]}
-      />
+      <div className="col-span-4">
+        <ActionButton
+          action={{ type: "startPenaltyShootout", args: { sides: "homeDefendsLeftGoal" } }}
+          label="Penalty Shoot-out"
+          legal={legalGameActions[actions.START_PENALTY_SHOOTOUT]}
+        />
+      </div>
     ) : (
       <></>
     );
@@ -138,7 +144,7 @@ const StatePanel = ({ game, legalGameActions }) => {
   );
 
   return (
-    <div className="flex flex-row gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {secondHalfButton}
       {penaltyShootoutButton}
       {readyButton}
