@@ -35,6 +35,8 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     app.manage(SyncState(runtime_notify.clone()));
 
     let _ = window.set_min_size(Some(LogicalSize::<f64>::new(1024.0, 768.0)));
+    #[cfg(target_os = "windows")]
+    let _ = window.set_size(LogicalSize::<f64>::new(1024.0, 768.0));
     let _ = window.set_fullscreen(settings.window.fullscreen);
     let _ = window.set_resizable(true);
     let _ = window.center();
