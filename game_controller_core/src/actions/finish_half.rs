@@ -24,7 +24,7 @@ impl Action for FinishHalf {
         c.game.state = State::Finished;
 
         // After the first half, a timer counts down the half-time break.
-        if c.game.phase == Phase::FirstHalf {
+        if c.game.phase == Phase::FirstHalf && c.params.competition.challenge_mode.is_none() {
             c.game.secondary_timer = Timer::Started {
                 remaining: c
                     .params

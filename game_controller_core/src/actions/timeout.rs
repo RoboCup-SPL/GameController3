@@ -71,5 +71,6 @@ impl Action for Timeout {
             // legal.
             && (c.game.set_play == SetPlay::NoSetPlay || c.game.set_play == SetPlay::KickOff)
             && self.side.map_or(true, |side| c.game.teams[side].timeout_budget > 0)
+            && c.params.competition.challenge_mode.is_none()
     }
 }

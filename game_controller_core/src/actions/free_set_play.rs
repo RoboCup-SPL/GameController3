@@ -20,14 +20,19 @@ impl Action for FreeSetPlay {
             return;
         }
 
-        if !c.params.competition.set_plays[c.game.set_play].duration.is_zero() {
+        if !c.params.competition.set_plays[c.game.set_play]
+            .duration
+            .is_zero()
+        {
             c.game.secondary_timer = Timer::Started {
                 remaining: c.params.competition.set_plays[c.game.set_play]
                     .duration
                     .try_into()
                     .unwrap(),
                 run_condition: RunCondition::Always,
-                behavior_at_zero: BehaviorAtZero::Expire(vec![VAction::FinishSetPlay(FinishSetPlay)]),
+                behavior_at_zero: BehaviorAtZero::Expire(vec![VAction::FinishSetPlay(
+                    FinishSetPlay,
+                )]),
             };
         } else {
             c.game.secondary_timer = Timer::Stopped;

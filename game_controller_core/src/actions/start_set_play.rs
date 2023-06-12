@@ -84,6 +84,7 @@ impl Action for StartSetPlay {
                 // have been clicked before).
                 c.game.state == State::Playing
                     && (c.game.set_play == SetPlay::NoSetPlay || c.game.kicking_side != self.side)
+                    && c.params.competition.challenge_mode.is_none()
             })
     }
 }

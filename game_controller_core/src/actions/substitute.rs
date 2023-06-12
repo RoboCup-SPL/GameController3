@@ -56,5 +56,6 @@ impl Action for Substitute {
             && self.player_in != self.player_out
             && c.game.teams[self.side][self.player_in].penalty == Penalty::Substitute
             && c.game.teams[self.side][self.player_out].penalty != Penalty::Substitute
+            && c.params.competition.challenge_mode.is_none()
     }
 }
