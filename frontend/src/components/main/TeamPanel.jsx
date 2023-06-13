@@ -106,11 +106,34 @@ const TeamPanel = ({
   sign,
   teamNames,
 }) => {
+  // This indicates whether we are currently in the process of substitution or player selection.
   const [substitute, setSubstitute] = useState(false);
+  // This doubles as carrying the number of the player which is substituted (out) for normal
+  // substitutions, and a boolean indicating whether the penalty shoot-out player we are selecting
+  // is a field player (false) or a goalkeeper (true). If the substitute state is false, this
+  // should always be null.
   const [substitutedPlayer, setSubstitutedPlayer] = useState(null);
 
+  // Thus, the allowed combinations of substituted/substitutedPlayer are:
+  // substitute === false && substitutedPlayer === null
+  //   -> no substitution / player selecting going on
+  // substitute === true && !penaltyShootout && substitutedPlayer === null
+  //   -> selecting the player going out
+  // substitute === true && !penaltyShootout && substitutedPlayer === 1..20
+  //   -> selecting the player coming in
+  // substitute === true && penaltyShootout && substitutedPlayer === null
+  //   -> selecting the player type (goalkeeper or field player)
+  // substitute === true && penaltyShootout && substitutedPlayer === false
+  //   -> selecting the player for this shot, wearing a field player jersey
+  // substitute === true && penaltyShootout && substitutedPlayer === true
+  //   -> selecting the player for this shot, wearing a goalkeeper jersey
+
+  // This is terrible code, I know.
   const selectingPlayerIn = substitute && substitutedPlayer != null;
-  const selectingPlayerInPSO = substitute && game.phase === "penaltyShootout";
+  const selectingPlayerTypePSO =
+    substitute && game.phase === "penaltyShootout" && substitutedPlayer === null;
+  const selectingPlayerInPSO =
+    substitute && game.phase === "penaltyShootout" && substitutedPlayer != null;
 
   const team = game.teams[side];
   const teamConnectionStatus = connectionStatus[side];
@@ -119,7 +142,7 @@ const TeamPanel = ({
     if (selectingPlayerInPSO) {
       applyAction({
         type: "selectPenaltyShotPlayer",
-        args: { side: side, player: player.number, goalkeeper: side != game.kickingSide /*TODO*/ },
+        args: { side: side, player: player.number, goalkeeper: substitutedPlayer === true },
       });
       setSubstitute(false);
       setSubstitutedPlayer(null);
@@ -194,47 +217,59 @@ const TeamPanel = ({
         <TeamStats game={game} side={side} sign={sign} team={team} />
       </div>
       <div className="grow flex flex-col gap-2 overflow-auto">
-        {team.players
-          .map((player, index) => {
-            return {
-              ...player,
-              connectionStatus: teamConnectionStatus[index],
-              number: index + 1,
-            };
-          })
-          .filter(
-            selectingPlayerInPSO
-              ? () => true
-              : selectingPlayerIn
-              ? (player) => player.penalty === "substitute"
-              : (player) => player.penalty != "substitute"
-          )
-          .map((player) => (
-            <PlayerButton
-              key={player.number}
-              color={
-                (
-                  selectingPlayerInPSO
-                    ? side != game.kickingSide /*TODO*/
-                    : (selectingPlayerIn ? substitutedPlayer : player.number) === team.goalkeeper
-                )
-                  ? teamParams.goalkeeperColor
-                  : teamParams.fieldPlayerColor
-              }
-              legal={
-                substitute ||
-                actions.isPenaltyCallLegalForPlayer(
-                  legalPenaltyActions,
-                  side,
-                  player.number,
-                  selectedPenaltyCall
-                )
-              }
-              sign={sign}
-              onClick={() => handlePlayerClick(player)}
-              player={player}
-            />
-          ))}
+        {selectingPlayerTypePSO
+          ? [true, false].map((isGoalkeeper) => (
+              <PlayerButton
+                key={isGoalkeeper}
+                color={isGoalkeeper ? teamParams.goalkeeperColor : teamParams.fieldPlayerColor}
+                legal={true}
+                sign={sign}
+                onClick={() => setSubstitutedPlayer(isGoalkeeper)}
+                player={null}
+              />
+            ))
+          : team.players
+              .map((player, index) => {
+                return {
+                  ...player,
+                  connectionStatus: teamConnectionStatus[index],
+                  number: index + 1,
+                };
+              })
+              .filter(
+                selectingPlayerInPSO
+                  ? () => true
+                  : selectingPlayerIn
+                  ? (player) => player.penalty === "substitute"
+                  : (player) => player.penalty != "substitute"
+              )
+              .map((player) => (
+                <PlayerButton
+                  key={player.number}
+                  color={
+                    (
+                      selectingPlayerInPSO
+                        ? substitutedPlayer === true
+                        : (selectingPlayerIn ? substitutedPlayer : player.number) ===
+                          team.goalkeeper
+                    )
+                      ? teamParams.goalkeeperColor
+                      : teamParams.fieldPlayerColor
+                  }
+                  legal={
+                    substitute ||
+                    actions.isPenaltyCallLegalForPlayer(
+                      legalPenaltyActions,
+                      side,
+                      player.number,
+                      selectedPenaltyCall
+                    )
+                  }
+                  sign={sign}
+                  onClick={() => handlePlayerClick(player)}
+                  player={player}
+                />
+              ))}
       </div>
       <FreeKickButtons game={game} legalTeamActions={legalTeamActions} side={side} sign={sign} />
     </div>

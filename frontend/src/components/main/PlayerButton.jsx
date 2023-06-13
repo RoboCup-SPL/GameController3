@@ -31,6 +31,7 @@ const penaltyDescriptions = {
 
 const PlayerButton = ({ color, legal, sign, onClick, player }) => {
   const shouldFlash =
+    player &&
     player.penalty != "noPenalty" &&
     player.penalty != "substitute" &&
     player.penalty != "motionInSet" &&
@@ -48,35 +49,45 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
       <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} items-center gap-4 px-4`}>
         <div className="grow flex flex-col">
           <p>{color.charAt(0).toUpperCase() + color.slice(1)}</p>
-          <p
-            className={
-              player.penaltyTimer.started
-                ? "tabular-nums"
-                : player.penalty === "noPenalty"
-                ? "invisible"
-                : ""
-            }
-          >
-            {player.penaltyTimer.started
-              ? formatMMSS(player.penaltyTimer)
-              : penaltyDescriptions[player.penalty]}
-          </p>
+          {player ? (
+            <p
+              className={
+                player.penaltyTimer.started
+                  ? "tabular-nums"
+                  : player.penalty === "noPenalty"
+                  ? "invisible"
+                  : ""
+              }
+            >
+              {player.penaltyTimer.started
+                ? formatMMSS(player.penaltyTimer)
+                : penaltyDescriptions[player.penalty]}
+            </p>
+          ) : (
+            <></>
+          )}
         </div>
-        <svg
-          className={
-            player.connectionStatus >= 2
-              ? "text-green-600"
-              : player.connectionStatus >= 1
-              ? "text-yellow-400"
-              : "text-red-600"
-          }
-          fill="currentColor"
-          height="14"
-          width="14"
-        >
-          <circle cx="7" cy="7" r="7" />
-        </svg>
-        <p className="text-3xl tabular-nums">{player.number}</p>
+        {player ? (
+          <>
+            <svg
+              className={
+                player.connectionStatus >= 2
+                  ? "text-green-600"
+                  : player.connectionStatus >= 1
+                  ? "text-yellow-400"
+                  : "text-red-600"
+              }
+              fill="currentColor"
+              height="14"
+              width="14"
+            >
+              <circle cx="7" cy="7" r="7" />
+            </svg>
+            <p className="text-3xl tabular-nums">{player.number}</p>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </button>
   );
