@@ -69,6 +69,31 @@ const TeamStats = ({ game, side, sign, team }) => {
   );
 };
 
+const FreeKickButtons = ({ game, legalTeamActions, side, sign }) => {
+  return (
+    <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
+      <ActionButton
+        action={{ type: "startSetPlay", args: { side: side, setPlay: "goalKick" } }}
+        active={game.setPlay === "goalKick" && game.kickingSide === side}
+        label="Goal Kick"
+        legal={legalTeamActions[actions.GOAL_KICK]}
+      />
+      <ActionButton
+        action={{ type: "startSetPlay", args: { side: side, setPlay: "kickIn" } }}
+        active={game.setPlay === "kickIn" && game.kickingSide === side}
+        label="Kick-in"
+        legal={legalTeamActions[actions.KICK_IN]}
+      />
+      <ActionButton
+        action={{ type: "startSetPlay", args: { side: side, setPlay: "cornerKick" } }}
+        active={game.setPlay === "cornerKick" && game.kickingSide === side}
+        label="Corner Kick"
+        legal={legalTeamActions[actions.CORNER_KICK]}
+      />
+    </div>
+  );
+};
+
 const TeamPanel = ({
   connectionStatus,
   game,
@@ -211,26 +236,7 @@ const TeamPanel = ({
             />
           ))}
       </div>
-      <div className={`flex ${sign > 0 ? "flex-row" : "flex-row-reverse"} gap-2`}>
-        <ActionButton
-          action={{ type: "startSetPlay", args: { side: side, setPlay: "goalKick" } }}
-          active={game.setPlay === "goalKick" && game.kickingSide === side}
-          label="Goal Kick"
-          legal={legalTeamActions[actions.GOAL_KICK]}
-        />
-        <ActionButton
-          action={{ type: "startSetPlay", args: { side: side, setPlay: "kickIn" } }}
-          active={game.setPlay === "kickIn" && game.kickingSide === side}
-          label="Kick-in"
-          legal={legalTeamActions[actions.KICK_IN]}
-        />
-        <ActionButton
-          action={{ type: "startSetPlay", args: { side: side, setPlay: "cornerKick" } }}
-          active={game.setPlay === "cornerKick" && game.kickingSide === side}
-          label="Corner Kick"
-          legal={legalTeamActions[actions.CORNER_KICK]}
-        />
-      </div>
+      <FreeKickButtons game={game} legalTeamActions={legalTeamActions} side={side} sign={sign} />
     </div>
   );
 };
