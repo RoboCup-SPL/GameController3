@@ -145,7 +145,7 @@ const TeamPanel = ({
             label={game.phase === "penaltyShootout" ? "Select" : "Substitute"}
             legal={true}
           />
-          {game.state != "playing" ? (
+          {game.phase === "penaltyShootout" || game.state != "playing" ? (
             <ActionButton
               action={{ type: "timeout", args: { side: side } }}
               label="Timeout"
@@ -154,7 +154,7 @@ const TeamPanel = ({
           ) : (
             <ActionButton
               action={{ type: "globalGameStuck", args: { side: side } }}
-              label="Global Game Stuck"
+              label="Global GS"
               legal={legalTeamActions[actions.GLOBAL_GAME_STUCK]}
             />
           )}
