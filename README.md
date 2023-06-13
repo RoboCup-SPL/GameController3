@@ -70,8 +70,9 @@ The exceptions are that control messages can be configured to be sent to the lim
 
 ### Start
 
-Given the absence of binary packages, the user will have compiled the GameController at this point (or do it now).
-Consequently, the most convenient way to run it is by executing
+The binary distributions on the [GitHub releases page](https://github.com/RoboCup-SPL/GameController3/releases) come with scripts that can executed in a platform-typical way.
+
+If the GameController should be run from the source code, the most convenient way to do it is by executing
 
 ```bash
 cargo run [-r]
