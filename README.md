@@ -123,6 +123,28 @@ The goalkeeper property is tranferred to the substitute, i.e. when the goalkeepe
 This feature must also be used before the start of a half in order to match the set of players in the GameController to the players that are actually on the field.
 If a team wants to play with a goalkeeper with a number from 2-7 (or 2-5 in the Challenge Shield), this must be done using three substitutions (e.g. if a team wants to play with players 1-7, but have the 3 be the goalkeeper, it must substitute 8 for 1, 1 for 3, 3 for 8).
 
+#### Penalty Shoot-out
+
+A penalty shoot-out can only be started after two halves have been played and the score is equal.
+However, it does not depend on the game mode, because penalty shoot-outs can already be needed in games in which the clock does not stop during the Ready and Set states.
+It is only allowed to switch to the next shot as long as the result of the game is not clear yet.
+
+The Playing state can be entered once players on both sides are selected.
+This is done by clicking the "Select" button (in place of the "Substitute" button).
+First, the color of the selected player must be selected.
+This is because in a penalty shoot-out, the jersey color does not necessarily match the designation as goalkeeper or kicker, and the GameController cannot know which players are wearing which jersey.
+After the color has been selected, a scrollable list of players appears (similar to substitution).
+
+#### Undo
+
+At the bottom of the window, a timeline of the last five actions applied by the user is filled from right to left.
+Clicking on one of the actions there restores the entire game to the state immediately before that action was applied.
+It is not possible to undo individual actions that have been followed by other actions.
+The undo history is actually not limited to the last five actions, i.e. previous actions appear once some actions are undone.
+
+Actions that were applied automatically (e.g. because a timer elapsed) do not appear in the undo history.
+This is because they would be applied again immediately if they were undone.
+
 ## Logs
 
 The GameController writes log files to the directory `logs`.
