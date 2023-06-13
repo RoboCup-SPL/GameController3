@@ -31,6 +31,13 @@ The Rust code is compiled with cargo:
 cargo build [-r]
 ```
 
+### Creating Binary Distributions
+
+For Linux, macOS and Windows, there are scripts in the directory `dist/` to create binary distributions.
+They all expect a version number as first argument, and can optionally take the target as second argument (otherwise the host target is assumed on Linux and Windows, while macOS creates a Universal binary).
+They build a special profile called `release-dist` which mainly tries to create a small binary.
+It is recommended to run the script only on a clean working tree.
+
 ## Configuration
 
 Configuration files that are read at runtime are located in the directory `config`.

@@ -7,7 +7,7 @@ target=${2:-"$(rustc -vV | sed -n "s/^host: \(.*\)/\1/p")"}
 profile=release-dist
 
 if [ -z ${version} ]; then
-  >&2 echo "usage: ${0} <version> [target]"
+  >&2 echo "usage: ${0} <version> [<target>]"
   exit 1
 fi
 
