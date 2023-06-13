@@ -39,7 +39,8 @@ impl StatusMessageForwarder {
         })
     }
 
-    /// This function runs the forwarder until an error occurs.
+    /// This function runs the forwarder until an error occurs. Network errors during sending are
+    /// ignored because the network might change and we shouldn't crash in that case.
     pub async fn run(&mut self) -> Result<()> {
         loop {
             let (source, buffer) = self.message_receiver.recv().await?;
@@ -54,7 +55,7 @@ impl StatusMessageForwarder {
                 }
                 _ => todo!("implement forwarding of IPv6 status messages"),
             };
-            self.socket.send(&prefixed_buffer).await?;
+            let _ = self.socket.send(&prefixed_buffer).await;
         }
     }
 }

@@ -52,8 +52,8 @@ impl ControlMessageSender {
         })
     }
 
-    /// This function runs the sender until an error occurs.
-    pub async fn run(&self) -> Result<()> {
+    /// This function runs the sender indefinitely.
+    pub async fn run(&self) {
         let mut interval = interval(Self::SEND_INTERVAL);
         let mut packet_number: u8 = 0;
         loop {
@@ -70,7 +70,7 @@ impl ControlMessageSender {
                 self.to_monitor,
             )
             .into();
-            self.socket.send(&buffer).await?;
+            let _ = self.socket.send(&buffer).await;
             packet_number = packet_number.wrapping_add(1);
         }
     }

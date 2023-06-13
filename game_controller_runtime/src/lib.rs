@@ -112,7 +112,7 @@ async fn start_network(
             .await
             .context("could not create control message sender")?;
 
-    join_set.spawn(async move { control_message_sender.run().await.unwrap() });
+    join_set.spawn(async move { control_message_sender.run().await });
 
     for team in teams {
         let team_message_receiver =
@@ -231,7 +231,8 @@ async fn event_loop(
                                     .await
                                     .unwrap()
                                     .run()
-                                    .await
+                                    .await;
+                                    Ok(())
                                 });
                             }
                             {
