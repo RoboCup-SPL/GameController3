@@ -34,9 +34,18 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     let runtime_notify = Arc::new(Notify::new());
     app.manage(SyncState(runtime_notify.clone()));
 
-    let _ = window.set_min_size(Some(LogicalSize::<f64>::new(1024.0, 768.0)));
+    // Unfortunately we cannot use the number of players per team here.
+    let size = LogicalSize::<f64>::new(
+        1024.0,
+        if settings.competition.id == "champions_cup" {
+            768.0
+        } else {
+            620.0
+        },
+    );
+    let _ = window.set_min_size(Some(size));
     #[cfg(target_os = "windows")]
-    let _ = window.set_size(LogicalSize::<f64>::new(1024.0, 768.0));
+    let _ = window.set_size(size);
     let _ = window.set_fullscreen(settings.window.fullscreen);
     let _ = window.set_resizable(true);
     let _ = window.center();
