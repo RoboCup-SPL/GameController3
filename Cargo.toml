@@ -32,7 +32,7 @@ trait_enum = { version = "0.5" }
 authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/RoboCup-SPL/GameController"
+repository = "https://github.com/RoboCup-SPL/GameController3"
 version = "1.0.0-rc.1"
 
 [profile.release-dist]

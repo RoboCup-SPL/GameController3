@@ -4,7 +4,7 @@ description = "The GUI application of the RoboCup Standard Platform League GameC
 edition = "2021"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 license = "MIT"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 name = "game_controller_app"
-repository = "https://github.com/RoboCup-SPL/GameController"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+repository = "https://github.com/RoboCup-SPL/GameController3"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 version = "1.0.0-rc.1"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
 
 [build-dependencies]
