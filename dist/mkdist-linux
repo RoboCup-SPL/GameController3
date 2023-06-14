@@ -18,7 +18,7 @@ archive="${basedir}/dist/game_controller-${version}-${target}.tar.bz2"
 rm -rf "${archivedir}"
 
 pushd "${basedir}/frontend"
-npm install
+npm ci
 npm run build
 popd
 

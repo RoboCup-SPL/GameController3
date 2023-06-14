@@ -19,7 +19,7 @@ if (Test-Path $ArchiveDirectory) {
 }
 
 Push-Location $(Join-Path $BaseDirectory "frontend")
-npm install
+npm ci
 npm run build
 Pop-Location
 

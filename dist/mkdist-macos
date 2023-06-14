@@ -33,7 +33,7 @@ rm -rf "${appdir}"
 rm -f "${dmg}"
 
 pushd "${basedir}/frontend"
-npm install
+npm ci
 npm run build
 popd
 
