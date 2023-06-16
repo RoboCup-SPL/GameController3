@@ -71,7 +71,7 @@ In addition, the GameController offers an interface for monitor applications (su
 
 The user must ensure that all of the aforementioned network communication channels are allowed to be used by the firewall.
 The GameController runs on a specific network interface, which generally specifies where packets are sent and from where they are received.
-The exceptions are that control messages can be configured to be sent to the limited broadcast address (`255.255.255.255`) instead of the interface's broadcast address, and that monitor requests are received from any address.
+The exceptions are that control messages can be configured to be sent to the limited broadcast address (`255.255.255.255`) instead of the interface's broadcast address, and that monitor requests and team messages are received from any address.
 
 ## Usage
 
