@@ -3,6 +3,7 @@ members = [
   "game_controller_app",
   "game_controller_core",
   "game_controller_msgs",
+  "game_controller_logs",
   "game_controller_net",
   "game_controller_runtime",
 ]
