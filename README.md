@@ -31,6 +31,22 @@ The Rust code is compiled with cargo:
 cargo build [-r]
 ```
 
+#### Dev
+
+First, thank you for contributing to development.
+
+This will install the tauri CLI:
+
+```bash
+cargo install tauri-cli
+```
+
+This will start the frontend and backend in dev mode:
+
+```bash
+cargo tauri dev
+```
+
 ### Creating Binary Distributions
 
 For Linux, macOS and Windows, there are scripts in the directory `dist/` to create binary distributions.
