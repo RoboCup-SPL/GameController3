@@ -15,24 +15,27 @@ const NetworkSettings = ({ interfaces, network, setNetwork }) => {
           ))}
         </select>
       </div>
-      <div className="flex flex-row items-center gap-2">
-        <label htmlFor="broadcast">Broadcast</label>
-        <input
-          type="checkbox"
-          checked={network.broadcast}
-          id="broadcast"
-          onChange={(e) => setNetwork({ ...network, broadcast: e.target.checked })}
-        />
-      </div>
-      <div className="flex flex-row items-center gap-2">
-        <label htmlFor="multicast">Multicast</label>
-        <input
-          type="checkbox"
-          checked={network.multicast}
-          id="multicast"
-          onChange={(e) => setNetwork({ ...network, multicast: e.target.checked })}
-        />
-      </div>
+      <details>
+        <summary>Casting (advanced option)</summary>
+        <div className="flex flex-row items-center gap-2">
+          <label htmlFor="broadcast">Broadcast</label>
+          <input
+            type="checkbox"
+            checked={network.broadcast}
+            id="broadcast"
+            onChange={(e) => setNetwork({ ...network, broadcast: e.target.checked })}
+          />
+        </div>
+        <div className="flex flex-row items-center gap-2">
+          <label htmlFor="multicast">Multicast</label>
+          <input
+            type="checkbox"
+            checked={network.multicast}
+            id="multicast"
+            onChange={(e) => setNetwork({ ...network, multicast: e.target.checked })}
+          />
+        </div>
+      </details>
     </div>
   );
 };
