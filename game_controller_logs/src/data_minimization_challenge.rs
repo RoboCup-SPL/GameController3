@@ -25,7 +25,7 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
     let mut iter = entries.iter();
     let metadata: &LoggedMetadata =
         if let LogEntry::Metadata(metadata) = &iter.next().unwrap().entry {
-            &metadata
+            metadata
         } else {
             return Err(anyhow!("first log entry must be metadata"));
         };
@@ -65,7 +65,12 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
         }
     }
     for side in [Side::Home, Side::Away] {
-        println!("{},{},{}", params.game.teams[side].number, stats[side].0, stats[side].1.as_secs());
+        println!(
+            "{},{},{}",
+            params.game.teams[side].number,
+            stats[side].0,
+            stats[side].1.as_secs()
+        );
     }
     Ok(())
 }
