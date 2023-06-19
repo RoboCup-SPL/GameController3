@@ -1,22 +1,22 @@
 [package]
-authors = ["Arne Hasselbring <arha@uni-bremen.de>"]  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+authors = { workspace = true }
 description = "The GUI application of the RoboCup Standard Platform League GameController"
-edition = "2021"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
-license = "MIT"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+edition = { workspace = true }
+license = { workspace = true }
 name = "game_controller_app"
-repository = "https://github.com/RoboCup-SPL/GameController3"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
-version = "1.0.0-rc.1"  # tauri does not support importing this from the workspace yet (already fixed in git, but not released yet)
+repository = { workspace = true }
+version = { workspace = true }
 
 [build-dependencies]
-tauri-build = { version = "1.2.1", features = [] }
+tauri-build = { workspace = true }
 
 [dependencies]
-anyhow = { version = "1" }
-clap = { version = "4.2", features = ["derive"] }
-game_controller_core = { path = "../game_controller_core" }
-game_controller_runtime = { path = "../game_controller_runtime" }
-tauri = { version = "1.2.4", features = [] }
-tokio = { version = "1.0", features = ["rt-multi-thread"] }
+anyhow = { workspace = true }
+clap = { workspace = true }
+game_controller_core = { workspace = true }
+game_controller_runtime = { workspace = true }
+tauri = { workspace = true }
+tokio = { workspace = true }
 
 [features]
 # by default Tauri runs in production mode
