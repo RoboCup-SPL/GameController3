@@ -19,6 +19,6 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y libclang-dev libgtk3-dev libwebkit2gtk-4.0-dev librsvg2-dev
         dist/mkdist-linux ${{ github.ref_name }}
-    - uses: actions/upload-artifcat@v3
+    - uses: actions/upload-artifact@v3
       with:
         path: dist/*.tar.bz2
