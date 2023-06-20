@@ -1,5 +1,7 @@
 //! This module defines the command line interface.
 
+use std::path::PathBuf;
+
 use clap::Parser;
 
 /// This struct defines the parser for the command line arguments.
@@ -30,4 +32,10 @@ pub struct Args {
     /// Join multicast groups for simulated team communication.
     #[arg(long, short)]
     pub multicast: bool,
+    /// Sync the log file to the storage device after each entry.
+    #[arg(long)]
+    pub sync: bool,
+    /// Specify the path to a log file to replay.
+    #[arg(long)]
+    pub replay: Option<PathBuf>,
 }

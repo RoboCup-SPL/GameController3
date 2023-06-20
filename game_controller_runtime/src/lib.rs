@@ -9,7 +9,7 @@ use std::{
     time::Duration,
 };
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Error, Result};
 use serde::Serialize;
 use serde_with::{serde_as, BoolFromInt};
 use time::{macros::format_description, OffsetDateTime};
@@ -25,7 +25,10 @@ use tokio_util::sync::CancellationToken;
 use game_controller_core::{
     action::VAction,
     actions::TeamMessage,
-    log::{LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage},
+    log::{
+        LogEntry, LoggedMetadata, LoggedMonitorRequest, LoggedStatusMessage, LoggedTeamMessage,
+        TimestampedLogEntry,
+    },
     types::{ActionSource, Game, Params, PlayerNumber, Side},
     GameController,
 };
@@ -326,20 +329,46 @@ pub async fn start_runtime(
 ) -> Result<RuntimeState> {
     let mut runtime_join_set = JoinSet::new();
 
-    let params = Params {
-        competition: serde_yaml::from_reader(
-            File::open(
-                config_directory
-                    .join(&settings.competition.id)
-                    .join("params.yaml"),
+    // If we should start by replaying a log file, it is loaded into memory now. This should
+    // definitely not be done in an async function...
+    let replay_data = settings
+        .log
+        .replay
+        .as_ref()
+        .map(|path| {
+            serde_yaml::from_reader::<_, Vec<TimestampedLogEntry>>(
+                File::open(path).context("could not open log file to be replayed")?,
             )
-            .context("could not open competition params")?,
-        )
-        .context("could not parse competition params")?,
-        game: settings.game.clone(),
-    };
+            .context("could not parse log file to be replayed")
+        })
+        .map_or(Ok(None), |r: Result<_>| r.map(Some))?;
 
-    let team_names = settings.game.teams.clone().map(|_side, team| {
+    // If the first entry in the log file to be replayed is metadata, then we use the parameters
+    // from there. Otherwise (or if we're not replaying a log file at all), the parameters are
+    // loaded from the settings supplied by the user.
+    let params = replay_data
+        .as_ref()
+        .and_then(|data| data.first())
+        .and_then(|entry| match &entry.entry {
+            LogEntry::Metadata(metadata) => Some(Ok::<Params, Error>(*metadata.params.clone())),
+            _ => None,
+        })
+        .unwrap_or_else(|| {
+            Ok(Params {
+                competition: serde_yaml::from_reader(
+                    File::open(
+                        config_directory
+                            .join(&settings.competition.id)
+                            .join("params.yaml"),
+                    )
+                    .context("could not open competition params")?,
+                )
+                .context("could not parse competition params")?,
+                game: settings.game.clone(),
+            })
+        })?;
+
+    let team_names = params.game.teams.clone().map(|_side, team| {
         teams
             .iter()
             .find(|t| team.number == t.number)
@@ -363,8 +392,7 @@ pub async fn start_runtime(
             team_names[Side::Away],
         )),
         &mut runtime_join_set,
-        false, // TODO: This should be true at actual competitions so that logs are always
-               // recoverable
+        settings.log.sync,
     )
     .await
     .context("could not create logger")?;
@@ -377,6 +405,35 @@ pub async fn start_runtime(
         timestamp: date_time,
         params: Box::new(params.clone()),
     }));
+
+    // Replay log entries. This should definitely not be done in an async function...
+    if let Some(data) = replay_data {
+        let mut iter = data.into_iter().peekable();
+        // Skip metadata if present and take its timestamp as start (even though it is always zero
+        // if written by the GameController).
+        let mut last_timestamp = iter
+            .next_if(|entry| matches!(entry.entry, LogEntry::Metadata(_)))
+            .map_or(Duration::ZERO, |entry| entry.timestamp);
+        for entry in iter {
+            game_controller.seek(entry.timestamp - last_timestamp);
+            last_timestamp = entry.timestamp;
+            match entry.entry {
+                LogEntry::Action(action) => {
+                    if action.source != ActionSource::Timer {
+                        game_controller.apply(action.action, action.source);
+                    }
+                }
+                LogEntry::End => {}
+                // We could check that the logged state matches the current, but because of timer
+                // actions this is not that simple.
+                LogEntry::GameState(_) => {}
+                LogEntry::Metadata(_) => panic!("metadata can only occur as first entry in a log"),
+                _ => {
+                    game_controller.log_now(entry.entry);
+                }
+            };
+        }
+    }
 
     let network_interface = network_interfaces
         .iter()

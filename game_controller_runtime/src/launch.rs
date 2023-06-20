@@ -1,6 +1,10 @@
 //! This module defines the launcher backend of the GameController application.
 
-use std::{fs::File, net::IpAddr, path::Path};
+use std::{
+    fs::File,
+    net::IpAddr,
+    path::{Path, PathBuf},
+};
 
 use anyhow::{anyhow, bail, Context, Result};
 use enum_map::enum_map;
@@ -83,6 +87,16 @@ pub struct NetworkSettings {
     pub multicast: bool,
 }
 
+/// This struct describes settings for logging.
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogSettings {
+    /// Whether the log file should be synced to the storage device after each entry.
+    pub sync: bool,
+    /// The path to a log file that should be replayed.
+    pub replay: Option<PathBuf>,
+}
+
 /// This represents the overall settings that can be configured in the launcher.
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -95,6 +109,8 @@ pub struct LaunchSettings {
     pub window: WindowSettings,
     /// Settings for the network.
     pub network: NetworkSettings,
+    /// Settings for logging.
+    pub log: LogSettings,
 }
 
 /// The bundle of data that is passed to JavaScript.
@@ -331,6 +347,10 @@ pub fn make_launch_data(config_directory: &Path, args: Args) -> Result<LaunchDat
             },
             broadcast: args.broadcast,
             multicast: args.multicast,
+        },
+        log: LogSettings {
+            sync: args.sync,
+            replay: args.replay,
         },
     };
 
