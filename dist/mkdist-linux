@@ -23,7 +23,7 @@ npm run build
 popd
 
 pushd "${basedir}"
-cargo build --target "${target}" --profile "${profile}"
+cargo build --target "${target}" --profile "${profile}" --project game_controller_app
 popd
 
 mkdir -p "${archivedir}/target/release"
@@ -34,7 +34,7 @@ cp "${basedir}/target/${target}/${profile}/game_controller_app" "${archivedir}/t
 cat >"${archivedir}/game_controller" <<EOF
 #!/bin/bash
 basedir="\$(cd "\$(dirname "\$(which "\${0}")")" && pwd)"
-"\${basedir}/target/release/game_controller_app" "\$@"
+exec "\${basedir}/target/release/game_controller_app" "\$@"
 EOF
 chmod a+x "${archivedir}/game_controller"
 

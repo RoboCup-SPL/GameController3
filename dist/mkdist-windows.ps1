@@ -24,7 +24,7 @@ npm run build
 Pop-Location
 
 Push-Location $BaseDirectory
-cargo build --target $Target --profile $BuildProfile
+cargo build --target $Target --profile $BuildProfile --project game_controller_app
 Pop-Location
 
 New-Item -ItemType Directory -Path $(Join-Path $ArchiveDirectory "target\release")
@@ -34,6 +34,6 @@ Copy-Item $(Join-Path $BaseDirectory "config") $ArchiveDirectory -Recurse
 Copy-Item $(Join-Path $BaseDirectory "target\$Target\$BuildProfile\game_controller_app.exe") $(Join-Path $ArchiveDirectory "target\release")
 New-Item -ItemType File -Path $(Join-Path $ArchiveDirectory "GameController.bat") -Value @"
 @echo off
-%~dp0\target\release\game_controller_app.exe %*
+start %~dp0\target\release\game_controller_app.exe %*
 "@
 Compress-Archive $ArchiveDirectory $Archive -Force

@@ -39,10 +39,10 @@ popd
 
 pushd "${basedir}"
 if ${universal}; then
-  cargo build --target aarch64-apple-darwin --profile "${profile}"
-  cargo build --target x86_64-apple-darwin --profile "${profile}"
+  cargo build --target aarch64-apple-darwin --profile "${profile}" --project game_controller_app
+  cargo build --target x86_64-apple-darwin --profile "${profile}" --project game_controller_app
 else
-  cargo build --target "${target}" --profile "${profile}"
+  cargo build --target "${target}" --profile "${profile}" --project game_controller_app
 fi
 popd
 
@@ -65,7 +65,7 @@ cat >"${appdir}/Contents/MacOS/GameController" <<EOF
 basedir="\$(cd "\$(dirname "\$(which "\${0}")")" && pwd)"
 mkdir -p ~/Library/Application\ Support/GameController/logs
 ln -sfh ~/Library/Application\ Support/GameController/logs "\${basedir}/../logs"
-"\${basedir}/../target/release/game_controller_app" "\$@"
+exec "\${basedir}/../target/release/game_controller_app" "\$@"
 EOF
 chmod a+x "${appdir}/Contents/MacOS/GameController"
 
