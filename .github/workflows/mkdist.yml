@@ -14,11 +14,16 @@ jobs:
     strategy:
       matrix:
         os:
+          - macos-latest
           - ubuntu-20.04
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+          dist/mkdist-macos ${{ github.ref_name }}
       - if: ${{ matrix.os == 'ubuntu-20.04' }}
         run: |
           sudo apt-get update -y
@@ -31,5 +36,6 @@ jobs:
         with:
           name: dist-${{ matrix.os }}
           path: |
+            dist/*.dmg
             dist/*.tar.bz2
             dist/*.zip
