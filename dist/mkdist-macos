@@ -2,7 +2,7 @@
 
 set -e
 
-version=${1}
+version="$(sed -e "s/^v\(.*\)/\1/" <<<${1})"
 target=${2}
 profile=release-dist
 
