@@ -8,6 +8,8 @@ version = { workspace = true }
 [dependencies]
 anyhow = { workspace = true }
 bytes = { workspace = true }
+clap = { workspace = true }
 enum-map = { workspace = true }
 game_controller_core = { workspace = true }
 game_controller_msgs = { workspace = true }
+serde_yaml = { workspace = true }
