@@ -20,7 +20,7 @@ fn is_valid_state(game: &Game) -> bool {
 /// This function evaluates the statistics for the data minimization challenge on a single game.
 /// For each team, a line is written to the standard output with three comma separated values: the
 /// team number, the number of payload bytes that the team sent during the game, and the overall
-/// uptime of the team during the game.
+/// uptime of the team during the game in milliseconds.
 pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
     let mut iter = entries.iter();
     let metadata: &LoggedMetadata =
@@ -69,7 +69,7 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
             "{},{},{}",
             params.game.teams[side].number,
             stats[side].0,
-            stats[side].1.as_secs()
+            stats[side].1.as_millis()
         );
     }
     Ok(())
