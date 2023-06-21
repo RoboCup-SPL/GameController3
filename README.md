@@ -94,6 +94,7 @@ The exceptions are that control messages can be configured to be sent to the lim
 ### Start
 
 The binary distributions on the [GitHub releases page](https://github.com/RoboCup-SPL/GameController3/releases) come with scripts that can executed in a platform-typical way.
+On macOS, you may want to call `xattr -c <path to GameController.app>` before the first run to clear the quarantine flag.
 
 If the GameController should be run from the source code, the most convenient way to do it is by executing
 
