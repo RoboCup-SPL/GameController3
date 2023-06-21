@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$Version = $args[0]
+$Version = $args[0] -replace "^v", ""
 if (!$Version) {
     throw "usage: $PSCommandPath <version> [<target>]"
 }
