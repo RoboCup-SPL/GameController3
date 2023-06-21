@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 use enum_map::enum_map;
 
 use game_controller_core::{
@@ -27,7 +27,7 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
         if let LogEntry::Metadata(metadata) = &iter.next().unwrap().entry {
             metadata
         } else {
-            return Err(anyhow!("first log entry must be metadata"));
+            bail!("first log entry must be metadata");
         };
     let params: &Params = &metadata.params;
     let mut stats = enum_map! {
