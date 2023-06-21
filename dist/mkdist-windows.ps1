@@ -24,7 +24,7 @@ npm run build
 Pop-Location
 
 Push-Location $BaseDirectory
-cargo build --target $Target --profile $BuildProfile --project game_controller_app
+cargo build --target $Target --profile $BuildProfile --package game_controller_app
 Pop-Location
 
 New-Item -ItemType Directory -Path $(Join-Path $ArchiveDirectory "target\release")

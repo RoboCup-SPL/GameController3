@@ -39,10 +39,10 @@ popd
 
 pushd "${basedir}"
 if ${universal}; then
-  cargo build --target aarch64-apple-darwin --profile "${profile}" --project game_controller_app
-  cargo build --target x86_64-apple-darwin --profile "${profile}" --project game_controller_app
+  cargo build --target aarch64-apple-darwin --profile "${profile}" --package game_controller_app
+  cargo build --target x86_64-apple-darwin --profile "${profile}" --package game_controller_app
 else
-  cargo build --target "${target}" --profile "${profile}" --project game_controller_app
+  cargo build --target "${target}" --profile "${profile}" --package game_controller_app
 fi
 popd
 

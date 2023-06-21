@@ -23,7 +23,7 @@ npm run build
 popd
 
 pushd "${basedir}"
-cargo build --target "${target}" --profile "${profile}" --project game_controller_app
+cargo build --target "${target}" --profile "${profile}" --package game_controller_app
 popd
 
 mkdir -p "${archivedir}/target/release"
