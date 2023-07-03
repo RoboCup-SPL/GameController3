@@ -1,14 +1,16 @@
 //! This module implements functions to evaluate the data minimization challenge (RoboCup 2023).
 
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use anyhow::{bail, Result};
+use bytes::Bytes;
 use enum_map::enum_map;
 
 use game_controller_core::{
     log::{LogEntry, LoggedMetadata, TimestampedLogEntry},
-    types::{Game, Params, Penalty, Phase, Side, State},
+    types::{Game, Params, Penalty, Phase, PlayerNumber, Side, State},
 };
+use game_controller_msgs::StatusMessage;
 
 /// This function checks if the given game is in a state where team messages are counted for this
 /// challenge.
@@ -30,6 +32,7 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
             bail!("first log entry must be metadata");
         };
     let params: &Params = &metadata.params;
+    let mut last_aliveness = HashMap::<(Side, PlayerNumber), Duration>::new();
     let mut stats = enum_map! {
         _ => (0usize, Duration::ZERO),
     };
@@ -41,16 +44,41 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
                     if is_valid_state(last_state) {
                         let dt = entry.timestamp - last_timestamp;
                         for side in [Side::Home, Side::Away] {
+                            // A player counts as being alive if it is
+                            // - not penalized AND
+                            // - has sent a status message during this state segment (- 4 seconds
+                            // because this is the minimum frequency of status messages, but the
+                            // state segment could be shorter than that).
                             let active_players = last_state.teams[side]
                                 .players
                                 .iter()
-                                .filter(|player| player.penalty == Penalty::NoPenalty)
+                                .zip(PlayerNumber::MIN..=PlayerNumber::MAX)
+                                .filter(|(player, number)| {
+                                    player.penalty == Penalty::NoPenalty
+                                        && last_aliveness
+                                            .get(&(side, PlayerNumber::new(*number)))
+                                            .map_or(false, |t| {
+                                                *t + Duration::from_secs(4) >= last_timestamp
+                                            })
+                                })
                                 .count() as u32;
                             stats[side].1 += dt * active_players;
                         }
                     }
                 }
                 last = Some((state, entry.timestamp));
+            }
+            LogEntry::StatusMessage(status_message) => {
+                if let Ok(status_message) =
+                    StatusMessage::try_from(Bytes::from(status_message.data.clone()))
+                {
+                    if let Some(side) = params.game.get_side(status_message.team_number) {
+                        last_aliveness.insert(
+                            (side, PlayerNumber::new(status_message.player_number)),
+                            entry.timestamp,
+                        );
+                    }
+                }
             }
             LogEntry::TeamMessage(team_message) => {
                 if let Some((last_state, _)) = last {
