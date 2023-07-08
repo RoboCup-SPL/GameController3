@@ -37,6 +37,9 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
         _ => (0usize, Duration::ZERO),
     };
     let mut last: Option<(&Game, Duration)> = None;
+    // Timestamp of the last transition from initial/finished/timeout to ready/set/playing (at
+    // least if the current state is ready/set/playing).
+    let mut last_stopped_timestamp = Duration::ZERO;
     for entry in iter {
         match &entry.entry {
             LogEntry::GameState(state) => {
@@ -46,9 +49,9 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
                         for side in [Side::Home, Side::Away] {
                             // A player counts as being alive if it is
                             // - not penalized AND
-                            // - has sent a status message during this state segment (- 4 seconds
-                            // because this is the minimum frequency of status messages, but the
-                            // state segment could be shorter than that).
+                            // - has sent a status message during this segment of ready/set/playing
+                            // (- 4 seconds because this is the minimum frequency of status
+                            // messages, but the state segment could be shorter than that).
                             let active_players = last_state.teams[side]
                                 .players
                                 .iter()
@@ -58,12 +61,14 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
                                         && last_aliveness
                                             .get(&(side, PlayerNumber::new(*number)))
                                             .map_or(false, |t| {
-                                                *t + Duration::from_secs(4) >= last_timestamp
+                                                *t + Duration::from_secs(4) >= last_stopped_timestamp
                                             })
                                 })
                                 .count() as u32;
                             stats[side].1 += dt * active_players;
                         }
+                    } else {
+                        last_stopped_timestamp = entry.timestamp;
                     }
                 }
                 last = Some((state, entry.timestamp));
