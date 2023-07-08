@@ -1,7 +1,7 @@
 - name: Invisibles
   number: 0
-  fieldPlayerColors: [blue, red]
-  goalkeeperColors: [yellow, black]
+  fieldPlayerColors: [red, blue, yellow, black, white, green, orange, purple, brown, gray]
+  goalkeeperColors: [blue, yellow, black, white, green, orange, purple, brown, gray, red]
 
 - name: UT Austin Villa
   number: 1
