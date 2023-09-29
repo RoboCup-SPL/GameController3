@@ -150,10 +150,7 @@ impl Timer {
                 behavior_at_zero,
             } => {
                 run_conditions[*run_condition]
-                    && !matches!(
-                        (*remaining, behavior_at_zero),
-                        (SignedDuration::ZERO, BehaviorAtZero::Clip)
-                    )
+                    && !(remaining.is_zero() && matches!(behavior_at_zero, BehaviorAtZero::Clip))
             }
             _ => false,
         }
