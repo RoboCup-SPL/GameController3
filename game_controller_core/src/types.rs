@@ -238,7 +238,7 @@ pub enum Penalty {
 /// but there are some calls that map to different penalties in different states
 /// ([PenaltyCall::IllegalPosition]) and there are calls that map to the same penalty but with
 /// different side effects ([PenaltyCall::Foul], [PenaltyCall::PenaltyKick]).
-#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Copy, Debug, Deserialize, Enum, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum PenaltyCall {
     RequestForPickUp,
