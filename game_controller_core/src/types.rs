@@ -358,15 +358,12 @@ impl Game {
         self.teams
             .values()
             .flat_map(|team| team.players.iter().map(|player| &player.penalty_timer))
-            .chain(
-                [
-                    &self.primary_timer,
-                    &self.secondary_timer,
-                    &self.timeout_rewind_timer,
-                    &self.switch_half_timer,
-                ]
-                .into_iter(),
-            )
+            .chain([
+                &self.primary_timer,
+                &self.secondary_timer,
+                &self.timeout_rewind_timer,
+                &self.switch_half_timer,
+            ])
     }
 
     /// This function returns a mutable iterator over all timers in the game.
@@ -378,15 +375,12 @@ impl Game {
                     .iter_mut()
                     .map(|player| &mut player.penalty_timer)
             })
-            .chain(
-                [
-                    &mut self.primary_timer,
-                    &mut self.secondary_timer,
-                    &mut self.timeout_rewind_timer,
-                    &mut self.switch_half_timer,
-                ]
-                .into_iter(),
-            )
+            .chain([
+                &mut self.primary_timer,
+                &mut self.secondary_timer,
+                &mut self.timeout_rewind_timer,
+                &mut self.switch_half_timer,
+            ])
     }
 }
 
