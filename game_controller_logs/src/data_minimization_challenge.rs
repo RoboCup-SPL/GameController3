@@ -61,7 +61,8 @@ pub fn evaluate(entries: Vec<TimestampedLogEntry>) -> Result<()> {
                                         && last_aliveness
                                             .get(&(side, PlayerNumber::new(*number)))
                                             .map_or(false, |t| {
-                                                *t + Duration::from_secs(4) >= last_stopped_timestamp
+                                                *t + Duration::from_secs(4)
+                                                    >= last_stopped_timestamp
                                             })
                                 })
                                 .count() as u32;
