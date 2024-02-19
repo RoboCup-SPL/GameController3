@@ -136,6 +136,44 @@ Note that changing the sides or the kick-off team is not possible afterwards, so
 
 ### Main Interface
 
+The team panels (i.e. the left and right columns of the layout) should be aligned with the goals the teams are defending (from the perspective of the GameController operator).
+That is, the GameController operator's view defines what the *left* and the *right* team is, as it has been selected in the [launcher](#launcher).
+
+The main interface is sometimes context-sensitive, i.e. some buttons only appear when they are useful in the current state of the game.
+However, it is generally avoided that the layout or meaning of buttons changes without user interaction (because it would be bad if a button which the user is about to press changed its meaning in that instant).
+
+#### Penalties
+
+Penalties are applied by clicking the button labeled with the penalty call first and then clicking the button of the penalized player.
+This will start a timer on the respective player's button which starts flashing once there are only 10 seconds remaining.
+Players are not unpenalized automatically.
+Instead they must be unpenalized by clicking their button once their penalty time is over and they have been placed correctly by the assistant referees.
+
+Some penalties are special:
+- The Pick-Up penalty can replace any existing penalty, although the timer is inherited from the original penalty.
+- The Motion in Set penalty can be applied to multiple players without selecting it, accommodating the case that multiple players respond at once to a wrong whistle.
+    Furthermore, players are unpenalized automatically when the timer has elapsed, since they are never removed from the field.
+
+#### Message Counting
+
+As per the rule book, team messages are counted (based on the port that they are sent on) during the Ready, Set, and Playing states (but not in penalty shoot-outs).
+When a team message arrives that is either too large or beyond the team's message budget, the score resets to 0 and future goals will not be counted.
+The score and the message counter change to a different color then.
+
+#### Timeouts
+
+A timeout can be taken both by the teams and by the referee.
+When a timeout is taken during the Ready or Set state, the clock is reset to the beginning of the stoppage of play, but not the message budget.
+
+When a timeout is taken while the half-time break timer counts down, the timer is adjusted by the duration of a timeout.
+This can cause confusion in so-called interleaved games because the half-time break is often longer than usual, so that even after taking a timeout that half-time break timer can still be negative.
+
+#### Extra Time
+
+A minute of extra time can be added by pressing the "+" button next to the main clock.
+This button becomes available during stoppages of play once a minute of play has elapsed in the half.
+Adding a minute of extra time also increases the message budget for both teams, unless a team had communicated illegally before.
+
 #### Substitution
 
 To substitute players, first click the "Substitute" button on the team's side.
