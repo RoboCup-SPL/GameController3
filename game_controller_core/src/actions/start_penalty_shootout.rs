@@ -42,6 +42,7 @@ impl Action for StartPenaltyShootout {
     fn is_legal(&self, c: &ActionContext) -> bool {
         c.game.phase == Phase::SecondHalf
             && c.game.state == State::Finished
-            && c.game.teams[Side::Home].score == c.game.teams[Side::Away].score
+            && (c.game.teams[Side::Home].score == c.game.teams[Side::Away].score
+                || c.params.game.test.penalty_shootout)
     }
 }

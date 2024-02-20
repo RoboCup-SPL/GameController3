@@ -10,7 +10,9 @@ pub struct FreePenaltyShot;
 
 impl Action for FreePenaltyShot {
     fn execute(&self, c: &mut ActionContext) {
-        if !c.fork(c.params.competition.delay_after_playing, |_| false) {
+        if !c.params.game.test.no_delay
+            && !c.fork(c.params.competition.delay_after_playing, |_| false)
+        {
             return;
         }
 

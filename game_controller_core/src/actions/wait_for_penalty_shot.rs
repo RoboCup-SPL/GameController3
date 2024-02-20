@@ -45,44 +45,45 @@ impl Action for WaitForPenaltyShot {
         c.game.phase == Phase::PenaltyShootout
             && (c.game.state == State::Initial
                 || c.game.state == State::Timeout
-                || (c.game.state == State::Finished && {
-                    // At this point, kicking_side is the team that just finished its shot, so
-                    // -kicking_side is the team that would have the next shot. The following
-                    // should answer the question: Should that team still have a shot or not?
-                    let score_difference = (c.game.teams[c.game.kicking_side].score as i16)
-                        - (c.game.teams[-c.game.kicking_side].score as i16);
-                    if c.game.teams[-c.game.kicking_side].penalty_shot
-                        < c.params.competition.penalty_shots
-                    {
-                        // We are still in the regular penalty shoot-out. The following should
-                        // answer if still both teams can win.
+                || (c.game.state == State::Finished
+                    && ({
+                        // At this point, kicking_side is the team that just finished its shot, so
+                        // -kicking_side is the team that would have the next shot. The following
+                        // should answer the question: Should that team still have a shot or not?
+                        let score_difference = (c.game.teams[c.game.kicking_side].score as i16)
+                            - (c.game.teams[-c.game.kicking_side].score as i16);
+                        if c.game.teams[-c.game.kicking_side].penalty_shot
+                            < c.params.competition.penalty_shots
+                        {
+                            // We are still in the regular penalty shoot-out. The following should
+                            // answer if still both teams can win.
 
-                        // How many shots does the next team still have in the regular shoot-out?
-                        // (is at least 1)
-                        let remaining_for_next = c.params.competition.penalty_shots
-                            - c.game.teams[-c.game.kicking_side].penalty_shot;
+                            // How many shots does the next team still have in the regular
+                            // shoot-out? (is at least 1)
+                            let remaining_for_next = c.params.competition.penalty_shots
+                                - c.game.teams[-c.game.kicking_side].penalty_shot;
 
-                        // How many shots does the last team still have? (can be 0)
-                        let remaining_for_last = c.params.competition.penalty_shots
-                            - c.game.teams[c.game.kicking_side].penalty_shot;
+                            // How many shots does the last team still have? (can be 0)
+                            let remaining_for_last = c.params.competition.penalty_shots
+                                - c.game.teams[c.game.kicking_side].penalty_shot;
 
-                        // Can the next team still equalize?
-                        score_difference <= remaining_for_next.into()
+                            // Can the next team still equalize?
+                            score_difference <= remaining_for_next.into()
                             // Can the last team still equalize?
                             && -score_difference <= remaining_for_last.into()
-                    } else if c.game.teams[-c.game.kicking_side].penalty_shot
-                        < c.params.competition.penalty_shots
-                            + c.params.competition.sudden_death_penalty_shots
-                    {
-                        // This means that the next shot will/would be part of the sudden death
-                        // penalty shoot-out. The away team always gets another shot, but the
-                        // home team only continues if the score is still even. At this point,
-                        // there are other criteria to finish the game even if neither team
-                        // scored, but that must be sorted out by the referee.
-                        c.game.kicking_side == Side::Home || score_difference == 0
-                    } else {
-                        false
-                    }
-                }))
+                        } else if c.game.teams[-c.game.kicking_side].penalty_shot
+                            < c.params.competition.penalty_shots
+                                + c.params.competition.sudden_death_penalty_shots
+                        {
+                            // This means that the next shot will/would be part of the sudden death
+                            // penalty shoot-out. The away team always gets another shot, but the
+                            // home team only continues if the score is still even. At this point,
+                            // there are other criteria to finish the game even if neither team
+                            // scored, but that must be sorted out by the referee.
+                            c.game.kicking_side == Side::Home || score_difference == 0
+                        } else {
+                            false
+                        }
+                    } || c.params.game.test.penalty_shootout)))
     }
 }
