@@ -7,7 +7,6 @@ mod bindings;
 mod control_message;
 mod monitor_request;
 mod status_message;
-mod vrc_message;
 
 use bindings::{
     GAMECONTROLLER_DATA_PORT, GAMECONTROLLER_RETURN_PORT, GAMECONTROLLER_RETURN_STRUCT_SIZE,
@@ -38,4 +37,3 @@ pub const TEAM_MESSAGE_PORT_BASE: u16 = 10000;
 pub use control_message::ControlMessage;
 pub use monitor_request::MonitorRequest;
 pub use status_message::StatusMessage;
-pub use vrc_message::VrcMessage;
