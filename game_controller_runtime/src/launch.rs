@@ -12,7 +12,7 @@ use network_interface::NetworkInterfaceConfig;
 use serde::{Deserialize, Serialize};
 
 use game_controller_core::types::{
-    Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams,
+    Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams, TestParams,
 };
 
 use crate::cli::Args;
@@ -316,6 +316,7 @@ pub fn make_launch_data(config_directory: &Path, args: Args) -> Result<LaunchDat
             long: args.play_off,
             kick_off_side: Side::Home,
             side_mapping: SideMapping::HomeDefendsLeftGoal,
+            test: TestParams::default(),
         },
         window: WindowSettings {
             fullscreen: args.fullscreen,
