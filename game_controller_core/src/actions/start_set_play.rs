@@ -19,6 +19,14 @@ pub struct StartSetPlay {
 
 impl Action for StartSetPlay {
     fn execute(&self, c: &mut ActionContext) {
+        if !c.params.game.test.no_delay
+            && self.set_play == SetPlay::KickOff
+            && (c.game.state == State::Initial || c.game.state == State::Timeout)
+            && !c.fork(c.params.competition.delay_after_ready, |_| false)
+        {
+            return;
+        }
+
         // Cancel all penalty timers if starting a set play from any state other than Playing.
         if c.game.state != State::Playing {
             c.game.teams.values_mut().for_each(|team| {
