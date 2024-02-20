@@ -34,6 +34,5 @@ impl Action for AddExtraTime {
             && matches!(c.game.primary_timer, Timer::Started { .. })
             && c.game.primary_timer.get_remaining() + Self::MINUTE
                 < c.params.competition.half_duration
-            && c.params.competition.challenge_mode.is_none()
     }
 }

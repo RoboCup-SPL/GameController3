@@ -59,6 +59,5 @@ impl Action for Goal {
     fn is_legal(&self, c: &ActionContext) -> bool {
         c.game.state == State::Playing
             && (c.game.phase != Phase::PenaltyShootout || self.side == c.game.kicking_side)
-            && (c.params.competition.challenge_mode.is_none() || self.side == Side::Home)
     }
 }

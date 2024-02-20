@@ -22,8 +22,6 @@ impl Action for GlobalGameStuck {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
-        c.game.phase != Phase::PenaltyShootout
-            && c.game.state == State::Playing
-            && c.params.competition.challenge_mode.is_none()
+        c.game.phase != Phase::PenaltyShootout && c.game.state == State::Playing
     }
 }

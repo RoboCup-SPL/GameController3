@@ -169,13 +169,11 @@ impl Action for Penalize {
                     c.game.phase != Phase::PenaltyShootout
                         && c.game.state == State::Playing
                         && c.game.set_play == SetPlay::NoSetPlay
-                        && c.params.competition.challenge_mode.is_none()
                 }
                 PenaltyCall::PenaltyKick => {
                     c.game.phase != Phase::PenaltyShootout
                         && c.game.state == State::Playing
                         && c.game.set_play == SetPlay::NoSetPlay
-                        && c.params.competition.challenge_mode.is_none()
                 }
                 PenaltyCall::PlayingWithArmsHands => {
                     c.game.state == State::Ready // Not possible in this state, but can happen in

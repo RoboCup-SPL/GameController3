@@ -14,8 +14,8 @@ use crate::timer::Timer;
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum ChallengeMode {
-    /// Dynamic Ball Handling Challenge
-    DynamicBallHandling,
+    /// Shared Autonomy Challenge
+    SharedAutonomyChallenge,
 }
 
 /// This struct contains constant parameters of a penalty type.
