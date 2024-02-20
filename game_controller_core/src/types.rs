@@ -346,7 +346,7 @@ impl From<PlayerNumber> for u8 {
 }
 
 /// This struct contains the dynamic state of a game.
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Game {
     /// The current mapping of the home/away team to the left/right side of the field.
@@ -405,7 +405,7 @@ impl Game {
 }
 
 /// This struct contains the dynamic state of a team.
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Team {
     /// The player number of the goalkeeper. Can be [None] (only) during a penalty shoot-out.
@@ -443,7 +443,7 @@ impl IndexMut<PlayerNumber> for Team {
 }
 
 /// This struct contains the dynamic state of a player.
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Player {
     /// The current penalty of the player.
