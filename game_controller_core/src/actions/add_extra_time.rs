@@ -18,7 +18,7 @@ impl Action for AddExtraTime {
     fn execute(&self, c: &mut ActionContext) {
         c.game.primary_timer = Timer::Started {
             remaining: c.game.primary_timer.get_remaining() + Self::MINUTE,
-            run_condition: RunCondition::Playing,
+            run_condition: RunCondition::MainTimer,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
         c.game.teams.values_mut().for_each(|team| {

@@ -18,17 +18,20 @@ pub enum RunCondition {
     Always,
     /// The timer counts down during Playing, but also during Ready and Set if the game is not a
     /// "long" game.
-    Playing,
+    MainTimer,
     /// The timer counts during the Ready and Playing states.
     ReadyOrPlaying,
+    /// The timer counts down only during the Playing state.
+    Playing,
 }
 
 /// This struct can be queried for values of each run condition. It mainly exists because there are
 /// technical reasons that the conditions can not be evaluated directly in [Timer::seek] or
 /// [Timer::is_running].
 pub struct EvaluatedRunConditions {
-    playing: bool,
+    main_timer: bool,
     ready_or_playing: bool,
+    playing: bool,
 }
 
 impl EvaluatedRunConditions {
@@ -36,7 +39,7 @@ impl EvaluatedRunConditions {
     /// later.
     pub fn new(game: &Game, params: &Params) -> Self {
         Self {
-            playing: game.state == State::Playing
+            main_timer: game.state == State::Playing
                 || ((game.state == State::Ready || game.state == State::Set)
                     && game.phase != Phase::PenaltyShootout
                     && !params.game.long
@@ -44,6 +47,7 @@ impl EvaluatedRunConditions {
                         != TryInto::<SignedDuration>::try_into(params.competition.half_duration)
                             .unwrap()),
             ready_or_playing: game.state == State::Ready || game.state == State::Playing,
+            playing: game.state == State::Playing,
         }
     }
 }
@@ -54,8 +58,9 @@ impl Index<RunCondition> for EvaluatedRunConditions {
     fn index(&self, index: RunCondition) -> &Self::Output {
         match index {
             RunCondition::Always => &true,
-            RunCondition::Playing => &self.playing,
+            RunCondition::MainTimer => &self.main_timer,
             RunCondition::ReadyOrPlaying => &self.ready_or_playing,
+            RunCondition::Playing => &self.playing,
         }
     }
 }

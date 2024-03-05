@@ -51,7 +51,7 @@ impl GameController {
             kicking_side: params.game.kick_off_side,
             primary_timer: Timer::Started {
                 remaining: params.competition.half_duration.try_into().unwrap(),
-                run_condition: RunCondition::Playing,
+                run_condition: RunCondition::MainTimer,
                 behavior_at_zero: BehaviorAtZero::Overflow,
             },
             secondary_timer: Timer::Stopped,

@@ -30,7 +30,7 @@ impl Action for Timeout {
             c.game.primary_timer = Timer::Started {
                 remaining: c.game.primary_timer.get_remaining()
                     - c.game.timeout_rewind_timer.get_remaining(),
-                run_condition: RunCondition::Playing,
+                run_condition: RunCondition::MainTimer,
                 behavior_at_zero: BehaviorAtZero::Overflow,
             };
             c.game.timeout_rewind_timer = Timer::Stopped;

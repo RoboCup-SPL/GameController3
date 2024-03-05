@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::action::{Action, ActionContext, VAction};
 use crate::actions::{FinishSetPlay, WaitForSetPlay};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
-use crate::types::{Phase, SetPlay, Side, State};
+use crate::types::{Penalty, Phase, SetPlay, Side, State};
 
 /// This struct defines an action to start a set play. Depending on the set play type, this means
 /// switching to the Ready state or just setting a flag for the current set play within the Playing
@@ -31,7 +31,11 @@ impl Action for StartSetPlay {
         if c.game.state != State::Playing {
             c.game.teams.values_mut().for_each(|team| {
                 team.players.iter_mut().for_each(|player| {
-                    player.penalty_timer = Timer::Stopped;
+                    // The Motion in Initial penalty is special because it needs to survive the
+                    // transition from Initial to Ready, otherwise it would be pointless.
+                    if !(self.set_play == SetPlay::KickOff && player.penalty == Penalty::MotionInInitial) {
+                        player.penalty_timer = Timer::Stopped;
+                    }
                 })
             });
         }
@@ -57,7 +61,7 @@ impl Action for StartSetPlay {
             // time won't be added back to it.
             c.game.timeout_rewind_timer = Timer::Started {
                 remaining: SignedDuration::ZERO,
-                run_condition: RunCondition::Playing,
+                run_condition: RunCondition::MainTimer,
                 behavior_at_zero: BehaviorAtZero::Overflow,
             };
             c.game.state = State::Ready;

@@ -31,6 +31,7 @@ impl Action for Penalize {
                     Penalty::IllegalPosition
                 }
             }
+            PenaltyCall::MotionInInitial => Penalty::MotionInInitial,
             PenaltyCall::MotionInSet => Penalty::MotionInSet,
             PenaltyCall::FallenInactive => Penalty::FallenInactive,
             PenaltyCall::LocalGameStuck => Penalty::LocalGameStuck,
@@ -89,9 +90,16 @@ impl Action for Penalize {
                         duration.try_into().unwrap()
                     }
                 }),
-                run_condition: RunCondition::ReadyOrPlaying,
-                // Motion in Set is removed automatically.
-                behavior_at_zero: if penalty == Penalty::MotionInSet {
+                run_condition: if penalty == Penalty::MotionInInitial {
+                    RunCondition::Playing
+                } else {
+                    RunCondition::ReadyOrPlaying
+                },
+                // Motion in Initial / Set is removed automatically.
+                behavior_at_zero: if matches!(
+                    penalty,
+                    Penalty::MotionInInitial | Penalty::MotionInSet
+                ) {
                     BehaviorAtZero::Expire(vec![VAction::Unpenalize(Unpenalize {
                         side: self.side,
                         player: self.player,
@@ -138,6 +146,10 @@ impl Action for Penalize {
                                                          // goal first.
                             || c.game.state == State::Set
                             || c.game.state == State::Playing)
+                }
+                PenaltyCall::MotionInInitial => {
+                    c.game.phase != Phase::PenaltyShootout
+                        && (c.game.state == State::Initial || c.game.state == State::Timeout)
                 }
                 PenaltyCall::MotionInSet => c.game.state == State::Set,
                 PenaltyCall::FallenInactive => {

@@ -30,7 +30,7 @@ impl Action for SwitchHalf {
 
         c.game.primary_timer = Timer::Started {
             remaining: c.params.competition.half_duration.try_into().unwrap(),
-            run_condition: RunCondition::Playing,
+            run_condition: RunCondition::MainTimer,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
         c.game.switch_half_timer = Timer::Stopped;

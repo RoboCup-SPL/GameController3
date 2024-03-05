@@ -34,7 +34,7 @@ impl Action for WaitForPenaltyShot {
                 .penalty_shot_duration
                 .try_into()
                 .unwrap(),
-            run_condition: RunCondition::Playing,
+            run_condition: RunCondition::MainTimer,
             behavior_at_zero: BehaviorAtZero::Overflow,
         };
         c.game.secondary_timer = Timer::Stopped; // This can be set from a previous timeout.

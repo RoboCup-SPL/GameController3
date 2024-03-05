@@ -30,6 +30,9 @@ impl Action for Unpenalize {
                 // We allow motion in Set penalties to be revoked while still in Set.
                 || (c.game.teams[self.side][self.player].penalty == Penalty::MotionInSet
                     && c.game.state == State::Set)
+                // same for motion in Initial
+                || (c.game.teams[self.side][self.player].penalty == Penalty::MotionInInitial
+                    && c.game.state == State::Initial)
                 || c.params.game.test.unpenalize)
     }
 }

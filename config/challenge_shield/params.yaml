@@ -26,6 +26,11 @@ penalties:
       secs: 45
       nanos: 0
     incremental: true
+  motionInInitial:
+    duration:
+      secs: 15
+      nanos: 0
+    incremental: false
   motionInSet:
     duration:
       secs: 15
