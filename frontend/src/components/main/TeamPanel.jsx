@@ -164,7 +164,10 @@ const TeamPanel = ({
           call: actions.PENALTIES[selectedPenaltyCall][1],
         },
       });
-      if (actions.PENALTIES[selectedPenaltyCall][1] != "motionInSet") {
+      if (
+        actions.PENALTIES[selectedPenaltyCall][1] != "motionInSet" &&
+        actions.PENALTIES[selectedPenaltyCall][1] != "motionInInitial"
+      ) {
         setSelectedPenaltyCall(null);
       }
     } else {

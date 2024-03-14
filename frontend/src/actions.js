@@ -3,7 +3,12 @@ export const PENALTIES = [
   ["Foul", "foul"],
   ["Fallen / Inactive", "fallenInactive"],
   ["Leaving the Field", "leavingTheField"],
-  ["Motion in Set", "motionInSet"],
+  [
+    "Motion in Initial",
+    "motionInInitial",
+    (game) => game.state === "initial" || game.state === "timeout",
+  ],
+  ["Motion in Set", "motionInSet", (game) => game.state != "initial" && game.state != "timeout"],
   ["Illegal Position", "illegalPosition"],
   ["Ball Holding", "ballHolding"],
   ["Penalty Kick", "penaltyKick"],
