@@ -262,8 +262,3 @@
   number: 70
   fieldPlayerColors: [red, black]
   goalkeeperColors: [blue, purple, red, black]
-
-- name: Defenders
-  number: 99
-  fieldPlayerColors: [red, blue]
-  goalkeeperColors: [blue, red]
