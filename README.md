@@ -218,4 +218,4 @@ The GameController writes log files to the directory `logs`.
 They can get quite large because they are YAML.
 The main reason for YAML is that it is human-readable and can be appended (in contrast to JSON which requires a closing bracket in the end to be well-formed).
 
-At the moment, there are no tools to process these log files, but eventually, the tools from the old GameController should be ported.
+These log files can be analyzed by the programs from the `game_controller_logs` package or replayed using the [TeamCommunicationMonitor](https://github.com/RoboCup-SPL/GameController).
