@@ -371,6 +371,8 @@ pub struct Game {
     /// A timer that counts down until the half is switched.
     #[serde(skip)]
     pub switch_half_timer: Timer,
+    /// The side which gets the kick-off after the next global game stuck.
+    pub next_global_game_stuck_kick_off: Side,
     /// The two competing teams.
     pub teams: EnumMap<Side, Team>,
 }

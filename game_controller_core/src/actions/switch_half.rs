@@ -27,6 +27,7 @@ impl Action for SwitchHalf {
         c.game.phase = Phase::SecondHalf;
         c.game.state = State::Initial;
         c.game.kicking_side = -c.params.game.kick_off_side;
+        c.game.next_global_game_stuck_kick_off = c.params.game.kick_off_side;
 
         c.game.primary_timer = Timer::Started {
             remaining: c.params.competition.half_duration.try_into().unwrap(),

@@ -24,13 +24,12 @@ const NUM_OF_TEAMS = 2;
 const TEAM_ACTION_BASE = 0;
 
 export const TIMEOUT = 0;
-export const GLOBAL_GAME_STUCK = 1;
-export const GOAL = 2;
-export const GOAL_KICK = 3;
-export const KICK_IN = 4;
-export const CORNER_KICK = 5;
+export const GOAL = 1;
+export const GOAL_KICK = 2;
+export const KICK_IN = 3;
+export const CORNER_KICK = 4;
 
-const NUM_OF_TEAM_ACTIONS = 6;
+const NUM_OF_TEAM_ACTIONS = 5;
 
 const GAME_ACTION_BASE = TEAM_ACTION_BASE + NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS;
 
@@ -49,8 +48,9 @@ export const START_KICK_OFF_HOME = 10;
 export const START_KICK_OFF_AWAY = 11;
 export const ADD_EXTRA_TIME = 12;
 export const REFEREE_TIMEOUT = 13;
+export const GLOBAL_GAME_STUCK = 14;
 
-const NUM_OF_GAME_ACTIONS = 14;
+const NUM_OF_GAME_ACTIONS = 15;
 
 const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
@@ -71,7 +71,6 @@ export const getActions = () => {
   for (const side of ["home", "away"]) {
     actions.push(
       { type: "timeout", args: { side: side } },
-      { type: "globalGameStuck", args: { side: side } },
       { type: "goal", args: { side: side } },
       { type: "startSetPlay", args: { side: side, setPlay: "goalKick" } },
       { type: "startSetPlay", args: { side: side, setPlay: "kickIn" } },
@@ -92,6 +91,7 @@ export const getActions = () => {
   actions.push({ type: "startSetPlay", args: { side: "away", setPlay: "kickOff" } });
   actions.push({ type: "addExtraTime", args: null });
   actions.push({ type: "timeout", args: { side: null } });
+  actions.push({ type: "globalGameStuck", args: null });
   for (const penalty of PENALTIES) {
     for (const side of ["home", "away"]) {
       for (let number = 1; number <= NUM_OF_PLAYERS; ++number) {

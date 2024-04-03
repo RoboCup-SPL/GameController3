@@ -57,6 +57,7 @@ impl GameController {
             secondary_timer: Timer::Stopped,
             timeout_rewind_timer: Timer::Stopped,
             switch_half_timer: Timer::Stopped,
+            next_global_game_stuck_kick_off: -params.game.kick_off_side,
             teams: enum_map! {
                 _ => Team {
                     goalkeeper: Some(PlayerNumber::new(1)),
