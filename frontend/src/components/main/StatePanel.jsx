@@ -27,11 +27,19 @@ const StatePanel = ({ game, legalGameActions }) => {
       <></>
     );
 
+  let globalGameStuckButton =
+    game.phase != "penaltyShootout" && game.state === "playing" ? (
+      <ActionButton
+        action={{ type: "globalGameStuck", args: null }}
+        label="Global GS"
+        legal={legalGameActions[actions.GLOBAL_GAME_STUCK]}
+      />
+    ) : (
+      <></>
+    );
+
   let setButton =
-    game.phase === "penaltyShootout" ||
-    game.state === "ready" ||
-    game.state === "set" ||
-    game.state === "playing" ? (
+    game.phase === "penaltyShootout" || game.state === "ready" || game.state === "set" ? (
       <ActionButton
         action={
           game.phase === "penaltyShootout"
@@ -159,6 +167,7 @@ const StatePanel = ({ game, legalGameActions }) => {
       {secondHalfButton}
       {penaltyShootoutButtons}
       {readyButton}
+      {globalGameStuckButton}
       {setButton}
       {playingButton}
       {ballFreeButton}
