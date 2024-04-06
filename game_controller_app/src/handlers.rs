@@ -37,7 +37,7 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     // Unfortunately we cannot use the number of players per team here.
     let size = LogicalSize::<f64>::new(
         1024.0,
-        if settings.competition.id == "champions_cup" {
+        if settings.competition.id != "challenge_shield" {
             768.0
         } else {
             620.0
