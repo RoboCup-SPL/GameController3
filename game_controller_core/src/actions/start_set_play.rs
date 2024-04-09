@@ -22,7 +22,9 @@ impl Action for StartSetPlay {
         if !c.params.game.test.no_delay
             && self.set_play == SetPlay::KickOff
             && (c.game.state == State::Initial || c.game.state == State::Timeout)
-            && !c.fork(c.params.competition.delay_after_ready, |_| false)
+            && !c.fork(c.params.competition.delay_after_ready, |action| {
+                matches!(action, VAction::TeamMessage(_))
+            })
         {
             return;
         }
@@ -33,7 +35,9 @@ impl Action for StartSetPlay {
                 team.players.iter_mut().for_each(|player| {
                     // The Motion in Initial penalty is special because it needs to survive the
                     // transition from Initial to Ready, otherwise it would be pointless.
-                    if !(self.set_play == SetPlay::KickOff && player.penalty == Penalty::MotionInInitial) {
+                    if !(self.set_play == SetPlay::KickOff
+                        && player.penalty == Penalty::MotionInInitial)
+                    {
                         player.penalty_timer = Timer::Stopped;
                     }
                 })

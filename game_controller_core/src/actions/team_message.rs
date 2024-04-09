@@ -15,6 +15,13 @@ pub struct TeamMessage {
 
 impl Action for TeamMessage {
     fn execute(&self, c: &mut ActionContext) {
+        // Do not consider messages that arrive while we are still pretending that it is
+        // Initial/Timeout.
+        if c.delayed_game()
+            .is_some_and(|game| game.state == State::Initial || game.state == State::Timeout)
+        {
+            return;
+        }
         if c.game.teams[self.side].message_budget == 0 || self.illegal {
             c.game.teams[self.side].illegal_communication = true;
             c.game.teams[self.side].score = 0;

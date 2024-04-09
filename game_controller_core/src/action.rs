@@ -132,4 +132,11 @@ impl ActionContext<'_> {
             }
         }
     }
+
+    /// This function returns the delayed game state if there is some, or [None].
+    pub fn delayed_game(&self) -> Option<&Game> {
+        self.delay
+            .as_ref()
+            .and_then(|delay| delay.as_ref().map(|delay| &delay.game))
+    }
 }
