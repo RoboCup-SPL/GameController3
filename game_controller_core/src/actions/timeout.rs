@@ -42,9 +42,12 @@ impl Action for Timeout {
         };
         c.game.secondary_timer = Timer::Started {
             // In some cases, an existing timer is modified to avoid situations like "We are going
-            // to take a timeout once their timeout is over".
+            // to take a timeout once their timeout is over". However, we don't want that in the
+            // half-time break if the timer is already negative because this happens in interleaved games.
             remaining: if c.game.state == State::Timeout
-                || (c.game.state == State::Initial && c.game.phase == Phase::SecondHalf)
+                || (c.game.state == State::Initial
+                    && c.game.phase == Phase::SecondHalf
+                    && c.game.secondary_timer.get_remaining().is_positive())
             {
                 c.game.secondary_timer.get_remaining() + duration
             } else {
