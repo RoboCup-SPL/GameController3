@@ -37,11 +37,7 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
     // Unfortunately we cannot use the number of players per team here.
     let size = LogicalSize::<f64>::new(
         1024.0,
-        if settings.competition.id != "challenge_shield" {
-            768.0
-        } else {
-            620.0
-        },
+        820.0,
     );
     let _ = window.set_min_size(Some(size));
     #[cfg(target_os = "windows")]
