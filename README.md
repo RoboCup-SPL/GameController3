@@ -93,7 +93,7 @@ The exceptions are that control messages can be configured to be sent to the lim
 
 ### Start
 
-The binary distributions on the [GitHub releases page](https://github.com/RoboCup-SPL/GameController3/releases) come with scripts that can executed in a platform-typical way.
+The binary distributions on the [GitHub releases page](https://github.com/RoboCup-SPL/GameController3/releases) come with scripts that can be executed in a platform-typical way.
 On macOS, you may want to call `xattr -c <path to GameController.app>` before the first run to clear the quarantine flag.
 
 If the GameController should be run from the source code, the most convenient way to do it is by executing
@@ -105,7 +105,7 @@ cargo run [-r]
 from a command line within any directory of this workspace.
 The program accepts command line arguments which can be passed to `cargo` after `--`.
 They override the defaults of the launcher.
-A list of arguments (that is always up to date, in contrast to what would be written here) can by obtained by running with the `-h` option:
+A list of arguments (that is always up to date, in contrast to what would be written here) can be obtained by running with the `-h` option:
 
 ```bash
 cargo run -- -h
