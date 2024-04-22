@@ -205,7 +205,7 @@ pub fn header() {
         motion in initial,motion in set,fallen/inactive,local game stuck,ball holding,\
         player stance,pushing,playing with arms/hands,leaving the field,kick-in against,\
         goal kick against,corner kick against,pushing free kick against,penalty kick against,\
-        kick-in for,goal kick for,corner kick for,pushing free kick for,penalty kick for,playing,\
-        active players,ready set playing"
+        kick-in for,goal kick for,corner kick for,pushing free kick for,penalty kick for,\
+        active players,ready set playing,playing"
     );
 }
