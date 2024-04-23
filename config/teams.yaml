@@ -221,7 +221,7 @@
 - name: Naova
   number: 45
   fieldPlayerColors: [black, red]
-  goalkeeperColors: [orange, black, red]
+  goalkeeperColors: [orange, black, red, green]
 
 - name: Recife Soccer
   number: 46
