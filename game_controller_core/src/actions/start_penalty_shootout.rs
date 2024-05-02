@@ -44,5 +44,6 @@ impl Action for StartPenaltyShootout {
             && c.game.state == State::Finished
             && (c.game.teams[Side::Home].score == c.game.teams[Side::Away].score
                 || c.params.game.test.penalty_shootout)
+            && c.params.competition.challenge_mode.is_none()
     }
 }
