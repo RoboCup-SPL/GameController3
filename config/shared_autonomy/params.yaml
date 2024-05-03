@@ -153,5 +153,5 @@ delayAfterPlaying:
   secs: 15
   nanos: 0
 delayAfterReady:
-  secs: 30
+  secs: 0
   nanos: 0
