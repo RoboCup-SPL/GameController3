@@ -13,7 +13,7 @@ pub mod types;
 
 use std::{cmp::min, iter::once, time::Duration};
 
-use enum_map::enum_map;
+use enum_map::EnumMap;
 
 use crate::action::{ActionContext, VAction};
 use crate::log::{LogEntry, LoggedAction, Logger, TimestampedLogEntry};
@@ -58,33 +58,37 @@ impl GameController {
             timeout_rewind_timer: Timer::Stopped,
             switch_half_timer: Timer::Stopped,
             next_global_game_stuck_kick_off: -params.game.kick_off_side,
-            teams: enum_map! {
-                _ => Team {
-                    goalkeeper: Some(PlayerNumber::new(1)),
-                    score: 0,
-                    penalty_counter: 0,
-                    timeout_budget: params.competition.timeouts_per_team,
-                    message_budget: params.competition.messages_per_team,
-                    illegal_communication: false,
-                    penalty_shot: 0,
-                    penalty_shot_mask: 0,
-                    players: (PlayerNumber::MIN..=PlayerNumber::MAX)
-                        .map(|player| Player {
-                            // By default, the higher-numbered players are substitutes.
-                            penalty: if player <= params.competition.players_per_team {
-                                Penalty::NoPenalty
-                            } else {
-                                Penalty::Substitute
-                            },
-                            penalty_timer: Timer::Stopped,
-                        })
-                        // We have to collect into a Vec first because this thing cannot be directly
-                        // collected into a fixed size array.
-                        .collect::<Vec<_>>()
-                        .try_into()
-                        .unwrap(),
+            teams: EnumMap::from_fn(|side| Team {
+                goalkeeper: if params.competition.challenge_mode.is_some()
+                    && side == params.game.kick_off_side
+                {
+                    None
+                } else {
+                    Some(PlayerNumber::new(1))
                 },
-            },
+                score: 0,
+                penalty_counter: 0,
+                timeout_budget: params.competition.timeouts_per_team,
+                message_budget: params.competition.messages_per_team,
+                illegal_communication: false,
+                penalty_shot: 0,
+                penalty_shot_mask: 0,
+                players: (PlayerNumber::MIN..=PlayerNumber::MAX)
+                    .map(|player| Player {
+                        // By default, the higher-numbered players are substitutes.
+                        penalty: if player <= params.competition.players_per_team {
+                            Penalty::NoPenalty
+                        } else {
+                            Penalty::Substitute
+                        },
+                        penalty_timer: Timer::Stopped,
+                    })
+                    // We have to collect into a Vec first because this thing cannot be directly
+                    // collected into a fixed size array.
+                    .collect::<Vec<_>>()
+                    .try_into()
+                    .unwrap(),
+            }),
         };
         Self {
             params,
