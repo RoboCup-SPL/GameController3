@@ -184,6 +184,8 @@ pub enum State {
     Finished,
     /// This state is active during a timeout (either for a team or by the referee).
     Timeout,
+    /// This state is active before each half, even before the Initial state.
+    Setup,
 }
 
 /// This enumerates the set plays which can be active.

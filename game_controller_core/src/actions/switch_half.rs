@@ -25,7 +25,7 @@ impl Action for SwitchHalf {
 
         c.game.sides = -c.params.game.side_mapping;
         c.game.phase = Phase::SecondHalf;
-        c.game.state = State::Initial;
+        c.game.state = State::Setup;
         c.game.kicking_side = -c.params.game.kick_off_side;
         c.game.next_global_game_stuck_kick_off = c.params.game.kick_off_side;
 

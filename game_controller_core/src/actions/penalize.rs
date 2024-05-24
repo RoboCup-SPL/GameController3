@@ -47,7 +47,7 @@ impl Action for Penalize {
         c.game.teams[self.side][self.player].penalty_timer = if penalty == Penalty::PickedUp
             && matches!(
                 c.game.state,
-                State::Initial | State::Finished | State::Timeout
+                State::Initial | State::Finished | State::Timeout | State::Ready
             ) {
             // Picking up a player does not start a timer in "halted" game states.
             Timer::Stopped

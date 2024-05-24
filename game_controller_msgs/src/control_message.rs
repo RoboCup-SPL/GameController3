@@ -19,8 +19,8 @@ use crate::bindings::{
     PENALTY_SPL_PLAYER_STANCE, PENALTY_SPL_REQUEST_FOR_PICKUP, PENALTY_SUBSTITUTE,
     SET_PLAY_CORNER_KICK, SET_PLAY_GOAL_KICK, SET_PLAY_KICK_IN, SET_PLAY_NONE,
     SET_PLAY_PENALTY_KICK, SET_PLAY_PUSHING_FREE_KICK, STATE_FINISHED, STATE_INITIAL,
-    STATE_PLAYING, STATE_READY, STATE_SET, TEAM_BLACK, TEAM_BLUE, TEAM_BROWN, TEAM_GRAY,
-    TEAM_GREEN, TEAM_ORANGE, TEAM_PURPLE, TEAM_RED, TEAM_WHITE, TEAM_YELLOW,
+    STATE_PLAYING, STATE_READY, STATE_SET, STATE_SETUP, TEAM_BLACK, TEAM_BLUE, TEAM_BROWN,
+    TEAM_GRAY, TEAM_GREEN, TEAM_ORANGE, TEAM_PURPLE, TEAM_RED, TEAM_WHITE, TEAM_YELLOW,
 };
 
 /// This struct corresponds to the `RobotInfo`.
@@ -186,6 +186,7 @@ impl ControlMessage {
                 State::Set => STATE_SET,
                 State::Playing => STATE_PLAYING,
                 State::Finished => STATE_FINISHED,
+                State::Setup => STATE_SETUP,
             },
             set_play: match game.set_play {
                 SetPlay::NoSetPlay | SetPlay::KickOff => SET_PLAY_NONE,

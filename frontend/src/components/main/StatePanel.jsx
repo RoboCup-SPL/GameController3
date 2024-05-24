@@ -4,12 +4,24 @@ import * as actions from "../../actions.js";
 const StatePanel = ({ game, legalGameActions }) => {
   const inHalfTimeBreak =
     (game.phase === "firstHalf" && game.state === "finished") ||
-    (game.phase === "secondHalf" && game.state === "initial");
-  let readyButton =
+    (game.phase === "secondHalf" && (game.state === "initial" || game.state === "setup"));
+
+  let initialButton =
     game.phase != "penaltyShootout" &&
-    (game.state === "initial" ||
-      game.state === "timeout" ||
-      (game.phase === "firstHalf" && game.state === "finished")) ? (
+    (game.state === "setup" || (game.phase === "firstHalf" && game.state === "finished")) ? (
+      <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
+        <ActionButton
+          action={{ type: "startHalf", args: null }}
+          label="Initial"
+          legal={legalGameActions[actions.START_HALF]}
+        />
+      </div>
+    ) : (
+      <></>
+    );
+
+  let readyButton =
+    game.phase != "penaltyShootout" && (game.state === "initial" || game.state === "timeout") ? (
       <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
         <ActionButton
           action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}
@@ -117,11 +129,12 @@ const StatePanel = ({ game, legalGameActions }) => {
       <></>
     );
 
-  // This button is still displayed when we are already in the Initial state of the second half.
-  // This is because the state can switch automatically to the second half and it would be bad if
-  // the operator clicked the button exactly at that time, but the button switches its meaning to
-  // Ready before the button is actually clicked. Therefore, both buttons (Ready and Second Half)
-  // are displayed during the entire half-time break, even though only one of them can be legal.
+  // This button is still displayed when we are already in the Setup/Initial state of the second
+  // half. This is because the state can switch automatically to the second half and it would be
+  // bad if the operator clicked the button exactly at that time, but the button switches its
+  // meaning to Ready before the button is actually clicked. Therefore, both buttons (Ready and
+  // Second Half) are displayed during the entire half-time break, even though only one of them can
+  // be legal.
   let secondHalfButton = inHalfTimeBreak ? (
     <ActionButton
       action={{ type: "switchHalf", args: null }}
@@ -165,6 +178,7 @@ const StatePanel = ({ game, legalGameActions }) => {
   return (
     <div className="grid grid-cols-5 gap-2">
       {secondHalfButton}
+      {initialButton}
       {penaltyShootoutButtons}
       {readyButton}
       {globalGameStuckButton}
