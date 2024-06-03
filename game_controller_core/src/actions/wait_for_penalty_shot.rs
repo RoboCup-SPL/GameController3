@@ -43,7 +43,7 @@ impl Action for WaitForPenaltyShot {
 
     fn is_legal(&self, c: &ActionContext) -> bool {
         c.game.phase == Phase::PenaltyShootout
-            && (c.game.state == State::Initial
+            && (c.game.state == State::Setup
                 || c.game.state == State::Timeout
                 || (c.game.state == State::Finished
                     && ({

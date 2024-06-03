@@ -8,12 +8,14 @@ const StatePanel = ({ game, legalGameActions }) => {
 
   let initialButton =
     game.phase != "penaltyShootout" &&
-    (game.state === "setup" || (game.phase === "firstHalf" && game.state === "finished")) ? (
+    (game.state === "setup" ||
+      game.state == "timeout" ||
+      (game.phase === "firstHalf" && game.state === "finished")) ? (
       <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
         <ActionButton
-          action={{ type: "startHalf", args: null }}
+          action={{ type: "waitForReady", args: null }}
           label="Initial"
-          legal={legalGameActions[actions.START_HALF]}
+          legal={legalGameActions[actions.WAIT_FOR_READY]}
         />
       </div>
     ) : (
@@ -21,7 +23,7 @@ const StatePanel = ({ game, legalGameActions }) => {
     );
 
   let readyButton =
-    game.phase != "penaltyShootout" && (game.state === "initial" || game.state === "timeout") ? (
+    game.phase != "penaltyShootout" && game.state === "initial" ? (
       <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
         <ActionButton
           action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}

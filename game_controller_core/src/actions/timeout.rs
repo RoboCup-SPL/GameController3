@@ -45,7 +45,7 @@ impl Action for Timeout {
             // to take a timeout once their timeout is over". However, we don't want that in the
             // half-time break if the timer is already negative because this happens in interleaved games.
             remaining: if c.game.state == State::Timeout
-                || (c.game.state == State::Initial
+                || ((c.game.state == State::Initial || c.game.state == State::Setup)
                     && c.game.phase == Phase::SecondHalf
                     && c.game.secondary_timer.get_remaining().is_positive())
             {
@@ -67,7 +67,7 @@ impl Action for Timeout {
         c.game.state != State::Playing
             && c.game.state != State::Finished
             && (c.game.phase != Phase::PenaltyShootout
-                || c.game.state == State::Initial
+                || c.game.state == State::Setup
                 || c.game.state == State::Timeout)
             // This check is so you can't take timeouts during a penalty kick Ready/Set. The rules
             // don't explicitly rule this out (I think), but it would be ridiculous if it was

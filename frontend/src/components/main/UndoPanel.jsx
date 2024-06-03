@@ -26,8 +26,6 @@ const getActionName = (action) => {
     }
     case "selectPenaltyShotPlayer":
       return "Select";
-    case "startHalf":
-      return "Initial";
     case "startPenaltyShootout":
       return "Penalty Shoot-out";
     case "startSetPlay":
@@ -53,6 +51,8 @@ const getActionName = (action) => {
     case "waitForPenaltyShot":
     case "waitForSetPlay":
       return "Set";
+    case "waitForReady":
+      return "Initial";
   }
   return action.type;
 };

@@ -21,7 +21,7 @@ impl Action for StartSetPlay {
     fn execute(&self, c: &mut ActionContext) {
         if !c.params.game.test.no_delay
             && self.set_play == SetPlay::KickOff
-            && (c.game.state == State::Initial || c.game.state == State::Timeout)
+            && c.game.state == State::Initial
             && !c.fork(c.params.competition.delay_after_ready, |action| {
                 matches!(action, VAction::TeamMessage(_))
             })
@@ -92,8 +92,7 @@ impl Action for StartSetPlay {
             && (if self.set_play == SetPlay::KickOff {
                 // For kick-offs, the kicking side is pre-filled so that only that team can take
                 // the kick-off.
-                (c.game.state == State::Initial || c.game.state == State::Timeout)
-                    && c.game.kicking_side == self.side
+                c.game.state == State::Initial && c.game.kicking_side == self.side
             } else {
                 // It must be Playing, and we can only start set play during other set plays if
                 // they are for the other team (this is a shortcut, because FinishSetPlay should

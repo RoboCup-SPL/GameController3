@@ -38,7 +38,7 @@ const NUM_OF_TEAM_ACTIONS = 5;
 const GAME_ACTION_BASE = TEAM_ACTION_BASE + NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS;
 
 export const SWITCH_HALF = 0;
-export const START_HALF = 1;
+export const WAIT_FOR_READY = 1;
 export const START_PENALTY_SHOOTOUT_LEFT = 2;
 export const START_PENALTY_SHOOTOUT_RIGHT = 3;
 export const WAIT_FOR_PENALTY_SHOT = 4;
@@ -83,7 +83,7 @@ export const getActions = () => {
     );
   }
   actions.push({ type: "switchHalf", args: null });
-  actions.push({ type: "startHalf", args: null });
+  actions.push({ type: "waitForReady", args: null });
   actions.push({ type: "startPenaltyShootout", args: { sides: "homeDefendsLeftGoal" } });
   actions.push({ type: "startPenaltyShootout", args: { sides: "homeDefendsRightGoal" } });
   actions.push({ type: "waitForPenaltyShot", args: null });

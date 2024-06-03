@@ -181,12 +181,12 @@ impl ControlMessage {
                 (Phase::PenaltyShootout, _) => GAME_PHASE_PENALTYSHOOT,
             },
             state: match game.state {
-                State::Initial | State::Timeout => STATE_INITIAL,
+                State::Initial => STATE_INITIAL,
                 State::Ready => STATE_READY,
                 State::Set => STATE_SET,
                 State::Playing => STATE_PLAYING,
                 State::Finished => STATE_FINISHED,
-                State::Setup => STATE_SETUP,
+                State::Setup | State::Timeout => STATE_SETUP,
             },
             set_play: match game.set_play {
                 SetPlay::NoSetPlay | SetPlay::KickOff => SET_PLAY_NONE,
