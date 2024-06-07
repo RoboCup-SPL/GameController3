@@ -258,6 +258,16 @@
   fieldPlayerColors: [white, red]
   goalkeeperColors: [black, white, red]
 
+- name: RoboIME
+  number: 53
+  fieldPlayerColors: [blue, red]
+  goalkeeperColors: [blue, red]
+
+- name: WisTex United
+  number: 54
+  fieldPlayerColors: [red, orange]
+  goalkeeperColors: [black, white, red, orange]
+
 - name: B-Team
   number: 70
   fieldPlayerColors: [red, black]
