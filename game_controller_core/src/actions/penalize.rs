@@ -31,7 +31,7 @@ impl Action for Penalize {
                     Penalty::IllegalPosition
                 }
             }
-            PenaltyCall::MotionInInitial => Penalty::MotionInInitial,
+            PenaltyCall::MotionInStandby => Penalty::MotionInStandby,
             PenaltyCall::MotionInSet => Penalty::MotionInSet,
             PenaltyCall::FallenInactive => Penalty::FallenInactive,
             PenaltyCall::LocalGameStuck => Penalty::LocalGameStuck,
@@ -47,7 +47,7 @@ impl Action for Penalize {
         c.game.teams[self.side][self.player].penalty_timer = if penalty == Penalty::PickedUp
             && matches!(
                 c.game.state,
-                State::Initial | State::Finished | State::Timeout | State::Setup
+                State::Initial | State::Finished | State::Timeout
             ) {
             // Picking up a player does not start a timer in "halted" game states.
             Timer::Stopped
@@ -90,15 +90,15 @@ impl Action for Penalize {
                         duration.try_into().unwrap()
                     }
                 }),
-                run_condition: if penalty == Penalty::MotionInInitial {
+                run_condition: if penalty == Penalty::MotionInStandby {
                     RunCondition::Playing
                 } else {
                     RunCondition::ReadyOrPlaying
                 },
-                // Motion in Initial / Set is removed automatically.
+                // Motion in Standby / Set is removed automatically.
                 behavior_at_zero: if matches!(
                     penalty,
-                    Penalty::MotionInInitial | Penalty::MotionInSet
+                    Penalty::MotionInStandby | Penalty::MotionInSet
                 ) {
                     BehaviorAtZero::Expire(vec![VAction::Unpenalize(Unpenalize {
                         side: self.side,
@@ -147,10 +147,7 @@ impl Action for Penalize {
                             || c.game.state == State::Set
                             || c.game.state == State::Playing)
                 }
-                PenaltyCall::MotionInInitial => {
-                    c.game.phase != Phase::PenaltyShootout
-                        && (c.game.state == State::Initial || c.game.state == State::Timeout)
-                }
+                PenaltyCall::MotionInStandby => c.game.state == State::Standby,
                 PenaltyCall::MotionInSet => c.game.state == State::Set,
                 PenaltyCall::FallenInactive => {
                     c.game.state == State::Ready

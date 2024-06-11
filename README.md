@@ -155,7 +155,7 @@ Instead they must be unpenalized by clicking their button once their penalty tim
 
 Some penalties are special:
 - The Pick-Up penalty can replace any existing penalty, although the timer is inherited from the original penalty.
-- The Motion in Initial/Set penalty can be applied to multiple players without selecting it, accommodating the case that multiple players respond at once to a wrong whistle.
+- The Motion in Standby/Set penalty can be applied to multiple players without selecting it, accommodating the case that multiple players respond at once to a wrong whistle.
     Furthermore, players are unpenalized automatically when the timer has elapsed, since they are never removed from the field.
 
 #### Message Counting

@@ -174,6 +174,8 @@ pub enum Phase {
 pub enum State {
     /// This state is active before each half and before a penalty shoot-out.
     Initial,
+    /// This state is active when the referee gestures the transition to Ready.
+    Standby,
     /// This state is active when certain set plays are set up.
     Ready,
     /// This state is active after certain set plays have been set up and before each penalty shot.
@@ -184,8 +186,6 @@ pub enum State {
     Finished,
     /// This state is active during a timeout (either for a team or by the referee).
     Timeout,
-    /// This state is active before each half, even before the Initial state.
-    Setup,
 }
 
 /// This enumerates the set plays which can be active.
@@ -238,8 +238,8 @@ pub enum Penalty {
     IllegalPositionInSet,
     /// The player has moved to an illegal position.
     IllegalPosition,
-    /// The player has moved during the Initial state.
-    MotionInInitial,
+    /// The player has moved during the Standby state.
+    MotionInStandby,
     /// The player has moved during the Set state.
     MotionInSet,
     /// The player has fallen or become inactive for too long.
@@ -267,7 +267,7 @@ pub enum Penalty {
 pub enum PenaltyCall {
     RequestForPickUp,
     IllegalPosition,
-    MotionInInitial,
+    MotionInStandby,
     MotionInSet,
     FallenInactive,
     LocalGameStuck,

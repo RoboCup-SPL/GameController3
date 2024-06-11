@@ -16,9 +16,9 @@ pub struct TeamMessage {
 impl Action for TeamMessage {
     fn execute(&self, c: &mut ActionContext) {
         // Do not consider messages that arrive while we are still pretending that it is
-        // Initial.
+        // Standby.
         if c.delayed_game()
-            .is_some_and(|game| game.state == State::Initial)
+            .is_some_and(|game| game.state == State::Standby)
         {
             return;
         }

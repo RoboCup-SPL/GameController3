@@ -52,7 +52,7 @@ const getActionName = (action) => {
     case "waitForSetPlay":
       return "Set";
     case "waitForReady":
-      return "Initial";
+      return "Standby";
   }
   return action.type;
 };

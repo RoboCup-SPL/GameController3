@@ -97,6 +97,7 @@ const Main = () => {
             game={game}
             legalGameActions={extractGameActions(legalActions)}
             legalPenaltyActions={extractPenaltyActions(legalActions)}
+            params={params}
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
           />

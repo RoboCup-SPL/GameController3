@@ -30,7 +30,7 @@ impl Action for StartPenaltyShootout {
 
         c.game.sides = self.sides;
         c.game.phase = Phase::PenaltyShootout;
-        c.game.state = State::Setup;
+        c.game.state = State::Initial;
         c.game.set_play = SetPlay::NoSetPlay;
         // "The first (left) team in the GameController will have the striker robot for the first
         // penalty kick." - 2023 rule book section 3.16

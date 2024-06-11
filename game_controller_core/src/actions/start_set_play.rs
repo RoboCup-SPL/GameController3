@@ -33,10 +33,10 @@ impl Action for StartSetPlay {
         if c.game.state != State::Playing {
             c.game.teams.values_mut().for_each(|team| {
                 team.players.iter_mut().for_each(|player| {
-                    // The Motion in Initial penalty is special because it needs to survive the
-                    // transition from Initial to Ready, otherwise it would be pointless.
+                    // The Motion in Standby penalty is special because it needs to survive the
+                    // transition from Standby to Ready, otherwise it would be pointless.
                     if !(self.set_play == SetPlay::KickOff
-                        && player.penalty == Penalty::MotionInInitial)
+                        && player.penalty == Penalty::MotionInStandby)
                     {
                         player.penalty_timer = Timer::Stopped;
                     }
@@ -87,12 +87,17 @@ impl Action for StartSetPlay {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
+        let has_standby_state = !c.params.competition.delay_after_ready.is_zero();
         self.set_play != SetPlay::NoSetPlay
             && c.game.phase != Phase::PenaltyShootout
             && (if self.set_play == SetPlay::KickOff {
                 // For kick-offs, the kicking side is pre-filled so that only that team can take
                 // the kick-off.
-                c.game.state == State::Initial && c.game.kicking_side == self.side
+                (if has_standby_state {
+                    c.game.state == State::Standby
+                } else {
+                    c.game.state == State::Initial || c.game.state == State::Timeout
+                }) && c.game.kicking_side == self.side
             } else {
                 // It must be Playing, and we can only start set play during other set plays if
                 // they are for the other team (this is a shortcut, because FinishSetPlay should

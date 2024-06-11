@@ -46,7 +46,7 @@ impl GameController {
         let game = Game {
             sides: params.game.side_mapping,
             phase: Phase::FirstHalf,
-            state: State::Setup,
+            state: State::Initial,
             set_play: SetPlay::NoSetPlay,
             kicking_side: params.game.kick_off_side,
             primary_timer: Timer::Started {
