@@ -182,9 +182,10 @@ impl Action for Penalize {
                         || c.game.state == State::Playing
                 }
                 PenaltyCall::Pushing => {
-                    c.game.state == State::Ready
-                        || c.game.state == State::Set // Not possible in this state, but can happen
-                                                      // in Ready shortly before the timer expires.
+                    // Not possible in Set, but can happen in Ready shortly before the timer
+                    // expires.
+                    (c.game.phase != Phase::PenaltyShootout
+                        && (c.game.state == State::Ready || c.game.state == State::Set))
                         || c.game.state == State::Playing
                 }
                 PenaltyCall::Foul => {
@@ -204,9 +205,10 @@ impl Action for Penalize {
                         || c.game.state == State::Playing
                 }
                 PenaltyCall::LeavingTheField => {
-                    c.game.state == State::Ready
-                        || c.game.state == State::Set // Not possible in this state, but can happen
-                                                      // in Ready shortly before the timer expires.
+                    // Not possible in Set, but can happen in Ready shortly before the timer
+                    // expires.
+                    (c.game.phase != Phase::PenaltyShootout
+                        && (c.game.state == State::Ready || c.game.state == State::Set))
                         || c.game.state == State::Playing
                 }
             })
