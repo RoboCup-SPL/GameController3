@@ -66,11 +66,24 @@ impl Action for Penalize {
                     let previous_penalty = c.game.teams[self.side][self.player].penalty;
                     if penalty == Penalty::PickedUp && previous_penalty != Penalty::NoPenalty {
                         // Picking up a player in other states should keep the previous timer if
-                        // the player was  already penalized, but enforce that the total penalty
+                        // the player was already penalized, but enforce that the total penalty
                         // time is at least that of the pick-up penalty.
-                        let extra_penalty_duration = TryInto::<SignedDuration>::try_into(duration)
+                        let extra_penalty_duration = if previous_penalty == Penalty::MotionInStandby
+                        {
+                            // Motion in Standby is special as its actual duration is "longer" than
+                            // Pick-up since it is normally paused during ready. This prevents a
+                            // hack where you could pick up all players that got Motion in Standby
+                            // so that they could reenter after 45s (i.e. immediately at the start
+                            // of the Playing state for a complete Ready state) instead of 15s
+                            // after Playing.
+                            TryInto::<SignedDuration>::try_into(
+                                c.params.competition.set_plays[SetPlay::KickOff].ready_duration,
+                            )
                             .unwrap()
-                            - c.params.competition.penalties[previous_penalty].duration;
+                        } else {
+                            TryInto::<SignedDuration>::try_into(duration).unwrap()
+                                - c.params.competition.penalties[previous_penalty].duration
+                        };
                         c.game.teams[self.side][self.player]
                             .penalty_timer
                             .get_remaining()
