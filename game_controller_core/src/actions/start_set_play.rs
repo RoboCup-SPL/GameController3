@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::action::{Action, ActionContext, VAction};
 use crate::actions::{FinishSetPlay, WaitForSetPlay};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
-use crate::types::{Penalty, Phase, SetPlay, Side, State};
+use crate::types::{Phase, SetPlay, Side, State};
 
 /// This struct defines an action to start a set play. Depending on the set play type, this means
 /// switching to the Ready state or just setting a flag for the current set play within the Playing
@@ -27,21 +27,6 @@ impl Action for StartSetPlay {
             })
         {
             return;
-        }
-
-        // Cancel all penalty timers if starting a set play from any state other than Playing.
-        if c.game.state != State::Playing {
-            c.game.teams.values_mut().for_each(|team| {
-                team.players.iter_mut().for_each(|player| {
-                    // The Motion in Standby penalty is special because it needs to survive the
-                    // transition from Standby to Ready, otherwise it would be pointless.
-                    if !(self.set_play == SetPlay::KickOff
-                        && player.penalty == Penalty::MotionInStandby)
-                    {
-                        player.penalty_timer = Timer::Stopped;
-                    }
-                })
-            });
         }
 
         if !c.params.competition.set_plays[self.set_play]
