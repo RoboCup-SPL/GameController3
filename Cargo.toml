@@ -12,10 +12,10 @@ resolver = "2"
 
 [workspace.dependencies]
 anyhow = { version = "1.0" }
-bindgen = { version = "0.64" }
+bindgen = { version = "0.69" }
 bytes = { version = "1.0" }
 clap = { version = "4.2", features = ["derive"] }
-enum-map = { version = "2.5", features = ["serde"] }
+enum-map = { version = "2.7", features = ["serde"] }
 game_controller_core = { path = "game_controller_core" }
 game_controller_msgs = { path = "game_controller_msgs" }
 game_controller_net = { path = "game_controller_net" }

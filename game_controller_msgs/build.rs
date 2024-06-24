@@ -1,6 +1,6 @@
 use std::{env, path::PathBuf};
 
-use bindgen::{Builder, CargoCallbacks};
+use bindgen::Builder;
 
 fn main() {
     let bindings = Builder::default()
@@ -9,7 +9,7 @@ fn main() {
         .blocklist_type(".*")
         .fit_macro_constants(true)
         .layout_tests(false)
-        .parse_callbacks(Box::new(CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("failed to generate bindings");
 
