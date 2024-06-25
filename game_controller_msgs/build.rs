@@ -5,7 +5,7 @@ use bindgen::Builder;
 fn main() {
     let bindings = Builder::default()
         .header("headers/bindings.h")
-        .allowlist_file("(.*/game_controller_msgs/)?headers/.*.h")
+        .allowlist_file("headers[/\\\\].*.h")
         .blocklist_type(".*")
         .fit_macro_constants(true)
         .layout_tests(false)
