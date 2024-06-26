@@ -1,6 +1,10 @@
-const TeamSelector = ({ teams, number, setNumber }) => {
+const TeamSelector = ({ teams, number, setNumber, isTeamLegal }) => {
   return (
-    <select className="w-full" value={number} onChange={(e) => setNumber(parseInt(e.target.value))}>
+    <select
+      className={`w-full border-2 ${isTeamLegal ? "" : "border-red-600"}`}
+      value={number}
+      onChange={(e) => setNumber(parseInt(e.target.value))}
+    >
       {teams
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((team) => (

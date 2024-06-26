@@ -42,6 +42,16 @@ const GameSettings = ({ teams, game, setGame }) => {
                     teams: { ...game.teams, [side]: team },
                   })
                 }
+                isTeamLegal={game.teams.home.number != game.teams.away.number}
+                isFieldPlayerColorLegal={
+                  game.teams[side].fieldPlayerColor != game.teams.home.goalkeeperColor &&
+                  game.teams[side].fieldPlayerColor != game.teams.away.goalkeeperColor &&
+                  game.teams.home.fieldPlayerColor != game.teams.away.fieldPlayerColor
+                }
+                isGoalkeeperColorLegal={
+                  game.teams[side].goalkeeperColor != game.teams.home.fieldPlayerColor &&
+                  game.teams[side].goalkeeperColor != game.teams.away.fieldPlayerColor
+                }
               />
             </div>
           );

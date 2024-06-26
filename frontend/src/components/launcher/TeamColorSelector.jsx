@@ -1,6 +1,10 @@
-const TeamColorSelector = ({ colors, color, setColor }) => {
+const TeamColorSelector = ({ colors, color, setColor, isColorLegal }) => {
   return (
-    <select value={color} onChange={(e) => setColor(e.target.value)}>
+    <select
+      className={`border-2 ${isColorLegal ? "" : "border-red-600"}`}
+      value={color}
+      onChange={(e) => setColor(e.target.value)}
+    >
       {colors.map((color) => (
         <option key={color} value={color}>
           {color}
