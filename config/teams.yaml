@@ -241,7 +241,7 @@
 - name: SABANA Herons
   number: 49
   fieldPlayerColors: [blue, red]
-  goalkeeperColors: [blue, red]
+  goalkeeperColors: [red, black, green]
 
 - name: R-ZWEI KICKERS
   number: 50
