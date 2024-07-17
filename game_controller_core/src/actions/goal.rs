@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
-use crate::actions::StartSetPlay;
+use crate::actions::{FinishHalf, StartSetPlay};
 use crate::timer::Timer;
 use crate::types::{Phase, SetPlay, Side, State};
 
@@ -45,7 +45,7 @@ impl Action for Goal {
             if mercy_rule {
                 c.game.phase = Phase::SecondHalf;
             }
-            c.game.state = State::Finished;
+            FinishHalf.execute(c);
         } else if c.game.phase != Phase::PenaltyShootout {
             // A kick-off for the other team.
             StartSetPlay {
