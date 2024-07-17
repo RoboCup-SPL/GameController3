@@ -86,7 +86,7 @@
 - name: RoboEireann
   number: 17
   fieldPlayerColors: [green, white]
-  goalkeeperColors: [white, green, red]
+  goalkeeperColors: [white, green, red, blue]
 
 - name: rUNSWift
   number: 18
