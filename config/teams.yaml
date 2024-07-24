@@ -270,5 +270,5 @@
 
 - name: B-Team
   number: 70
-  fieldPlayerColors: [red, black]
-  goalkeeperColors: [blue, purple, red, black]
+  fieldPlayerColors: [red, blue, yellow, black, white, green, orange, purple, brown, gray]
+  goalkeeperColors: [blue, yellow, black, white, green, orange, purple, brown, gray, red]
