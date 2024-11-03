@@ -18,6 +18,7 @@ game_controller_core = { workspace = true }
 game_controller_runtime = { workspace = true }
 tauri = { workspace = true }
 tokio = { workspace = true }
+tts = { workspace = true }
 
 [features]
 # by default Tauri runs in production mode

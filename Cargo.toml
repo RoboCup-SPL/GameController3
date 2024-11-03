@@ -32,6 +32,7 @@ time = { version = "0.3", features = ["formatting", "local-offset", "macros", "s
 tokio = { version = "1.0", features = ["fs", "io-util", "macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
 tokio-util = { version = "0.7" }
 trait_enum = { version = "0.5" }
+tts = { version = "0.26.3" }
 
 [workspace.package]
 authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
