@@ -208,6 +208,21 @@ pub enum SetPlay {
     PenaltyKick,
 }
 
+impl std::fmt::Display for SetPlay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let output = match self {
+            Self::NoSetPlay => "No set play",
+            Self::KickOff => "Kick-off",
+            Self::KickIn => "Kick-in",
+            Self::GoalKick => "Goal kick",
+            Self::CornerKick => "Corner kick",
+            Self::PushingFreeKick => "Pushing free kick",
+            Self::PenaltyKick => "Penalty kick",
+        };
+        write!(f, "{output}")
+    }
+}
+
 /// This enumerates the jersey colors. Values may be added to match actually submitted jersey designs.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]

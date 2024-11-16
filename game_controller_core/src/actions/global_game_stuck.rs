@@ -4,6 +4,8 @@ use crate::action::{Action, ActionContext};
 use crate::actions::StartSetPlay;
 use crate::types::{Phase, SetPlay, State};
 
+use tts::*;
+
 /// This struct defines an action which corresponds to the referee call "Global Game Stuck".
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct GlobalGameStuck;
@@ -16,6 +18,12 @@ impl Action for GlobalGameStuck {
         }
         .execute(c);
         c.game.next_global_game_stuck_kick_off = -c.game.next_global_game_stuck_kick_off;
+
+        // Audio output
+        let msg = "Global game stuck";
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

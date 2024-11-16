@@ -4,6 +4,8 @@ use crate::action::{Action, ActionContext};
 use crate::timer::Timer;
 use crate::types::{SetPlay, State};
 
+use tts::*;
+
 /// This struct defines an action which corresponds to the referee call "Ball Free". It is the last
 /// part of a set play (i.e. fourth part of "complex" set plays with Ready and Set state and second
 /// part of "simple" set plays).
@@ -14,6 +16,12 @@ impl Action for FinishSetPlay {
     fn execute(&self, c: &mut ActionContext) {
         c.game.secondary_timer = Timer::Stopped;
         c.game.set_play = SetPlay::NoSetPlay;
+
+        // Audio output
+        let msg = "Ball free";
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

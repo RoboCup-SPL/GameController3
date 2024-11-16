@@ -5,6 +5,8 @@ use crate::actions::{FinishSetPlay, WaitForSetPlay};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
 use crate::types::{Phase, SetPlay, Side, State};
 
+use tts::*;
+
 /// This struct defines an action to start a set play. Depending on the set play type, this means
 /// switching to the Ready state or just setting a flag for the current set play within the Playing
 /// state.
@@ -69,6 +71,14 @@ impl Action for StartSetPlay {
         }
         c.game.set_play = self.set_play;
         c.game.kicking_side = self.side;
+
+        // Audio output
+        if self.set_play==SetPlay::KickIn || self.set_play==SetPlay::GoalKick || self.set_play==SetPlay::CornerKick {
+            let msg = format!("{} {}", self.set_play, c.params.game.teams[self.side].field_player_color);
+            println!("{}", msg);
+            let mut the_tts: Tts = Tts::default().unwrap();
+            the_tts.speak(msg, false);
+        }
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
