@@ -6,6 +6,7 @@ use crate::action::{Action, ActionContext, VAction};
 use crate::actions::{StartSetPlay, Unpenalize};
 use crate::timer::{BehaviorAtZero, RunCondition, SignedDuration, Timer};
 use crate::types::{Penalty, PenaltyCall, Phase, PlayerNumber, SetPlay, Side, State};
+use crate::speakable::Speakable;
 
 use tts::*;
 
@@ -146,11 +147,7 @@ impl Action for Penalize {
         }
 
         // Audio output
-        let msg = format!("{} {} {}", self.call, c.params.game.teams[self.side].field_player_color, u8::from(self.player));
-        println!("{}", msg);
-        let mut the_tts: Tts = Tts::default().unwrap();
-        the_tts.speak(msg, false);
-        
+        self.speak(c);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
@@ -221,5 +218,15 @@ impl Action for Penalize {
                         || c.game.state == State::Playing
                 }
             })
+    }
+}
+
+impl Speakable for Penalize {
+    fn speak(&self, c: &mut ActionContext) {
+        // Audio output
+        let msg = format!("{} {} {}", self.call, c.params.game.teams[self.side].field_player_color, u8::from(self.player));
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 }
