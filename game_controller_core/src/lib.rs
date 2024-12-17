@@ -10,6 +10,7 @@ pub mod actions;
 pub mod log;
 pub mod timer;
 pub mod types;
+pub mod speakable;
 
 use std::{cmp::min, iter::once, time::Duration};
 
