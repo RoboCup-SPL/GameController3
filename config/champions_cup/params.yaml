@@ -28,7 +28,7 @@ penalties:
     incremental: true
   motionInStandby:
     duration:
-      secs: 15
+      secs: 45
       nanos: 0
     incremental: false
   motionInSet:
@@ -152,5 +152,5 @@ delayAfterPlaying:
   secs: 15
   nanos: 0
 delayAfterReady:
-  secs: 30
+  secs: 45
   nanos: 0
