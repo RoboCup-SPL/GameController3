@@ -163,7 +163,13 @@ async fn event_loop(
     let (true_control_sender, _) = watch::channel(game_controller.get_game(false).clone());
 
     // We must wait for the main window before sending the first UI state.
-    ui_notify.notified().await;
+    select! {
+        _ = ui_notify.notified() => {},
+        _ = shutdown_token.cancelled() => {
+            return Ok(());
+        }
+    }
+
 
     loop {
         send_ui_state(UiState {
