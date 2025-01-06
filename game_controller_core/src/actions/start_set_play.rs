@@ -22,9 +22,7 @@ impl Action for StartSetPlay {
         if !c.params.game.test.no_delay
             && self.set_play == SetPlay::KickOff
             && c.game.state == State::Standby
-            && !c.fork(c.params.competition.delay_after_ready, |action| {
-                matches!(action, VAction::TeamMessage(_))
-            })
+            && !c.fork(c.params.competition.delay_after_ready, |_| false)
         {
             return;
         }
