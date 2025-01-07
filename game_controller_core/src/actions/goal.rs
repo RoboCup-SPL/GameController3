@@ -5,6 +5,8 @@ use crate::actions::{FinishHalf, StartSetPlay};
 use crate::timer::Timer;
 use crate::types::{Phase, SetPlay, Side, State};
 
+use tts::*;
+
 /// This struct defines an action for when a goal has been scored.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -58,6 +60,12 @@ impl Action for Goal {
                 1u16 << (c.game.teams[self.side].penalty_shot - 1);
             c.game.state = State::Finished;
         }
+
+        // Audio output
+        let msg = format!("Goal for {}", c.params.game.teams[self.side].field_player_color);
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

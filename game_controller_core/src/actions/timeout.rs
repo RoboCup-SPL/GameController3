@@ -4,6 +4,8 @@ use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
 use crate::types::{Phase, SetPlay, Side, State};
 
+use tts::*;
+
 /// This struct defines an action for when a team or the referee takes a timeout.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -61,6 +63,19 @@ impl Action for Timeout {
         if let Some(side) = self.side {
             c.game.teams[side].timeout_budget -= 1;
         }
+
+        // Audio output
+        let msg;
+        if let Some(side) = self.side {
+            msg = format!("Timeout {}", c.params.game.teams[side].field_player_color);
+        }
+        else {
+            msg = format!("Referee Timeout");
+        }
+        
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

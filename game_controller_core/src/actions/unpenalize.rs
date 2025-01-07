@@ -4,6 +4,8 @@ use crate::action::{Action, ActionContext};
 use crate::timer::Timer;
 use crate::types::{Penalty, PlayerNumber, Side, State};
 
+use tts::*;
+
 /// This struct defines an action to unpenalize players.
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -18,6 +20,12 @@ impl Action for Unpenalize {
     fn execute(&self, c: &mut ActionContext) {
         c.game.teams[self.side][self.player].penalty_timer = Timer::Stopped;
         c.game.teams[self.side][self.player].penalty = Penalty::NoPenalty;
+
+        // Audio output
+        let msg = format!("{} {} returning to field", c.params.game.teams[self.side].field_player_color, u8::from(self.player));
+        println!("{}", msg);
+        let mut the_tts: Tts = Tts::default().unwrap();
+        the_tts.speak(msg, false);
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
