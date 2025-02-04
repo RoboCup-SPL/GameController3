@@ -25,6 +25,7 @@ impl Action for FreeSetPlay {
         if !c.params.competition.set_plays[c.game.set_play]
             .duration
             .is_zero()
+            && c.game.kicking_side.is_some()
         {
             c.game.secondary_timer = Timer::Started {
                 remaining: c.params.competition.set_plays[c.game.set_play]

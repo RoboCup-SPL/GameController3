@@ -26,6 +26,11 @@ const StatePanel = ({ game, params, legalGameActions }) => {
       <></>
     );
 
+  let readySideMap = {
+    null: actions.START_KICK_OFF_NONE,
+    home: actions.START_KICK_OFF_HOME,
+    away: actions.START_KICK_OFF_AWAY,
+  };
   let readyButton =
     game.phase != "penaltyShootout" &&
     (hasStandbyState
@@ -37,13 +42,7 @@ const StatePanel = ({ game, params, legalGameActions }) => {
         <ActionButton
           action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}
           label="Ready"
-          legal={
-            legalGameActions[
-              game.kickingSide === "home"
-                ? actions.START_KICK_OFF_HOME
-                : actions.START_KICK_OFF_AWAY
-            ]
-          }
+          legal={legalGameActions[readySideMap[game.kickingSide]]}
         />
       </div>
     ) : (

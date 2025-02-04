@@ -137,7 +137,7 @@ impl Action for Penalize {
             _ => None,
         } {
             StartSetPlay {
-                side: -self.side,
+                side: Some(-self.side),
                 set_play,
             }
             .execute(c);

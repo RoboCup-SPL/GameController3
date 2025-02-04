@@ -12,7 +12,7 @@ use crate::bindings::{
     COMPETITION_PHASE_PLAYOFF, COMPETITION_PHASE_ROUNDROBIN, COMPETITION_TYPE_NORMAL,
     COMPETITION_TYPE_SHARED_AUTONOMY, GAMECONTROLLER_STRUCT_HEADER, GAMECONTROLLER_STRUCT_SIZE,
     GAMECONTROLLER_STRUCT_VERSION, GAME_PHASE_NORMAL, GAME_PHASE_PENALTYSHOOT, GAME_PHASE_TIMEOUT,
-    MAX_NUM_PLAYERS, PENALTY_NONE, PENALTY_SPL_ILLEGAL_BALL_CONTACT,
+    KICKING_TEAM_NONE, MAX_NUM_PLAYERS, PENALTY_NONE, PENALTY_SPL_ILLEGAL_BALL_CONTACT,
     PENALTY_SPL_ILLEGAL_MOTION_IN_SET, PENALTY_SPL_ILLEGAL_MOTION_IN_STANDBY,
     PENALTY_SPL_ILLEGAL_POSITION, PENALTY_SPL_ILLEGAL_POSITION_IN_SET, PENALTY_SPL_INACTIVE_PLAYER,
     PENALTY_SPL_LEAVING_THE_FIELD, PENALTY_SPL_LOCAL_GAME_STUCK, PENALTY_SPL_PLAYER_PUSHING,
@@ -197,7 +197,9 @@ impl ControlMessage {
                 SetPlay::PenaltyKick => SET_PLAY_PENALTY_KICK,
             },
             first_half: game.phase == Phase::FirstHalf,
-            kicking_team: params.game.teams[game.kicking_side].number,
+            kicking_team: game
+                .kicking_side
+                .map_or(KICKING_TEAM_NONE, |side| params.game.teams[side].number),
             secs_remaining: get_duration(
                 game.primary_timer.get_remaining(),
                 i16::MIN as i64,

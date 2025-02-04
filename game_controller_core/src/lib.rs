@@ -48,7 +48,7 @@ impl GameController {
             phase: Phase::FirstHalf,
             state: State::Initial,
             set_play: SetPlay::NoSetPlay,
-            kicking_side: params.game.kick_off_side,
+            kicking_side: Some(params.game.kick_off_side),
             primary_timer: Timer::Started {
                 remaining: params.competition.half_duration.try_into().unwrap(),
                 run_condition: RunCondition::MainTimer,
@@ -57,7 +57,6 @@ impl GameController {
             secondary_timer: Timer::Stopped,
             timeout_rewind_timer: Timer::Stopped,
             switch_half_timer: Timer::Stopped,
-            next_global_game_stuck_kick_off: -params.game.kick_off_side,
             teams: EnumMap::from_fn(|side| Team {
                 goalkeeper: if params.competition.challenge_mode.is_some()
                     && side == params.game.kick_off_side

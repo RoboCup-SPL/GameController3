@@ -11,11 +11,10 @@ pub struct GlobalGameStuck;
 impl Action for GlobalGameStuck {
     fn execute(&self, c: &mut ActionContext) {
         StartSetPlay {
-            side: c.game.next_global_game_stuck_kick_off,
+            side: None,
             set_play: SetPlay::KickOff,
         }
         .execute(c);
-        c.game.next_global_game_stuck_kick_off = -c.game.next_global_game_stuck_kick_off;
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

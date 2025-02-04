@@ -49,13 +49,14 @@ export const FREE_SET_PLAY = 8;
 export const FINISH_PENALTY_SHOT = 9;
 export const FINISH_HALF = 10;
 // These are game actions because they are part of the center panel.
-export const START_KICK_OFF_HOME = 11;
-export const START_KICK_OFF_AWAY = 12;
-export const ADD_EXTRA_TIME = 13;
-export const REFEREE_TIMEOUT = 14;
-export const GLOBAL_GAME_STUCK = 15;
+export const START_KICK_OFF_NONE = 11;
+export const START_KICK_OFF_HOME = 12;
+export const START_KICK_OFF_AWAY = 13;
+export const ADD_EXTRA_TIME = 14;
+export const REFEREE_TIMEOUT = 15;
+export const GLOBAL_GAME_STUCK = 16;
 
-const NUM_OF_GAME_ACTIONS = 16;
+const NUM_OF_GAME_ACTIONS = 17;
 
 const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
@@ -93,6 +94,7 @@ export const getActions = () => {
   actions.push({ type: "freeSetPlay", args: null });
   actions.push({ type: "finishPenaltyShot", args: null });
   actions.push({ type: "finishHalf", args: null });
+  actions.push({ type: "startSetPlay", args: { side: null, setPlay: "kickOff" } });
   actions.push({ type: "startSetPlay", args: { side: "home", setPlay: "kickOff" } });
   actions.push({ type: "startSetPlay", args: { side: "away", setPlay: "kickOff" } });
   actions.push({ type: "addExtraTime", args: null });

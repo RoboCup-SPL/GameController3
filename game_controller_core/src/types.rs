@@ -363,7 +363,7 @@ pub struct Game {
     /// The current set play.
     pub set_play: SetPlay,
     /// The side which may play the ball during the current set play or penalty shot.
-    pub kicking_side: Side,
+    pub kicking_side: Option<Side>,
     /// The timer which counts down the duration of a half or the current penalty shot.
     pub primary_timer: Timer,
     /// The timer which counts down set plays, timeouts, half-time break etc.
@@ -373,8 +373,6 @@ pub struct Game {
     /// A timer that counts down until the half is switched.
     #[serde(skip)]
     pub switch_half_timer: Timer,
-    /// The side which gets the kick-off after the next global game stuck.
-    pub next_global_game_stuck_kick_off: Side,
     /// The two competing teams.
     pub teams: EnumMap<Side, Team>,
 }

@@ -38,7 +38,7 @@ authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/RoboCup-SPL/GameController3"
-rust-version = "1.74"
+rust-version = "1.82"
 version = "3.0.2"
 
 [profile.release-dist]
