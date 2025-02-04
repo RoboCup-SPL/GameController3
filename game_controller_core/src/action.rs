@@ -116,7 +116,7 @@ impl ActionContext<'_> {
     pub fn is_undo_available(&self, back: u32) -> bool {
         self.history
             .as_ref()
-            .map_or(false, |history| history.len() >= (back as usize))
+            .is_some_and(|history| history.len() >= (back as usize))
     }
 
     /// This function reverts the game state to the state before a given number of actions.

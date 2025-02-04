@@ -170,7 +170,6 @@ async fn event_loop(
         }
     }
 
-
     loop {
         send_ui_state(UiState {
             connection_status: get_connection_status_map(&aliveness_timestamps, &last),
