@@ -14,6 +14,7 @@ impl Action for FinishSetPlay {
     fn execute(&self, c: &mut ActionContext) {
         c.game.secondary_timer = Timer::Stopped;
         c.game.set_play = SetPlay::NoSetPlay;
+        c.game.kicking_side = None;
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {

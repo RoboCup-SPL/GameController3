@@ -22,6 +22,7 @@ impl Action for FinishHalf {
         c.game.secondary_timer = Timer::Stopped;
         c.game.timeout_rewind_timer = Timer::Stopped;
         c.game.set_play = SetPlay::NoSetPlay;
+        c.game.kicking_side = None;
         c.game.state = State::Finished;
 
         // After the first half, a timer counts down the half-time break.
