@@ -73,8 +73,8 @@ impl Action for Penalize {
             } else {
                 Timer::Started {
                     remaining: ({
-                        // The duration is composed of the base duration plus the increment for each
-                        // previous incremental penalty of this team.
+                        // The duration is composed of the base duration plus the increment for
+                        // each previous incremental penalty of this team.
                         let duration = c.params.competition.penalties[penalty].duration
                             + if c.params.competition.penalties[penalty].incremental {
                                 c.params.competition.penalty_duration_increment
@@ -84,34 +84,20 @@ impl Action for Penalize {
                             };
                         let previous_penalty = c.game.teams[self.side][player].penalty;
                         if penalty == Penalty::PickedUp && previous_penalty != Penalty::NoPenalty {
-                            // Picking up a player in other states should keep the previous timer if
-                            // the player was already penalized, but enforce that the total penalty
-                            // time is at least that of the pick-up penalty.
-                            let extra_penalty_duration = if previous_penalty
-                                == Penalty::MotionInStandby
-                            {
-                                // Motion in Standby is special as its actual duration is "longer" than
-                                // Pick-up since it is normally paused during ready. This prevents a
-                                // hack where you could pick up all players that got Motion in Standby
-                                // so that they could reenter after 45s (i.e. immediately at the start
-                                // of the Playing state for a complete Ready state) instead of 15s
-                                // after Playing.
-                                TryInto::<SignedDuration>::try_into(
-                                    c.params.competition.set_plays[SetPlay::KickOff].ready_duration,
-                                )
-                                .unwrap()
-                            } else {
+                            // Picking up a player in other states should keep the previous timer
+                            // if the player was already penalized, but enforce that the total
+                            // penalty time is at least that of the pick-up penalty.
+                            let extra_penalty_duration =
                                 TryInto::<SignedDuration>::try_into(duration).unwrap()
-                                    - c.params.competition.penalties[previous_penalty].duration
-                            };
+                                    - c.params.competition.penalties[previous_penalty].duration;
                             c.game.teams[self.side][player]
                                 .penalty_timer
                                 .get_remaining()
                                 + if extra_penalty_duration.is_positive() {
-                                    // If any penalty that is shorter than pick-up is incremental, we
-                                    // would have to save how long the duration *actually* was. I
-                                    // don't want to introduce extra complexity only for this special
-                                    // case as long as it isn't necessary.
+                                    // If any penalty that is shorter than pick-up is incremental,
+                                    // we would have to save how long the duration *actually* was.
+                                    // I don't want to introduce extra complexity only for this
+                                    // special case as long as it isn't necessary.
                                     assert!(
                                         !c.params.competition.penalties[previous_penalty]
                                             .incremental
