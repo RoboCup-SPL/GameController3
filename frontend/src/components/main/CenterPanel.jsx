@@ -15,7 +15,6 @@ const CenterPanel = ({
       <ClockPanel game={game} legalGameActions={legalGameActions} />
       <StatePanel game={game} params={params} legalGameActions={legalGameActions} />
       <PenaltyPanel
-        game={game}
         legalPenaltyActions={legalPenaltyActions}
         selectedPenaltyCall={selectedPenaltyCall}
         setSelectedPenaltyCall={setSelectedPenaltyCall}
