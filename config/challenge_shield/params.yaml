@@ -154,3 +154,4 @@ delayAfterPlaying:
 delayAfterReady:
   secs: 35
   nanos: 0
+hideKickingSide: false

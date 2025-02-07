@@ -162,6 +162,13 @@ impl ControlMessage {
             SideMapping::HomeDefendsLeftGoal => [Side::Home, Side::Away],
             SideMapping::HomeDefendsRightGoal => [Side::Away, Side::Home],
         };
+        let hide_kicking_side = !to_monitor
+            && params.competition.hide_kicking_side
+            && game.phase != Phase::PenaltyShootout
+            && ((game.state == State::Ready
+                || game.state == State::Set
+                || game.state == State::Playing)
+                && game.set_play != SetPlay::KickOff);
         Self {
             to_monitor,
             packet_number,
@@ -199,6 +206,7 @@ impl ControlMessage {
             first_half: game.phase == Phase::FirstHalf,
             kicking_team: game
                 .kicking_side
+                .filter(|_| !hide_kicking_side)
                 .map_or(KICKING_TEAM_NONE, |side| params.game.teams[side].number),
             secs_remaining: get_duration(
                 game.primary_timer.get_remaining(),

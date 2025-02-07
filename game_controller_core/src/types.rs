@@ -85,6 +85,8 @@ pub struct CompetitionParams {
     /// The duration for which the true game state is hidden after switching to the Ready state
     /// from Initial or Timeout (i.e. *not* after a goal or a global game stuck).
     pub delay_after_ready: Duration,
+    /// Whether the kicking side is hidden from the players during most set plays.
+    pub hide_kicking_side: bool,
 }
 
 /// This struct contains constant parameters for one team.
