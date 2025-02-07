@@ -30,9 +30,6 @@ impl Action for Goal {
             return;
         }
 
-        c.game.secondary_timer = Timer::Stopped;
-        c.game.set_play = SetPlay::NoSetPlay;
-
         if !c.game.teams[self.side].illegal_communication {
             c.game.teams[self.side].score += 1;
         }
