@@ -23,8 +23,17 @@ impl Action for Timeout {
 
         if c.game.phase != Phase::PenaltyShootout {
             // If this is not a referee timeout, the next kick-off is for the other team.
+            // Otherwise, the kicking side is kept unless we're not in or before a kick-off, in
+            // which case there is a dropped ball.
             if let Some(side) = self.side {
                 c.game.kicking_side = Some(-side);
+            } else if c.game.phase != Phase::PenaltyShootout
+                && c.game.state != State::Initial
+                && c.game.state != State::Standby
+                && c.game.state != State::Timeout
+                && c.game.set_play != SetPlay::KickOff
+            {
+                c.game.kicking_side = None;
             }
             // The primary timer is rewound to the time when the stoppage of play has started.
             c.game.primary_timer = Timer::Started {
@@ -43,7 +52,8 @@ impl Action for Timeout {
         c.game.secondary_timer = Timer::Started {
             // In some cases, an existing timer is modified to avoid situations like "We are going
             // to take a timeout once their timeout is over". However, we don't want that in the
-            // half-time break if the timer is already negative because this happens in interleaved games.
+            // half-time break if the timer is already negative because this happens in interleaved
+            // games.
             remaining: if c.game.state == State::Timeout
                 || ((c.game.state == State::Initial || c.game.state == State::Standby)
                     && c.game.phase == Phase::SecondHalf
@@ -64,15 +74,20 @@ impl Action for Timeout {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
-        c.game.state != State::Playing
+        (c.game.phase != Phase::PenaltyShootout
+            || c.game.state == State::Initial
+            || c.game.state == State::Timeout)
             && c.game.state != State::Finished
-            && (c.game.phase != Phase::PenaltyShootout
-                || c.game.state == State::Initial
-                || c.game.state == State::Timeout)
-            // This check is so you can't take timeouts during a penalty kick Ready/Set. The rules
-            // don't explicitly rule this out (I think), but it would be ridiculous if it was
-            // legal.
-            && (c.game.set_play == SetPlay::NoSetPlay || c.game.set_play == SetPlay::KickOff)
-            && self.side.map_or(true, |side| c.game.teams[side].timeout_budget > 0)
+            && self.side.is_none_or(|side| {
+                // These are additional conditions when it is a team taking a timeout and not the
+                // referee.
+                c.game.state != State::Playing
+                    // This check is so you can't take timeouts during a penalty kick Ready/Set.
+                    // The rules don't explicitly rule this out (I think), but it would be
+                    // ridiculous if it was legal.
+                    && (c.game.set_play == SetPlay::NoSetPlay
+                        || c.game.set_play == SetPlay::KickOff)
+                    && c.game.teams[side].timeout_budget > 0
+            })
     }
 }
