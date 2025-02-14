@@ -13,10 +13,7 @@ use crate::timer::Timer;
 /// This enumerates the special GameController modes for technical challenges.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum ChallengeMode {
-    /// Shared Autonomy Challenge
-    SharedAutonomyChallenge,
-}
+pub enum ChallengeMode {}
 
 /// This struct contains constant parameters of a penalty type.
 #[derive(Clone, Deserialize, Serialize)]
