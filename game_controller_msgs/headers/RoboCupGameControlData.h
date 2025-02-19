@@ -79,7 +79,7 @@ struct TeamInfo
   uint8_t goalkeeperColour;                  // colour of the goalkeeper
   uint8_t goalkeeper;                        // player number of the goalkeeper (1-MAX_NUM_PLAYERS)
   uint8_t score;                             // team's score
-  uint8_t penaltyShot;                       // penalty shot counter
+  uint8_t penaltyShot;                       // penalty shot counter, or fallback mode flag (if not in GAME_PHASE_PENALTYSHOOT)
   uint16_t singleShots;                      // bits represent penalty shot success
   uint16_t messageBudget;                    // number of team messages the team is allowed to send for the remainder of the game
   struct RobotInfo players[MAX_NUM_PLAYERS]; // the team's players
