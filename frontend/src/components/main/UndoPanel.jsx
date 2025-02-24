@@ -44,6 +44,8 @@ const getActionName = (action) => {
       return "Substitute";
     case "switchHalf":
       return "Second Half";
+    case "switchTeamMode":
+      return "Switch Mode";
     case "timeout":
       return action.args.side ? "Timeout" : "Referee Timeout";
     case "unpenalize":

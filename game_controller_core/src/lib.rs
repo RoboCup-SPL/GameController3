@@ -70,6 +70,7 @@ impl GameController {
                 timeout_budget: params.competition.timeouts_per_team,
                 message_budget: params.competition.messages_per_team,
                 illegal_communication: false,
+                fallback_mode: false,
                 penalty_shot: 0,
                 penalty_shot_mask: 0,
                 players: (PlayerNumber::MIN..=PlayerNumber::MAX)

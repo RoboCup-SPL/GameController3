@@ -1,5 +1,6 @@
 name: "Challenge Shield"
 playersPerTeam: 5
+playersPerTeamFallbackMode: 2
 penalties:
   noPenalty:
     duration:

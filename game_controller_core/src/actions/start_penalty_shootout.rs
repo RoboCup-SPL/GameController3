@@ -20,6 +20,7 @@ impl Action for StartPenaltyShootout {
         // Make all players substitutes.
         c.game.teams.values_mut().for_each(|team| {
             team.goalkeeper = None;
+            team.fallback_mode = false;
             team.penalty_shot = 0;
             team.penalty_shot_mask = 0;
             team.players.iter_mut().for_each(|player| {

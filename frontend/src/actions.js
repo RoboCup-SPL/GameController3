@@ -24,8 +24,9 @@ export const GOAL_KICK = 2;
 export const KICK_IN = 3;
 export const CORNER_KICK = 4;
 export const MOTION_IN_STANDBY = 5;
+export const SWITCH_TEAM_MODE = 6;
 
-const NUM_OF_TEAM_ACTIONS = 6;
+const NUM_OF_TEAM_ACTIONS = 7;
 
 const GAME_ACTION_BASE = TEAM_ACTION_BASE + NUM_OF_TEAMS * NUM_OF_TEAM_ACTIONS;
 
@@ -73,7 +74,8 @@ export const getActions = () => {
       { type: "startSetPlay", args: { side: side, setPlay: "goalKick" } },
       { type: "startSetPlay", args: { side: side, setPlay: "kickIn" } },
       { type: "startSetPlay", args: { side: side, setPlay: "cornerKick" } },
-      { type: "penalize", args: { side: side, player: null, call: "motionInStandby" } }
+      { type: "penalize", args: { side: side, player: null, call: "motionInStandby" } },
+      { type: "switchTeamMode", args: { side: side } }
     );
   }
   actions.push({ type: "switchHalf", args: null });
