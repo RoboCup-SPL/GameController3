@@ -5,25 +5,47 @@ import NetworkSettings from "./launcher/NetworkSettings";
 import WindowSettings from "./launcher/WindowSettings";
 import { getLaunchData, launch } from "../api";
 
+const getLegal = (launchSettings) => {
+  if (launchSettings == null) {
+    return { isLegal: false, reason: "Launch settings are null." };
+  } else {
+    let isLegal = true;
+    let reason = "";
+    if (launchSettings.game.teams.home.number === launchSettings.game.teams.away.number) {
+      isLegal = false;
+      reason += "Home and away teams must be different.\n";
+    }
+    if (launchSettings.game.teams.home.fieldPlayerColor === launchSettings.game.teams.away.fieldPlayerColor) {
+      isLegal = false;
+      reason += "Home and away field player colors must be different.\n";
+    }
+    if (launchSettings.game.teams.home.fieldPlayerColor === launchSettings.game.teams.home.goalkeeperColor) {
+      isLegal = false;
+      reason += "Home field player and goalkeeper colors must be different.\n";
+    }
+    if (launchSettings.game.teams.home.fieldPlayerColor === launchSettings.game.teams.away.goalkeeperColor) {
+      isLegal = false;
+      reason += "Home field player and away goalkeeper colors must be different.\n";
+    }
+    if (launchSettings.game.teams.away.fieldPlayerColor === launchSettings.game.teams.away.goalkeeperColor) {
+      isLegal = false;
+      reason += "Away field player and goalkeeper colors must be different.\n";
+    }
+    if (launchSettings.game.teams.away.fieldPlayerColor === launchSettings.game.teams.home.goalkeeperColor) {
+      isLegal = false;
+      reason += "Away field player and home goalkeeper colors must be different.\n";
+    }
+    return { isLegal: isLegal, reason: reason };
+  }
+};
+
 const Launcher = ({ setLaunched }) => {
   const [competitions, setCompetitions] = useState(null);
   const [launchSettings, setLaunchSettings] = useState(null);
   const [networkInterfaces, setNetworkInterfaces] = useState(null);
   const [teams, setTeams] = useState(null);
 
-  const launchSettingsAreLegal =
-    launchSettings != null &&
-    launchSettings.game.teams.home.number != launchSettings.game.teams.away.number &&
-    launchSettings.game.teams.home.fieldPlayerColor !=
-      launchSettings.game.teams.away.fieldPlayerColor &&
-    launchSettings.game.teams.home.fieldPlayerColor !=
-      launchSettings.game.teams.home.goalkeeperColor &&
-    launchSettings.game.teams.home.fieldPlayerColor !=
-      launchSettings.game.teams.away.goalkeeperColor &&
-    launchSettings.game.teams.away.fieldPlayerColor !=
-      launchSettings.game.teams.away.goalkeeperColor &&
-    launchSettings.game.teams.away.fieldPlayerColor !=
-      launchSettings.game.teams.home.goalkeeperColor;
+  const { isLegal: launchSettingsAreLegal, reason } = getLegal(launchSettings);
 
   useEffect(() => {
     getLaunchData().then((data) => {
@@ -97,6 +119,9 @@ const Launcher = ({ setLaunched }) => {
         >
           Start
         </button>
+        {!launchSettingsAreLegal && (
+          <p className="text-red-500 whitespace-pre-wrap">{reason}</p>
+        )}
       </div>
     );
   } else {
