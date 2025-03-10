@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
 use crate::timer::Timer;
-use crate::types::{Penalty, Phase, Player, Side, State};
+use crate::types::{Penalty, Phase, Player, PlayerNumber, Side, State};
 
 /// This struct defines an action that switches between "normal mode" and "fallback mode".
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -17,17 +17,28 @@ impl Action for SwitchTeamMode {
             c.params.competition.players_per_team_fallback_mode
         {
             if players_per_team_fallback_mode < c.params.competition.players_per_team {
-                type SwitchParameters = (Box<dyn FnMut(&&mut Player) -> bool>, Penalty, u8);
+                type SwitchParameters<'a> = (
+                    Box<dyn FnMut(&(usize, &mut Player)) -> bool + 'a>,
+                    Penalty,
+                    u8,
+                );
+                let goalkeeper_index = c.game.teams[self.side]
+                    .goalkeeper
+                    .map(|goalkeeper| u8::from(goalkeeper) - PlayerNumber::MIN);
                 let (predicate, penalty, target_players): SwitchParameters =
                     if !c.game.teams[self.side].fallback_mode {
                         (
-                            Box::new(|player| player.penalty != Penalty::Substitute),
+                            Box::new(|(index, player)| {
+                                player.penalty != Penalty::Substitute
+                                    && goalkeeper_index
+                                        .is_none_or(|goalkeeper| goalkeeper != (*index as u8))
+                            }),
                             Penalty::Substitute,
                             players_per_team_fallback_mode,
                         )
                     } else {
                         (
-                            Box::new(|player| player.penalty == Penalty::Substitute),
+                            Box::new(|(_, player)| player.penalty == Penalty::Substitute),
                             Penalty::NoPenalty,
                             c.params.competition.players_per_team,
                         )
@@ -35,7 +46,9 @@ impl Action for SwitchTeamMode {
                 c.game.teams[self.side]
                     .players
                     .iter_mut()
+                    .enumerate()
                     .filter(predicate)
+                    .map(|(_, player)| player)
                     .take(
                         (c.params.competition.players_per_team - players_per_team_fallback_mode)
                             as usize,
