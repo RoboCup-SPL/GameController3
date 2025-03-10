@@ -1,5 +1,6 @@
-name: "German Open"
-playersPerTeam: 7
+name: "German Open Challenge Shield"
+playersPerTeam: 5
+playersPerTeamFallbackMode: 2
 penalties:
   noPenalty:
     duration:
@@ -28,7 +29,7 @@ penalties:
     incremental: true
   motionInStandby:
     duration:
-      secs: 45
+      secs: 35
       nanos: 0
     incremental: false
   motionInSet:
@@ -152,6 +153,6 @@ delayAfterPlaying:
   secs: 15
   nanos: 0
 delayAfterReady:
-  secs: 45
+  secs: 35
   nanos: 0
-hideKickingSide: true
+hideKickingSide: false
