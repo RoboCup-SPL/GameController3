@@ -32,7 +32,7 @@ jobs:
       - if: ${{ matrix.os == 'windows-latest' }}
         run: |
           dist/mkdist-windows.ps1 ${{ github.ref_name }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}
           path: |
