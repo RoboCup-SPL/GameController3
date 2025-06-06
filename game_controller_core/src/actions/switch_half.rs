@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::action::{Action, ActionContext};
 use crate::timer::{BehaviorAtZero, RunCondition, Timer};
-use crate::types::{Penalty, Phase, PlayerNumber, State};
+use crate::types::{Penalty, Phase, State};
 
 /// This struct defines an action that switches from the end of the first half to the beginning of
 /// the second half, including the switch of sides.
@@ -23,17 +23,6 @@ impl Action for SwitchHalf {
                 })
         });
 
-        if c.params.competition.challenge_mode.is_some() {
-            c.game.teams[c.params.game.kick_off_side].goalkeeper = c.game.teams
-                [c.params.game.kick_off_side]
-                .players
-                .iter()
-                .enumerate()
-                .find(|player| player.1.penalty != Penalty::Substitute)
-                .map(|player| PlayerNumber::new((player.0 as u8) + PlayerNumber::MIN));
-            c.game.teams[-c.params.game.kick_off_side].goalkeeper = None;
-        }
-
         c.game.sides = -c.params.game.side_mapping;
         c.game.phase = Phase::SecondHalf;
         c.game.state = State::Initial;
@@ -48,6 +37,8 @@ impl Action for SwitchHalf {
     }
 
     fn is_legal(&self, c: &ActionContext) -> bool {
-        c.game.phase == Phase::FirstHalf && c.game.state == State::Finished
+        c.game.phase == Phase::FirstHalf
+            && c.game.state == State::Finished
+            && c.params.competition.challenge_mode.is_none()
     }
 }

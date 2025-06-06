@@ -101,18 +101,22 @@ const Main = () => {
             selectedPenaltyCall={selectedPenaltyCall}
             setSelectedPenaltyCall={setSelectedPenaltyCall}
           />
-          <TeamPanel
-            connectionStatus={connectionStatus}
-            game={game}
-            legalPenaltyActions={extractPenaltyActions(legalActions)}
-            legalTeamActions={extractTeamActions(legalActions, "away")}
-            params={params}
-            selectedPenaltyCall={selectedPenaltyCall}
-            setSelectedPenaltyCall={setSelectedPenaltyCall}
-            side="away"
-            sign={mirror ? 1 : -1}
-            teamNames={teamNames}
-          />
+          {params.competition.challengeMode == null ? (
+            <TeamPanel
+              connectionStatus={connectionStatus}
+              game={game}
+              legalPenaltyActions={extractPenaltyActions(legalActions)}
+              legalTeamActions={extractTeamActions(legalActions, "away")}
+              params={params}
+              selectedPenaltyCall={selectedPenaltyCall}
+              setSelectedPenaltyCall={setSelectedPenaltyCall}
+              side="away"
+              sign={mirror ? 1 : -1}
+              teamNames={teamNames}
+            />
+          ) : (
+            <></>
+          )}
         </div>
         <UndoPanel undoActions={undoActions} legalUndoActions={extractUndoActions(legalActions)} />
       </div>
