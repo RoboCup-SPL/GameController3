@@ -268,6 +268,11 @@
   fieldPlayerColors: [red, orange]
   goalkeeperColors: [black, white, red, orange]
 
+- name: AI Rams
+  number: 55
+  fieldPlayerColors: [blue, red]
+  goalkeeperColors: [blue, red]
+
 - name: B-Team
   number: 70
   fieldPlayerColors: [red, blue, yellow, black, white, green, orange, purple, brown, gray]
