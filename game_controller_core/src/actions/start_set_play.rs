@@ -84,7 +84,7 @@ impl Action for StartSetPlay {
             } else {
                 // All set plays other than kick-off must be "for" some team.
                 self.side.is_some()
-                // It must be Playing, and we can only start set play during other set plays if
+                // It must be Playing, and we can only start set plays during other set plays if
                 // they are for the other team (this is a shortcut, because FinishSetPlay should
                 // have been clicked before).
                     && c.game.state == State::Playing
