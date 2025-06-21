@@ -186,19 +186,22 @@ impl Action for Penalize {
                 PenaltyCall::Pushing => {
                     // Not possible in Set, but can happen in Ready shortly before the timer
                     // expires.
-                    (c.game.phase != Phase::PenaltyShootout
+                    ((c.game.phase != Phase::PenaltyShootout
                         && (c.game.state == State::Ready || c.game.state == State::Set))
-                        || c.game.state == State::Playing
+                        || c.game.state == State::Playing)
+                        && c.params.competition.challenge_mode.is_none()
                 }
                 PenaltyCall::Foul => {
                     c.game.phase != Phase::PenaltyShootout
                         && c.game.state == State::Playing
                         && c.game.set_play == SetPlay::NoSetPlay
+                        && c.params.competition.challenge_mode.is_none()
                 }
                 PenaltyCall::PenaltyKick => {
                     c.game.phase != Phase::PenaltyShootout
                         && c.game.state == State::Playing
                         && c.game.set_play == SetPlay::NoSetPlay
+                        && c.params.competition.challenge_mode.is_none()
                 }
                 PenaltyCall::PlayingWithArmsHands => {
                     c.game.state == State::Ready // Not possible in this state, but can happen in

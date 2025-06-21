@@ -222,7 +222,7 @@ const TeamPanel = ({
         <div className="flex-1">
           <ActionButton
             action={{ type: "goal", args: { side: side } }}
-            label="Goal"
+            label={params.competition.challengeMode == null ? "Goal" : "Point"}
             legal={legalTeamActions[actions.GOAL]}
           />
         </div>

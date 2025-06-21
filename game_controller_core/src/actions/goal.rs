@@ -33,15 +33,16 @@ impl Action for Goal {
         if !c.game.teams[self.side].illegal_communication {
             c.game.teams[self.side].score += 1;
         }
-        if mercy_rule || c.params.competition.challenge_mode.is_some() {
+        if c.params.competition.challenge_mode.is_some() {
+            return;
+        }
+        if mercy_rule {
             c.game.teams.values_mut().for_each(|team| {
                 team.players.iter_mut().for_each(|player| {
                     player.penalty_timer = Timer::Stopped;
                 })
             });
-            if mercy_rule {
-                c.game.phase = Phase::SecondHalf;
-            }
+            c.game.phase = Phase::SecondHalf;
             FinishHalf.execute(c);
         } else if c.game.phase != Phase::PenaltyShootout {
             // A kick-off for the other team.
@@ -62,11 +63,6 @@ impl Action for Goal {
             && (c.game.phase != Phase::PenaltyShootout
                 || c.game.kicking_side.is_none_or(|side| side == self.side))
             && (c.params.competition.challenge_mode.is_none()
-                || self.side
-                    == (if c.game.phase == Phase::FirstHalf {
-                        c.params.game.kick_off_side
-                    } else {
-                        -c.params.game.kick_off_side
-                    }))
+                || self.side == c.params.game.kick_off_side)
     }
 }
