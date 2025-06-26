@@ -5,6 +5,8 @@
     windows_subsystem = "windows"
 )]
 
+use std::env::current_exe;
+
 use clap::Parser;
 use tauri::{async_runtime, generate_context, Manager, RunEvent, WebviewUrl, WebviewWindowBuilder};
 
@@ -34,10 +36,8 @@ fn main() {
 
     let app = tauri::Builder::default()
         .setup(|app| {
-            // TODO: This will probably not work in production.
-            let config_directory = app
-                .path()
-                .resource_dir()
+            let config_directory = current_exe()?
+                .parent()
                 .unwrap()
                 .join("..")
                 .join("..")
