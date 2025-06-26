@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "GameController",
-    "version": "4.0.0-rc.1"
+    "version": "5.0.0-rc.1"
   },
   "tauri": {
     "bundle": {
