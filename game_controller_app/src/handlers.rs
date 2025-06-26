@@ -1,6 +1,6 @@
 //! This module defines handlers that can be called from JavaScript.
 
-use std::sync::Arc;
+use std::{env::current_exe, sync::Arc};
 
 use anyhow::{anyhow, Context};
 use tauri::{
@@ -53,15 +53,16 @@ async fn launch(settings: LaunchSettings, window: Window, app: AppHandle) {
 
     let launch_data = app.state::<LaunchData>();
     match start_runtime(
-        // TODO: This will probably not work in production.
-        &app.path_resolver()
-            .resource_dir()
+        &current_exe()
+            .unwrap()
+            .parent()
             .unwrap()
             .join("..")
             .join("..")
             .join("config"),
-        &app.path_resolver()
-            .resource_dir()
+        &current_exe()
+            .unwrap()
+            .parent()
             .unwrap()
             .join("..")
             .join("..")
