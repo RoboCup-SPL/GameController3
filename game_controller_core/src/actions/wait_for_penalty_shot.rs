@@ -72,8 +72,8 @@ impl Action for WaitForPenaltyShot {
 
                                 // Can the next team still equalize?
                                 score_difference <= remaining_for_next.into()
-                            // Can the last team still equalize?
-                            && -score_difference <= remaining_for_last.into()
+                                    // Can the last team still equalize?
+                                    && -score_difference <= remaining_for_last.into()
                             } else if c.game.teams[-side].penalty_shot
                                 < c.params.competition.penalty_shots
                                     + c.params.competition.sudden_death_penalty_shots
