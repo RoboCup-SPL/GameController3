@@ -14,3 +14,4 @@ serde_with = { workspace = true }
 time = { workspace = true }
 trait_enum = { workspace = true }
 tts = { workspace = true }
+lazy_static = { workspace = true }

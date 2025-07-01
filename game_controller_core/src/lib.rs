@@ -10,7 +10,7 @@ pub mod actions;
 pub mod log;
 pub mod timer;
 pub mod types;
-pub mod speakable;
+pub mod tts_handler;
 
 use std::{cmp::min, iter::once, time::Duration};
 
@@ -22,6 +22,12 @@ use crate::timer::{BehaviorAtZero, EvaluatedRunConditions, RunCondition, Timer};
 use crate::types::{
     ActionSource, Game, Params, Penalty, Phase, Player, PlayerNumber, SetPlay, State, Team,
 };
+
+
+use std::sync::Mutex;
+use tts_handler::ClonableTTSHandler;
+use tts_handler::FullTTSHandler;
+use tts_handler::{ttshandle_init, ttshandle_push_tts};
 
 /// This struct encapsulates a delayed game state.
 pub struct DelayHandler {
@@ -39,6 +45,8 @@ pub struct GameController {
     time: Duration,
     history: Vec<(Game, VAction)>,
     logger: Box<dyn Logger + Send>,
+    // tts_handler: FullTTSHandler,
+    // tts_handler: ClonableTTSHandler,
 }
 
 impl GameController {
@@ -91,6 +99,12 @@ impl GameController {
                     .unwrap(),
             }),
         };
+        // let tts_handler = FullTTSHandler::new();
+        // let tts_handler = ClonableTTSHandler::new();
+        // tts_handler.set_callback();
+        unsafe {
+            ttshandle_init();
+        }
         Self {
             params,
             game,
@@ -98,6 +112,7 @@ impl GameController {
             time: Duration::ZERO,
             history: vec![],
             logger,
+            // tts_handler
         }
     }
 
@@ -144,6 +159,7 @@ impl GameController {
     /// This function lets time progress. Timers are updated and expiration actions applied when
     /// necessary.
     pub fn seek(&mut self, mut dt: Duration) {
+        println!("zan zan zan");
         // We must split the time when timers expire in the meantime, because they can have actions
         // which must be applied at the right point in time.
         while !dt.is_zero() {
@@ -210,6 +226,14 @@ impl GameController {
         }
 
         action.execute(&mut context);
+        // Audio output
+        if let Some(message) = action.get_tts_message(&context) {
+            println!("sending this message to the TTS: {}", message);
+            // self.tts_handler.push_tts(message);
+            unsafe {
+                ttshandle_push_tts(message);
+            }
+        }
         // I'm not sure if timer-triggered actions from the non-delayed state should still cancel
         // the delayed state if they are illegal.
         if source != ActionSource::Timer {
