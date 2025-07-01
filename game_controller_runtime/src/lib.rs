@@ -37,6 +37,7 @@ use game_controller_net::{
     ControlMessageSender, Event, MonitorRequestReceiver, StatusMessageForwarder,
     StatusMessageReceiver, TeamMessageReceiver,
 };
+use game_controller_tts::{tts_event_loop};
 
 pub mod cli;
 mod connection_status;
@@ -88,6 +89,8 @@ pub struct RuntimeState {
     shutdown_token: CancellationToken,
     /// The mutable state behind a mutex. It is a tokio mutex because it is held across await.
     mutable_state: Mutex<MutableState>,
+    // for the tts settings
+    pub mute_sender: mpsc::UnboundedSender<bool>,
 }
 
 /// This function starts all network services that are not tied to a specific monitor. It returns a
@@ -402,7 +405,12 @@ pub async fn start_runtime(
     .await
     .context("could not create logger")?;
 
-    let mut game_controller = GameController::new(params.clone(), Box::new(logger));
+    let (action_ttsmsg_sender, action_ttsmsg_receiver) = mpsc::unbounded_channel();
+    let mut game_controller = GameController::new(
+        params.clone(),
+        Box::new(logger),
+        action_ttsmsg_sender,
+    );
 
     game_controller.log_now(LogEntry::Metadata(LoggedMetadata {
         creator: "GameController".into(),
@@ -474,6 +482,8 @@ pub async fn start_runtime(
     let ui_notify = Arc::new(Notify::new());
     let shutdown_token = CancellationToken::new();
 
+    let (mute_sender, mute_receiver) = mpsc::unbounded_channel();
+
     runtime_join_set.spawn(event_loop(
         game_controller,
         event_receiver,
@@ -483,6 +493,12 @@ pub async fn start_runtime(
         shutdown_token.clone(),
         control_sender,
         send_ui_state,
+    ));
+
+    runtime_join_set.spawn(tts_event_loop(
+        action_ttsmsg_receiver,
+        mute_receiver,
+        shutdown_token.clone(),
     ));
 
     Ok(RuntimeState {
@@ -495,6 +511,7 @@ pub async fn start_runtime(
             runtime_join_set,
             network_join_set,
         }),
+        mute_sender,
     })
 }
 

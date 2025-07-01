@@ -92,4 +92,24 @@ impl Action for StartSetPlay {
                     && c.params.competition.challenge_mode.is_none()
             })
     }
+
+    fn get_tts_message(&self, c: &ActionContext) -> Option<String> {
+        let side_color_str = match self.side {
+            Some(sd) => {
+                format!("{}", c.params.game.teams[sd].field_player_color)
+            },
+            None => "".to_string(),
+        };
+        let msg = format!(
+            "{} {}",
+            self.set_play,
+            side_color_str,
+        );
+        match self.set_play {
+            SetPlay::KickIn => Some(msg),
+            SetPlay::GoalKick => Some(msg),
+            SetPlay::CornerKick => Some(msg),
+            _ => None,
+        }
+    }
 }

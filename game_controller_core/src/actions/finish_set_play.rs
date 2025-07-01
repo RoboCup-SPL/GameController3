@@ -20,4 +20,8 @@ impl Action for FinishSetPlay {
     fn is_legal(&self, c: &ActionContext) -> bool {
         c.game.state == State::Playing && c.game.set_play != SetPlay::NoSetPlay
     }
+
+    fn get_tts_message(&self, _c: &ActionContext) -> Option<String> {
+        Some("Ball free".to_string())
+    }
 }

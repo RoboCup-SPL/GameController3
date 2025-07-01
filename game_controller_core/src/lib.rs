@@ -15,6 +15,8 @@ use std::{cmp::min, iter::once, time::Duration};
 
 use enum_map::EnumMap;
 
+use tokio::sync::mpsc;
+
 use crate::action::{ActionContext, VAction};
 use crate::log::{LogEntry, LoggedAction, Logger, TimestampedLogEntry};
 use crate::timer::{BehaviorAtZero, EvaluatedRunConditions, RunCondition, Timer};
@@ -38,11 +40,17 @@ pub struct GameController {
     time: Duration,
     history: Vec<(Game, VAction)>,
     logger: Box<dyn Logger + Send>,
+    // to the tts
+    action_ttsmsg_sender: mpsc::UnboundedSender<Option<String>>,
 }
 
 impl GameController {
     /// This function creates a new instance with given parameters and a logger.
-    pub fn new(params: Params, logger: Box<dyn Logger + Send>) -> Self {
+    pub fn new(
+        params: Params,
+        logger: Box<dyn Logger + Send>,
+        action_ttsmsg_sender: mpsc::UnboundedSender<Option<String>>
+    ) -> Self {
         let game = Game {
             sides: params.game.side_mapping,
             phase: Phase::FirstHalf,
@@ -100,6 +108,7 @@ impl GameController {
             time: Duration::ZERO,
             history: vec![],
             logger,
+            action_ttsmsg_sender,
         }
     }
 
@@ -211,6 +220,7 @@ impl GameController {
         }
 
         action.execute(&mut context);
+        let _ = self.action_ttsmsg_sender.send(action.get_tts_message(&mut context));
         // I'm not sure if timer-triggered actions from the non-delayed state should still cancel
         // the delayed state if they are illegal.
         if source != ActionSource::Timer {

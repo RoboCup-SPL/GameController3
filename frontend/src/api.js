@@ -210,6 +210,42 @@ export const syncWithBackend = async () => {
   }
 };
 
+// press M to toggle mute mode
+// hold spacebar for hold mode
+let mute = false;
+let hold = false;
+
+document.addEventListener('keydown', function(event) {
+  if (event.key == 'm') {
+    mute = !mute;
+    if (window.__TAURI_INTERNALS__) {
+      invoke("set_mute", { mute: mute });
+    } else {
+      console.log("Set mute to " + mute);
+    }
+  }
+  else if (event.key == ' ') {
+    hold = true;
+    if (window.__TAURI_INTERNALS__) {
+      invoke("set_hold", { hold: hold });
+    } else {
+      console.log("Set hold to " + hold);
+    }
+  }
+});
+
+document.addEventListener('keyup', function(event) {
+  if (event.key == ' ') {
+    hold = false;
+    if (window.__TAURI_INTERNALS__) {
+      invoke("set_hold", { hold: hold });
+    } else {
+      console.log("Set hold to " + hold);
+    }
+  }
+});
+
+
 export const applyAction = (action) => {
   if (window.__TAURI_INTERNALS__) {
     invoke("apply_action", { action: action });

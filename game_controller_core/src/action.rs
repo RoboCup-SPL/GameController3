@@ -21,6 +21,14 @@ pub trait Action {
 
     /// This function returns whether the action is legal in the given game state.
     fn is_legal(&self, c: &ActionContext) -> bool;
+
+    /// This function returns the message to be spoken by the TTS system for speakable actions,
+    /// or None if the action is not intended to be announced.
+    fn get_tts_message(&self, _c: &ActionContext) -> Option<String> {
+        // This default None is so that non-speakable actions don't have to worry
+        // about this new addition at all.
+        None
+    }
 }
 
 trait_enum! {

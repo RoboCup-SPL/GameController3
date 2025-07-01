@@ -22,4 +22,8 @@ impl Action for GlobalGameStuck {
             && c.game.state == State::Playing
             && c.params.competition.challenge_mode.is_none()
     }
+
+    fn get_tts_message(&self, _c: &ActionContext) -> Option<String> {
+        Some("Global game stuck".to_string())
+    }
 }

@@ -213,6 +213,21 @@ pub enum SetPlay {
     PenaltyKick,
 }
 
+impl std::fmt::Display for SetPlay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let output = match self {
+            Self::NoSetPlay => "No set play",
+            Self::KickOff => "Kick-off",
+            Self::KickIn => "Kick-in",
+            Self::GoalKick => "Goal kick",
+            Self::CornerKick => "Corner kick",
+            Self::PushingFreeKick => "Pushing free kick",
+            Self::PenaltyKick => "Penalty kick",
+        };
+        write!(f, "{output}")
+    }
+}
+
 /// This enumerates the jersey colors. Values may be added to match actually submitted jersey designs.
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -227,6 +242,25 @@ pub enum Color {
     Purple,
     Brown,
     Gray,
+}
+
+impl std::fmt::Display for Color {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let output = match self {
+            Self::Red => "Red",
+            Self::Blue => "Blue",
+            Self::Yellow => "Yellow",
+            Self::Black => "Black",
+            Self::White => "White",
+            Self::Green => "Green",
+            Self::Orange => "Orange",
+            Self::Purple => "Purple",
+            Self::Brown => "Brown",
+            Self::Gray => "Gray",
+        };
+        write!(f, "{output}")
+    }
+
 }
 
 /// This enumerates the reasons why a player can be penalized.
@@ -283,6 +317,27 @@ pub enum PenaltyCall {
     PenaltyKick,
     PlayingWithArmsHands,
     LeavingTheField,
+}
+
+impl std::fmt::Display for PenaltyCall {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let output = match self {
+            Self::RequestForPickUp => "Request for Pickup",
+            Self::IllegalPosition => "Illegal Position",
+            Self::MotionInStandby => "Motion in Standby",
+            Self::MotionInSet => "Motion in Set",
+            Self::FallenInactive => "Fallen Robot",
+            Self::LocalGameStuck => "Local Game Stuck",
+            Self::BallHolding => "Ball Holding",
+            Self::PlayerStance => "Illegal Stance",
+            Self::Pushing => "Pushing",
+            Self::Foul => "Foul",
+            Self::PenaltyKick => "Penalty Kick",
+            Self::PlayingWithArmsHands => "Playing with Hands",
+            Self::LeavingTheField => "Leaving the Field",
+        };
+        write!(f, "{}", output)
+    }
 }
 
 /// This enumerates the two opposing teams of the game. The name `Side` may be slightly misleading

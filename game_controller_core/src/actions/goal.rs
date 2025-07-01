@@ -65,4 +65,11 @@ impl Action for Goal {
             && (c.params.competition.challenge_mode.is_none()
                 || self.side == c.params.game.kick_off_side)
     }
+
+    fn get_tts_message(&self, c: &ActionContext) -> Option<String> {
+        Some(format!(
+            "Goal for {}",
+            c.params.game.teams[self.side].field_player_color,
+        ))
+    }
 }

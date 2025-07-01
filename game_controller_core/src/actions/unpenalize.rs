@@ -32,4 +32,12 @@ impl Action for Unpenalize {
                     && c.game.state == State::Set)
                 || c.params.game.test.unpenalize)
     }
+
+    fn get_tts_message(&self, c: &ActionContext) -> Option<String> {
+        Some(format!(
+            "{} {} returning to field",
+            c.params.game.teams[self.side].field_player_color,
+            u8::from(self.player)
+        ))
+    }
 }

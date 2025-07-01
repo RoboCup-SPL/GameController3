@@ -90,4 +90,13 @@ impl Action for Timeout {
                     && c.game.teams[side].timeout_budget > 0
             })
     }
+
+    fn get_tts_message(&self, c: &ActionContext) -> Option<String> {
+        Some(
+            match self.side {
+                Some(sd) => format!("Timeout {}", c.params.game.teams[sd].field_player_color),
+                None => format!("Referee Timeout"),
+            }
+        )
+    }
 }

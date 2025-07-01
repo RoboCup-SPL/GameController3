@@ -218,4 +218,17 @@ impl Action for Penalize {
                 }
             })
     }
+
+    fn get_tts_message(&self, c: &ActionContext) -> Option<String> {
+        let player_number_str = match self.player {
+            Some(n) => format!("{}", u8::from(n)),
+            None => "Team".to_string(),
+        };
+        Some(format!(
+            "{} {} {}",
+            self.call,
+            c.params.game.teams[self.side].field_player_color,
+            player_number_str
+        ))
+    }
 }

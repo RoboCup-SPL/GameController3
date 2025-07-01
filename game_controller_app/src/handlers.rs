@@ -115,6 +115,14 @@ fn declare_actions(actions: Vec<VAction>, state: State<RuntimeState>) {
     let _ = state.subscribed_actions_sender.send(actions);
 }
 
+#[command]
+fn set_mute(mute: bool, state: State<RuntimeState>) {
+    println!("Setting mute to {}", mute);
+    let _ = state.mute_sender.send(mute);
+}
+
+// TODO set_hold
+
 /// This function returns a handler that can be passed to [tauri::Builder::invoke_handler].
 /// It must be boxed because otherwise its size is unknown at compile time.
 pub fn get_invoke_handler() -> Box<InvokeHandler<Wry>> {
@@ -124,5 +132,6 @@ pub fn get_invoke_handler() -> Box<InvokeHandler<Wry>> {
         get_launch_data,
         launch,
         sync_with_backend,
+        set_mute,
     ])
 }
