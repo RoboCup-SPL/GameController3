@@ -7,6 +7,7 @@ members = [
   "game_controller_logs",
   "game_controller_net",
   "game_controller_runtime",
+  "game_controller_tts",
 ]
 resolver = "2"
 
@@ -27,12 +28,14 @@ serde_with = { version = "2.3", features = ["base64", "time_0_3"] }
 serde_repr = { version = "0.1" }
 serde_yaml = { version = "0.9" }
 socket2 = { version = "0.5", features = ["all"] }
+speech-dispatcher = { version = "0.16.0" }
 tauri = { version = "2.1", features = [] }
 tauri-build = { version = "2.0", features = [] }
 time = { version = "0.3", features = ["formatting", "local-offset", "macros", "serde"] }
 tokio = { version = "1.0", features = ["fs", "io-util", "macros", "net", "rt", "rt-multi-thread", "sync", "time"] }
 tokio-util = { version = "0.7" }
 trait_enum = { version = "0.5" }
+tts = { version = "0.26.3" }
 
 [workspace.package]
 authors = ["Arne Hasselbring <arha@uni-bremen.de>"]
@@ -40,7 +43,7 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/RoboCup-SPL/GameController3"
 rust-version = "1.82"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 
 [profile.release-dist]
 inherits = "release"

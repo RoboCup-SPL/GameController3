@@ -1101,7 +1101,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_app"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "clap",
@@ -1114,7 +1114,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_core"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "enum-map",
  "serde",
@@ -1126,7 +1126,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_logs"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "bytes",
@@ -1139,7 +1139,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_msgs"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "bindgen",
@@ -1149,7 +1149,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_net"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "bytes",
@@ -1161,7 +1161,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_runtime"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "clap",
@@ -1182,7 +1182,7 @@ dependencies = [
 
 [[package]]
 name = "game_controller_tts"
-version = "5.0.0-rc.2"
+version = "5.0.0-rc.2-tts"
 dependencies = [
  "anyhow",
  "speech-dispatcher",

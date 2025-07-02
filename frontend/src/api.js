@@ -216,6 +216,7 @@ let mute = false;
 let hold = false;
 
 document.addEventListener('keydown', function(event) {
+  if (event.repeat) return;
   if (event.key == 'm') {
     mute = !mute;
     if (window.__TAURI_INTERNALS__) {
@@ -225,6 +226,7 @@ document.addEventListener('keydown', function(event) {
     }
   }
   else if (event.key == ' ') {
+    event.preventDefault();
     hold = true;
     if (window.__TAURI_INTERNALS__) {
       invoke("set_hold", { hold: hold });
@@ -236,6 +238,7 @@ document.addEventListener('keydown', function(event) {
 
 document.addEventListener('keyup', function(event) {
   if (event.key == ' ') {
+    event.preventDefault();
     hold = false;
     if (window.__TAURI_INTERNALS__) {
       invoke("set_hold", { hold: hold });

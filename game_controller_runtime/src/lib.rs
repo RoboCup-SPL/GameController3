@@ -91,6 +91,7 @@ pub struct RuntimeState {
     mutable_state: Mutex<MutableState>,
     // for the tts settings
     pub mute_sender: mpsc::UnboundedSender<bool>,
+    pub hold_sender: mpsc::UnboundedSender<bool>,
 }
 
 /// This function starts all network services that are not tied to a specific monitor. It returns a
@@ -483,6 +484,7 @@ pub async fn start_runtime(
     let shutdown_token = CancellationToken::new();
 
     let (mute_sender, mute_receiver) = mpsc::unbounded_channel();
+    let (hold_sender, hold_receiver) = mpsc::unbounded_channel();
 
     runtime_join_set.spawn(event_loop(
         game_controller,
@@ -498,6 +500,7 @@ pub async fn start_runtime(
     runtime_join_set.spawn(tts_event_loop(
         action_ttsmsg_receiver,
         mute_receiver,
+        hold_receiver,
         shutdown_token.clone(),
     ));
 
@@ -512,6 +515,7 @@ pub async fn start_runtime(
             network_join_set,
         }),
         mute_sender,
+        hold_sender,
     })
 }
 

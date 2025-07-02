@@ -27,10 +27,12 @@ pub fn naive_say(message: String) {
 pub async fn tts_event_loop(
     mut action_ttsmsg_receiver: mpsc::UnboundedReceiver<Option<String>>,
     mut mute_receiver: mpsc::UnboundedReceiver<bool>,
+    mut hold_receiver: mpsc::UnboundedReceiver<bool>,
     shutdown_token: CancellationToken,
 ) -> Result<()> {
-    println!("zan zan zan");
     let mut the_mute = false;
+    let mut the_hold = false;
+    let mut held_messages = vec![];
 
     loop {
         select! {
@@ -41,6 +43,10 @@ pub async fn tts_event_loop(
                         if the_mute {
                             println!("But am mute");
                         }
+                        else if the_hold {
+                            println!("Holding it");
+                            held_messages.push(message);
+                        }
                         else {
                             naive_say(message);
                         }
@@ -49,8 +55,25 @@ pub async fn tts_event_loop(
             },
             mute_or_error = mute_receiver.recv() => {
                 if let Some(mute) = mute_or_error {
-                    println!("Confirm setting mute to {}", mute);
+                    println!("Set mute to {}", mute);
                     the_mute = mute;
+                    if mute {
+                        // have mute double as "hold-cancel"
+                        held_messages.clear();
+                    }
+                }
+            },
+            hold_or_error = hold_receiver.recv() => {
+                if let Some(hold) = hold_or_error {
+                    println!("Set hold to {}", hold);
+                    the_hold = hold;
+                    if !hold {
+                        // release all held messages
+                        for i in 0..held_messages.len() {
+                            naive_say(held_messages[i].clone());
+                        }
+                        held_messages.clear();
+                    }
                 }
             },
             _ = shutdown_token.cancelled() => {

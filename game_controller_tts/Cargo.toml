@@ -11,5 +11,5 @@ version = { workspace = true }
 anyhow = { workspace = true }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
-tts = { version = "0.26.3" }
-speech-dispatcher = { version = "0.16.0" }
+tts = { workspace = true }
+speech-dispatcher = { workspace = true }
