@@ -3,6 +3,7 @@ import CompetitionSettings from "./launcher/CompetitionSettings";
 import GameSettings from "./launcher/GameSettings";
 import NetworkSettings from "./launcher/NetworkSettings";
 import WindowSettings from "./launcher/WindowSettings";
+import TtsSettings from "./launcher/TtsSettings";
 import { getLaunchData, launch } from "../api";
 
 const Launcher = ({ setLaunched }) => {
@@ -10,6 +11,7 @@ const Launcher = ({ setLaunched }) => {
   const [launchSettings, setLaunchSettings] = useState(null);
   const [networkInterfaces, setNetworkInterfaces] = useState(null);
   const [teams, setTeams] = useState(null);
+  const [voices, setVoices] = useState(null);
 
   const launchSettingsAreLegal =
     launchSettings != null &&
@@ -31,6 +33,7 @@ const Launcher = ({ setLaunched }) => {
       setLaunchSettings(data.defaultSettings);
       setNetworkInterfaces(data.networkInterfaces);
       setTeams(data.teams);
+      setVoices(data.voices);
     });
   }, []);
 
@@ -38,7 +41,8 @@ const Launcher = ({ setLaunched }) => {
     competitions != null &&
     launchSettings != null &&
     networkInterfaces != null &&
-    teams != null
+    teams != null &&
+    voices != null
   ) {
     const setCompetition = (competition) => {
       const INVISIBLES_NUMBER = 0;
@@ -69,6 +73,7 @@ const Launcher = ({ setLaunched }) => {
     const teamsInThisCompetition = teams.filter((team) =>
       thisCompetition.teams.includes(team.number)
     );
+    const languages = Object.keys(voices).sort()
     return (
       <div className="flex flex-col items-center p-4 gap-2">
         <CompetitionSettings
@@ -89,6 +94,12 @@ const Launcher = ({ setLaunched }) => {
           interfaces={networkInterfaces}
           network={launchSettings.network}
           setNetwork={(network) => setLaunchSettings({ ...launchSettings, network: network })}
+        />
+        <TtsSettings
+          languages={languages}
+          voices={voices}
+          tts={launchSettings.tts}
+          setTts={(tts) => setLaunchSettings({ ...launchSettings, tts: tts })}
         />
         <button
           className="px-8 py-2 rounded-md border border-black disabled:bg-slate-400"

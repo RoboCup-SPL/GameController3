@@ -499,6 +499,8 @@ pub async fn start_runtime(
 
     runtime_join_set.spawn(tts_event_loop(
         action_ttsmsg_receiver,
+        settings.tts.enabled.clone(),
+        settings.tts.voice.clone(),
         mute_receiver,
         hold_receiver,
         shutdown_token.clone(),

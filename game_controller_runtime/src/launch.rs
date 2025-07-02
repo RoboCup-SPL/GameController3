@@ -4,6 +4,7 @@ use std::{
     fs::File,
     net::IpAddr,
     path::{Path, PathBuf},
+    collections::HashMap,
 };
 
 use anyhow::{anyhow, bail, Context, Result};
@@ -14,6 +15,7 @@ use serde::{Deserialize, Serialize};
 use game_controller_core::types::{
     Color, CompetitionParams, GameParams, Side, SideMapping, TeamParams, TestParams,
 };
+use game_controller_tts::get_voices;
 
 use crate::cli::Args;
 
@@ -97,6 +99,16 @@ pub struct LogSettings {
     pub replay: Option<PathBuf>,
 }
 
+/// This struct describes settings for the TTS.
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TtsSettings {
+    /// Whether the TTS is enabled at the start.
+    pub enabled: bool,
+    /// The name of the voice to be used.
+    pub voice: String,
+}
+
 /// This represents the overall settings that can be configured in the launcher.
 #[derive(Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -111,6 +123,8 @@ pub struct LaunchSettings {
     pub network: NetworkSettings,
     /// Settings for logging.
     pub log: LogSettings,
+    /// Settings for TTS
+    pub tts: TtsSettings,
 }
 
 /// The bundle of data that is passed to JavaScript.
@@ -125,6 +139,8 @@ pub struct LaunchData {
     pub network_interfaces: Vec<NetworkInterface>,
     /// The initial settings to be modified by the user.
     pub default_settings: LaunchSettings,
+    /// The TTS vocies available on this machine.
+    pub voices: HashMap<String, Vec<String>>,
 }
 
 /// This function creates a list of competitions from the subdirectories of `config`.
@@ -353,16 +369,23 @@ pub fn make_launch_data(config_directory: &Path, args: Args) -> Result<LaunchDat
             broadcast: args.broadcast,
             multicast: args.multicast,
         },
+        tts: TtsSettings {
+            enabled: true,
+            voice: "English (America)".to_string(),
+        },
         log: LogSettings {
             sync: args.sync,
             replay: args.replay,
         },
     };
 
+    let voices = get_voices();
+
     Ok(LaunchData {
         competitions,
         teams,
         network_interfaces,
         default_settings,
+        voices,
     })
 }
