@@ -119,6 +119,7 @@ impl Action for Penalize {
                         BehaviorAtZero::Expire(vec![VAction::Unpenalize(Unpenalize {
                             side: self.side,
                             player,
+                            force: false,
                         })])
                     } else if penalty == Penalty::PickedUp {
                         BehaviorAtZero::Expire(vec![])

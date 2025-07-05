@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ActionButton from "./ActionButton";
 import PlayerButton from "./PlayerButton";
 import * as actions from "../../actions.js";
@@ -155,6 +155,21 @@ const TeamPanel = ({
   const selectingPlayerInPSO =
     substitute && game.phase === "penaltyShootout" && substitutedPlayer != null;
 
+  // The operator can press the shift key to remove penalties early. The main logic is still in
+  // the backend, but it is decided here what the user *wants*.
+  const [forceUnpenalize, setForceUnpenalize] = useState(false);
+  useEffect(() => {
+    const handleKey = (e) => {
+      setForceUnpenalize(e.shiftKey);
+    };
+    document.addEventListener("keydown", handleKey);
+    document.addEventListener("keyup", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("keyup", handleKey);
+    };
+  });
+
   const team = game.teams[side];
   const teamConnectionStatus = connectionStatus[side];
   const teamParams = params.game.teams[side];
@@ -190,7 +205,7 @@ const TeamPanel = ({
     } else {
       applyAction({
         type: "unpenalize",
-        args: { side: side, player: player.number },
+        args: { side: side, player: player.number, force: forceUnpenalize },
       });
     }
   };
@@ -274,7 +289,8 @@ const TeamPanel = ({
                       legalPenaltyActions,
                       side,
                       player.number,
-                      selectedPenaltyCall
+                      selectedPenaltyCall,
+                      forceUnpenalize
                     )
                   }
                   sign={sign}
