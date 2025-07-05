@@ -118,7 +118,11 @@ const Main = () => {
             <></>
           )}
         </div>
-        <UndoPanel undoActions={undoActions} legalUndoActions={extractUndoActions(legalActions)} />
+        <UndoPanel
+          params={params}
+          undoActions={undoActions}
+          legalUndoActions={extractUndoActions(legalActions)}
+        />
       </div>
     );
   } else {
