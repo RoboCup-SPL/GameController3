@@ -12,6 +12,8 @@ pub struct Unpenalize {
     pub side: Side,
     /// The number of the player who is unpenalized.
     pub player: PlayerNumber,
+    /// Whether the removal of a penalty should be allowed before its timer is over.
+    pub force: bool,
 }
 
 impl Action for Unpenalize {
@@ -30,6 +32,7 @@ impl Action for Unpenalize {
                 // We allow motion in Set penalties to be revoked while still in Set.
                 || (c.game.teams[self.side][self.player].penalty == Penalty::MotionInSet
                     && c.game.state == State::Set)
+                || self.force
                 || c.params.game.test.unpenalize)
     }
 }

@@ -53,7 +53,7 @@ const NUM_OF_GAME_ACTIONS = 17;
 
 const PENALTY_ACTION_BASE = GAME_ACTION_BASE + NUM_OF_GAME_ACTIONS;
 
-const NUM_OF_PENALTY_ACTIONS = NUM_OF_TEAMS * NUM_OF_PLAYERS * (PENALTIES.length + 1); // The + 1 is the unpenalize action.
+const NUM_OF_PENALTY_ACTIONS = NUM_OF_TEAMS * NUM_OF_PLAYERS * (PENALTIES.length + 2); // The + 2 are the unpenalize actions.
 
 const UNDO_ACTION_BASE = PENALTY_ACTION_BASE + NUM_OF_PENALTY_ACTIONS;
 
@@ -102,9 +102,11 @@ export const getActions = () => {
       }
     }
   }
-  for (const side of ["home", "away"]) {
-    for (let number = 1; number <= NUM_OF_PLAYERS; ++number) {
-      actions.push({ type: "unpenalize", args: { side: side, player: number } });
+  for (const force of [false, true]) {
+    for (const side of ["home", "away"]) {
+      for (let number = 1; number <= NUM_OF_PLAYERS; ++number) {
+        actions.push({ type: "unpenalize", args: { side: side, player: number, force: force } });
+      }
     }
   }
   for (let states = 1; states <= NUM_OF_UNDO_ACTIONS; ++states) {
@@ -143,10 +145,18 @@ export const isPenaltyCallLegal = (legalPenaltyActions, callIndex) => {
     .some((element) => element != 0);
 };
 
-export const isPenaltyCallLegalForPlayer = (legalPenaltyActions, side, player, callIndex) => {
+export const isPenaltyCallLegalForPlayer = (
+  legalPenaltyActions,
+  side,
+  player,
+  callIndex,
+  forceUnpenalize
+) => {
   return (
     legalPenaltyActions[
-      (callIndex === null ? PENALTIES.length : callIndex) * NUM_OF_TEAMS * NUM_OF_PLAYERS +
+      (callIndex === null ? PENALTIES.length + (forceUnpenalize ? 1 : 0) : callIndex) *
+        NUM_OF_TEAMS *
+        NUM_OF_PLAYERS +
         (side === "home" ? 0 : NUM_OF_PLAYERS) +
         (player - 1)
     ] != 0
