@@ -41,7 +41,7 @@ const StatePanel = ({ game, params, legalGameActions }) => {
       <div className={inHalfTimeBreak ? "col-span-3" : "col-span-4"}>
         <ActionButton
           action={{ type: "startSetPlay", args: { side: game.kickingSide, setPlay: "kickOff" } }}
-          label="Ready"
+          label={params.competition.challengeMode != null ? "Set" : "Ready"}
           legal={legalGameActions[readySideMap[game.kickingSide]]}
         />
       </div>
