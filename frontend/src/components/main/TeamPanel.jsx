@@ -159,14 +159,21 @@ const TeamPanel = ({
   // the backend, but it is decided here what the user *wants*.
   const [forceUnpenalize, setForceUnpenalize] = useState(false);
   useEffect(() => {
-    const handleKey = (e) => {
-      setForceUnpenalize(e.shiftKey);
+    const onKeydown = (e) => {
+      if (e.key === "Shift") {
+        setForceUnpenalize(true);
+      }
     };
-    document.addEventListener("keydown", handleKey);
-    document.addEventListener("keyup", handleKey);
+    const onKeyup = (e) => {
+      if (e.key === "Shift") {
+        setForceUnpenalize(false);
+      }
+    };
+    document.addEventListener("keydown", onKeydown);
+    document.addEventListener("keyup", onKeyup);
     return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.removeEventListener("keyup", handleKey);
+      document.removeEventListener("keydown", onKeydown);
+      document.removeEventListener("keyup", onKeyup);
     };
   });
 
