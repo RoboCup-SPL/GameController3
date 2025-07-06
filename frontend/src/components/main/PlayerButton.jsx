@@ -1,3 +1,4 @@
+import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { formatMMSS } from "../../utils.js";
 
 const bgClasses = {
@@ -38,6 +39,7 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
     (player.penaltyTimer.started
       ? player.penaltyTimer.started.remaining[0] < 10
       : player.penalty != "pickedUp");
+
   return (
     <button
       className={`grow rounded-md border border-gray-600 ${bgClasses[color]} ${
@@ -67,30 +69,23 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
             <></>
           )}
         </div>
-        {player ? (
-          <>
-            <svg
-              className={
-                player.connectionStatus >= 2
-                  ? "text-green-600"
-                  : player.connectionStatus >= 1
-                  ? "text-yellow-400"
-                  : "text-red-600"
-              }
-              fill="currentColor"
-              height="14"
-              width="14"
-            >
-              <circle cx="7" cy="7" r="7" />
-            </svg>
-            <p className="text-3xl tabular-nums">{player.number}</p>
-          </>
-        ) : (
-          <></>
-        )}
+        {connectionStatusIndicatorIcon(player.connectionStatus)}
+        <p className="text-3xl tabular-nums">{player.number}</p>
       </div>
     </button>
   );
 };
 
 export default PlayerButton;
+
+function connectionStatusIndicatorIcon(connectionStatus) {
+  if (connectionStatus >= 2) {
+    return <CheckIcon className="w-6 h-6 text-green-600" />;
+  }
+
+  if (connectionStatus >= 1) {
+    return <ExclamationTriangleIcon className="w-6 h-6 text-yellow-400" />;
+  }
+
+  return <XMarkIcon className="w-6 h-6 text-red-600" />;
+}
