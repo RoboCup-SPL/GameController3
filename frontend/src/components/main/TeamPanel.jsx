@@ -33,7 +33,7 @@ const TeamHeader = ({ color, isKicking, name }) => {
   );
 };
 
-const TeamStats = ({ game, side, sign, team }) => {
+const TeamStats = ({ game, params, side, sign, team }) => {
   return (
     <dl className="flex-1">
       <dt className="sr-only">Score</dt>
@@ -42,7 +42,15 @@ const TeamStats = ({ game, side, sign, team }) => {
           team.illegalCommunication ? "text-fuchsia-400" : ""
         }`}
       >
-        {team.score}
+        {params.competition.challengeMode != null && game.state === "finished"
+          ? (
+              team.score *
+              (1 +
+                (game.primaryTimer.started.remaining[0] +
+                  (game.primaryTimer.started.remaining[1] > 0 ? 1 : 0)) /
+                  params.competition.halfDuration.secs)
+            ).toFixed(2)
+          : team.score}
       </dd>
 
       {game.phase === "penaltyShootout" ? (
@@ -248,7 +256,7 @@ const TeamPanel = ({
             legal={legalTeamActions[actions.GOAL]}
           />
         </div>
-        <TeamStats game={game} side={side} sign={sign} team={team} />
+        <TeamStats game={game} params={params} side={side} sign={sign} team={team} />
       </div>
       <div className="grow flex flex-col gap-2 overflow-auto">
         {selectingPlayerTypePSO
