@@ -1,4 +1,4 @@
-import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { formatMMSS } from "../../utils.js";
 
 const bgClasses = {
