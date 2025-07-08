@@ -30,6 +30,18 @@ const penaltyDescriptions = {
   leavingTheField: "Leaving the Field",
 };
 
+const ConnectionStatusIndicatorIcon = ({ connectionStatus }) => {
+  if (connectionStatus >= 2) {
+    return <CheckIcon className="w-6 h-6 text-green-600" />;
+  }
+
+  if (connectionStatus >= 1) {
+    return <ExclamationTriangleIcon className="w-6 h-6 text-yellow-400" />;
+  }
+
+  return <XMarkIcon className="w-6 h-6 text-red-600" />;
+};
+
 const PlayerButton = ({ color, legal, sign, onClick, player }) => {
   const shouldFlash =
     player &&
@@ -69,23 +81,17 @@ const PlayerButton = ({ color, legal, sign, onClick, player }) => {
             <></>
           )}
         </div>
-        {connectionStatusIndicatorIcon(player.connectionStatus)}
-        <p className="text-3xl tabular-nums">{player.number}</p>
+        {player ? (
+          <>
+            <ConnectionStatusIndicatorIcon connectionStatus={player.connectionStatus} />
+            <p className="text-3xl tabular-nums">{player.number}</p>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </button>
   );
 };
 
 export default PlayerButton;
-
-function connectionStatusIndicatorIcon(connectionStatus) {
-  if (connectionStatus >= 2) {
-    return <CheckIcon className="w-6 h-6 text-green-600" />;
-  }
-
-  if (connectionStatus >= 1) {
-    return <ExclamationTriangleIcon className="w-6 h-6 text-yellow-400" />;
-  }
-
-  return <XMarkIcon className="w-6 h-6 text-red-600" />;
-}
