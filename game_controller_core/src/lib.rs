@@ -117,7 +117,7 @@ impl GameController {
     /// prevents it from being used in other ways, it should only be used to check if actions are
     /// legal. (I'm too lazy at the moment to create different types of contexts for is_legal and
     /// execute.)
-    pub fn get_context(&mut self, delayed: bool) -> ActionContext {
+    pub fn get_context(&mut self, delayed: bool) -> ActionContext<'_> {
         ActionContext::new(
             if delayed {
                 self.delay
